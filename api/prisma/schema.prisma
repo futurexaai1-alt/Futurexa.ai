@@ -1,0 +1,697 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  DONE
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum EntityType {
+  PROJECT
+  TASK
+  FILE
+  COMMENT
+  PROJECT_REQUEST
+  MILESTONE
+  TICKET
+  DEPLOYMENT
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  WEBHOOK
+}
+
+enum NotificationEvent {
+  TASK_ASSIGNED
+  PROJECT_UPDATED
+  COMMENT_ADDED
+  DEADLINE_APPROACHING
+  FILE_UPLOADED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum IntegrationType {
+  SLACK
+  ZAPIER
+  GOOGLE_DRIVE
+  GITHUB
+  CUSTOM
+}
+
+enum ProjectRequestStatus {
+  NEW
+  REVIEW
+  APPROVED
+  CONVERTED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  BLOCKED
+  COMPLETED
+}
+
+enum TicketStatus {
+  OPEN
+  INVESTIGATING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum EnvironmentType {
+  DEVELOPMENT
+  STAGING
+  PRODUCTION
+}
+
+enum DeploymentStatus {
+  QUEUED
+  IN_PROGRESS
+  SUCCESS
+  FAILED
+  ROLLED_BACK
+}
+
+model Organization {
+  id                     String                   @id @default(cuid())
+  name                   String
+  planId                 String?
+  status                 OrganizationStatus       @default(ACTIVE)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime?
+  plan                   Plan?                    @relation(fields: [planId], references: [id])
+  members                OrganizationMember[]
+  projects               Project[]
+  projectRequests        ProjectRequest[]
+  milestones             Milestone[]
+  tasks                  Task[]
+  tickets                Ticket[]
+  deployments            Deployment[]
+  environments           Environment[]
+  projectSecrets         ProjectSecret[]
+  threads                Thread[]
+  mentions               Mention[]
+  files                  File[]
+  comments               Comment[]
+  activityLogs           ActivityLog[]
+  roles                  Role[]
+  subscriptions          Subscription[]
+  apiKeys                ApiKey[]
+  notifications          Notification[]
+  notificationPreferences NotificationPreference[]
+  usageMetrics           UsageMetric[]
+  organizationIntegrations OrganizationIntegration[]
+  webhooks               Webhook[]
+  organizationRoles      UserRole[]
+  apiUsages              ApiUsage[]
+
+  @@index([planId])
+}
+
+model User {
+  id               String                @id @default(cuid())
+  name             String
+  email            String                @unique
+  passwordHash     String
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  deletedAt        DateTime?
+  memberships      OrganizationMember[]
+  createdProjects  Project[]             @relation("ProjectCreator")
+  createdProjectRequests ProjectRequest[] @relation("ProjectRequestCreator")
+  assignedTasks    Task[]                @relation("TaskAssignee")
+  createdTickets   Ticket[]              @relation("TicketCreator")
+  assignedTickets  Ticket[]              @relation("TicketAssignee")
+  createdMilestones Milestone[]          @relation("MilestoneCreator")
+  mentions         Mention[]
+  files            File[]                @relation("FileUploader")
+  comments         Comment[]             @relation("CommentAuthor")
+  activityLogs     ActivityLog[]
+  notifications    Notification[]
+  notificationPreferences NotificationPreference[]
+  roles            UserRole[]
+}
+
+model OrganizationMember {
+  id             String    @id @default(cuid())
+  organizationId String
+  userId         String
+  roleId         String?
+  joinedAt       DateTime  @default(now())
+  deletedAt      DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
+  role           Role?     @relation(fields: [roleId], references: [id])
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Role {
+  id             String     @id @default(cuid())
+  organizationId String?
+  name           String
+  description    String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  rolePermissions RolePermission[]
+  userRoles      UserRole[]
+  organizationMembers OrganizationMember[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId])
+}
+
+model UserRole {
+  id             String     @id @default(cuid())
+  organizationId String
+  userId         String
+  roleId         String
+  createdAt      DateTime   @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
+  role           Role       @relation(fields: [roleId], references: [id])
+
+  @@unique([organizationId, userId, roleId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Project {
+  id             String        @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  status         ProjectStatus @default(ACTIVE)
+  createdById    String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  createdBy      User          @relation("ProjectCreator", fields: [createdById], references: [id])
+  tasks          Task[]
+  milestones     Milestone[]
+  tickets        Ticket[]
+  environments   Environment[]
+  deployments    Deployment[]
+  secrets        ProjectSecret[]
+  request        ProjectRequest?
+
+  @@index([organizationId])
+  @@index([createdById])
+}
+
+model Task {
+  id             String       @id @default(cuid())
+  organizationId String
+  projectId      String
+  assignedToId   String?
+  title          String
+  description    String?
+  status         TaskStatus   @default(TODO)
+  priority       TaskPriority @default(MEDIUM)
+  dueDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  project        Project      @relation(fields: [projectId], references: [id])
+  assignedTo     User?        @relation("TaskAssignee", fields: [assignedToId], references: [id])
+  milestoneId    String?
+  milestone      Milestone?   @relation(fields: [milestoneId], references: [id])
+  tickets        Ticket[]
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([assignedToId])
+  @@index([milestoneId])
+}
+
+model ProjectRequest {
+  id                    String               @id @default(cuid())
+  organizationId        String
+  projectTitle          String
+  description           String
+  businessGoals         String?
+  budgetRange           String?
+  deadline              DateTime?
+  preferredTechnologies String?
+  attachments           Json?
+  status                ProjectRequestStatus @default(NEW)
+  createdById           String
+  reviewedById          String?
+  convertedProjectId    String?              @unique
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  organization          Organization         @relation(fields: [organizationId], references: [id])
+  createdBy             User                 @relation("ProjectRequestCreator", fields: [createdById], references: [id])
+  convertedProject      Project?             @relation(fields: [convertedProjectId], references: [id])
+
+  @@index([organizationId])
+  @@index([createdById])
+}
+
+model Milestone {
+  id                   String          @id @default(cuid())
+  organizationId       String
+  projectId            String
+  title                String
+  dueDate              DateTime?
+  status               MilestoneStatus @default(PENDING)
+  completionPercentage Int             @default(0)
+  createdById          String
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  organization         Organization    @relation(fields: [organizationId], references: [id])
+  project              Project         @relation(fields: [projectId], references: [id])
+  createdBy            User            @relation("MilestoneCreator", fields: [createdById], references: [id])
+  tasks                Task[]
+  tickets              Ticket[]
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([createdById])
+}
+
+model Ticket {
+  id             String       @id @default(cuid())
+  organizationId String
+  projectId      String
+  milestoneId    String?
+  taskId         String?
+  title          String
+  description    String?
+  type           String
+  status         TicketStatus @default(OPEN)
+  createdById    String
+  assignedToId   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  closedAt       DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  project        Project      @relation(fields: [projectId], references: [id])
+  milestone      Milestone?   @relation(fields: [milestoneId], references: [id])
+  task           Task?        @relation(fields: [taskId], references: [id])
+  createdBy      User         @relation("TicketCreator", fields: [createdById], references: [id])
+  assignedTo     User?        @relation("TicketAssignee", fields: [assignedToId], references: [id])
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([milestoneId])
+  @@index([taskId])
+  @@index([createdById])
+  @@index([assignedToId])
+}
+
+model ProjectSecret {
+  id             String          @id @default(cuid())
+  organizationId String
+  projectId      String
+  keyName        String
+  encryptedValue String
+  environment    EnvironmentType
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  project        Project         @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, keyName, environment])
+  @@index([organizationId])
+}
+
+model Environment {
+  id               String          @id @default(cuid())
+  organizationId   String
+  projectId        String
+  name             String
+  type             EnvironmentType
+  url              String?
+  version          String?
+  deploymentStatus DeploymentStatus?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  organization     Organization    @relation(fields: [organizationId], references: [id])
+  project          Project         @relation(fields: [projectId], references: [id])
+  deployments      Deployment[]
+
+  @@unique([projectId, name])
+  @@index([organizationId])
+}
+
+model Deployment {
+  id             String           @id @default(cuid())
+  organizationId String
+  projectId      String
+  environmentId  String
+  version        String
+  status         DeploymentStatus @default(QUEUED)
+  deployedAt     DateTime?
+  createdAt      DateTime         @default(now())
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  project        Project          @relation(fields: [projectId], references: [id])
+  environment    Environment      @relation(fields: [environmentId], references: [id])
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([environmentId])
+}
+
+model Thread {
+  id             String       @id @default(cuid())
+  organizationId String
+  entityType     EntityType
+  entityId       String
+  title          String?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  comments       Comment[]
+
+  @@index([organizationId])
+  @@index([entityId])
+}
+
+model Mention {
+  id             String       @id @default(cuid())
+  organizationId String
+  commentId      String
+  userId         String
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  comment        Comment      @relation(fields: [commentId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([commentId, userId])
+  @@index([organizationId])
+}
+
+model Comment {
+  id             String     @id @default(cuid())
+  organizationId String
+  entityType     EntityType
+  entityId       String
+  userId         String
+  content        String
+  createdAt      DateTime   @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User       @relation("CommentAuthor", fields: [userId], references: [id])
+  threadId       String?
+  thread         Thread?    @relation(fields: [threadId], references: [id])
+  parentId       String?
+  parent         Comment?   @relation("CommentReplies", fields: [parentId], references: [id])
+  replies        Comment[]  @relation("CommentReplies")
+  mentions       Mention[]
+
+  @@index([organizationId])
+  @@index([entityId])
+  @@index([userId])
+  @@index([threadId])
+  @@index([parentId])
+}
+
+model File {
+  id             String     @id @default(cuid())
+  organizationId String
+  uploadedById   String
+  fileUrl        String
+  fileType       String
+  entityType     EntityType
+  entityId       String
+  createdAt      DateTime   @default(now())
+  deletedAt      DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  uploadedBy     User       @relation("FileUploader", fields: [uploadedById], references: [id])
+
+  @@index([organizationId])
+  @@index([entityId])
+  @@index([uploadedById])
+}
+
+model ActivityLog {
+  id             String     @id @default(cuid())
+  organizationId String
+  userId         String
+  action         String
+  entityType     EntityType?
+  entityId       String?
+  metadata       Json?
+  createdAt      DateTime   @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Notification {
+  id             String              @id @default(cuid())
+  organizationId String
+  userId         String
+  event          NotificationEvent
+  channel        NotificationChannel
+  title          String
+  message        String
+  readAt         DateTime?
+  createdAt      DateTime            @default(now())
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+  user           User                @relation(fields: [userId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model NotificationPreference {
+  id             String              @id @default(cuid())
+  organizationId String
+  userId         String
+  event          NotificationEvent
+  channel        NotificationChannel
+  enabled        Boolean             @default(true)
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+  user           User                @relation(fields: [userId], references: [id])
+
+  @@unique([organizationId, userId, event, channel])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Plan {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  description  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  planFeatures PlanFeature[]
+  organizations Organization[]
+  subscriptions Subscription[]
+}
+
+model PlanFeature {
+  id       String   @id @default(cuid())
+  planId   String
+  key      String
+  value    String?
+  plan     Plan     @relation(fields: [planId], references: [id])
+
+  @@unique([planId, key])
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  organizationId     String
+  planId             String
+  status             SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAt           DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  organization       Organization       @relation(fields: [organizationId], references: [id])
+  plan               Plan               @relation(fields: [planId], references: [id])
+  payments           Payment[]
+  invoices           Invoice[]
+
+  @@index([organizationId])
+  @@index([planId])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  subscriptionId String
+  amount         Int
+  currency       String
+  status         PaymentStatus @default(PENDING)
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+
+  @@index([subscriptionId])
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  subscriptionId String
+  amount         Int
+  currency       String
+  status         InvoiceStatus @default(DRAFT)
+  issuedAt       DateTime      @default(now())
+  dueAt          DateTime?
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+
+  @@index([subscriptionId])
+}
+
+model ApiKey {
+  id             String     @id @default(cuid())
+  organizationId String
+  name           String
+  apiKey         String     @unique
+  permissions    Json?
+  rateLimit      Int?
+  createdAt      DateTime   @default(now())
+  lastUsedAt     DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  usage          ApiUsage[]
+
+  @@index([organizationId])
+}
+
+model ApiUsage {
+  id             String     @id @default(cuid())
+  apiKeyId       String
+  organizationId String
+  requestCount   Int        @default(0)
+  periodStart    DateTime
+  periodEnd      DateTime
+  apiKey         ApiKey     @relation(fields: [apiKeyId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([apiKeyId, periodStart, periodEnd])
+  @@index([organizationId])
+}
+
+model Integration {
+  id                      String                     @id @default(cuid())
+  type                    IntegrationType
+  name                    String
+  description             String?
+  createdAt               DateTime                   @default(now())
+  organizationIntegrations OrganizationIntegration[]
+}
+
+model OrganizationIntegration {
+  id             String       @id @default(cuid())
+  organizationId String
+  integrationId  String
+  config         Json?
+  enabled        Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  integration    Integration  @relation(fields: [integrationId], references: [id])
+
+  @@unique([organizationId, integrationId])
+  @@index([organizationId])
+}
+
+model Webhook {
+  id             String       @id @default(cuid())
+  organizationId String
+  url            String
+  secret         String?
+  event          String
+  enabled        Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+}
+
+model UsageMetric {
+  id             String       @id @default(cuid())
+  organizationId String
+  key            String
+  value          Int          @default(0)
+  periodStart    DateTime
+  periodEnd      DateTime
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, key, periodStart, periodEnd])
+  @@index([organizationId])
+}
