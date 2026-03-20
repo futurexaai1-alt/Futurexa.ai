@@ -6,3 +6,4 @@ export default {
     v8_viteEnvironmentApi: true,
   },
 } satisfies Config;
+

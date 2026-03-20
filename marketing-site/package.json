@@ -14,16 +14,17 @@
 	"dependencies": {
 		"clsx": "^2.1.1",
 		"framer-motion": "^12.35.2",
+		"futurexa.ai": "file:..",
 		"isbot": "^5.1.31",
 		"lucide-react": "^0.577.0",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
-		"react-router": "^7.10.0",
+		"react-router": "^7.13.1",
 		"tailwind-merge": "^3.5.0"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.13.5",
-		"@react-router/dev": "^7.10.0",
+		"@react-router/dev": "^7.13.1",
 		"@tailwindcss/vite": "^4.1.13",
 		"@types/node": "^22.19.15",
 		"@types/react": "^19.1.13",

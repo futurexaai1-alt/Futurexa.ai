@@ -1,0 +1,80 @@
+import type { Route } from "./+types/auth-callback";
+import { useLoaderData, useNavigate } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createSupabaseBrowserClient } from "../utils/supabase";
+
+type LoaderData = {
+  supabaseUrl: string;
+  supabaseAnonKey: string;
+};
+
+export function loader({ context }: Route.LoaderArgs) {
+  const env = context.cloudflare.env as any;
+  return {
+    supabaseUrl: env.SUPABASE_URL,
+    supabaseAnonKey: env.SUPABASE_ANON_KEY,
+  } satisfies LoaderData;
+}
+
+export default function AuthCallback(_: Route.ComponentProps) {
+  const { supabaseUrl, supabaseAnonKey } = useLoaderData() as LoaderData;
+  const navigate = useNavigate();
+
+  const supabase = useMemo(() => {
+    return createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey);
+  }, [supabaseUrl, supabaseAnonKey]);
+
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      setError(null);
+
+      const url = new URL(window.location.href);
+      const authCode = url.searchParams.get("code");
+
+      const hashParams = new URLSearchParams(
+        url.hash.startsWith("#") ? url.hash.slice(1) : url.hash
+      );
+      const accessToken = hashParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token");
+
+      try {
+        if (authCode) {
+          await supabase.auth.exchangeCodeForSession(authCode);
+        } else if (accessToken && refreshToken) {
+          await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+        }
+
+        const { data } = await supabase.auth.getSession();
+
+        // Clean up tokens from the URL to avoid accidental reuse.
+        window.history.replaceState({}, document.title, "/auth/callback");
+
+        if (data.session) navigate("/dashboard", { replace: true });
+        else navigate("/signin", { replace: true });
+      } catch (e) {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "Auth callback failed");
+        navigate("/signin", { replace: true });
+      }
+    }
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate, supabase]);
+
+  return (
+    <main style={{ padding: 24, maxWidth: 520, margin: "0 auto" }}>
+      <h1>Signing you in...</h1>
+      {error && <p style={{ color: "#b91c1c" }}>{error}</p>}
+    </main>
+  );
+}
+

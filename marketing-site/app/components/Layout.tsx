@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const clientPortalUrl = import.meta.env.DEV ? "http://localhost:5174" : "https://client.futurexa.ai";
+  const clientPortalBaseUrl = import.meta.env.DEV ? "http://localhost:5174" : "https://client.futurexa.ai";
+  const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
+  const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
 
   const navLinks = [
     { name: "Services", path: "/services" },
@@ -64,10 +66,16 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           <a
-            href={clientPortalUrl}
+            href={clientSignInUrl}
             className="h-10 px-6 rounded-full border border-gray-200 text-gray-700 text-sm font-medium flex items-center justify-center transition-all hover:border-blue-200 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-100/40"
           >
-            Client Login
+            Sign In
+          </a>
+          <a
+            href={clientSignUpUrl}
+            className="h-10 px-6 rounded-full border border-blue-200 text-blue-700 text-sm font-medium flex items-center justify-center transition-all hover:border-blue-300 hover:text-blue-800 hover:shadow-lg hover:shadow-blue-100/50"
+          >
+            Sign Up
           </a>
           <Link
             to="/contact"
@@ -114,11 +122,18 @@ export function Navbar() {
                 </NavLink>
               ))}
               <a
-                href={clientPortalUrl}
+                href={clientSignInUrl}
                 onClick={() => setIsOpen(false)}
                 className="block w-full py-3 rounded-xl border border-gray-200 text-gray-700 text-center font-bold shadow-sm hover:border-blue-200 hover:text-blue-600"
               >
-                Client Login
+                Sign In
+              </a>
+              <a
+                href={clientSignUpUrl}
+                onClick={() => setIsOpen(false)}
+                className="block w-full py-3 rounded-xl border border-blue-200 text-blue-700 text-center font-bold shadow-sm hover:border-blue-300 hover:text-blue-800"
+              >
+                Sign Up
               </a>
               <Link
                 to="/contact"
