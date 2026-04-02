@@ -1,0 +1,15 @@
+export { authRoutes } from "./auth.routes";
+export { leadsRoutes } from "./leads.routes";
+export { usersRoutes } from "./users.routes";
+export { orgsRoutes } from "./organizations.routes";
+export { projectsRoutes } from "./projects.routes";
+export { milestonesRoutes } from "./milestones.routes";
+export { tasksRoutes } from "./tasks.routes";
+export { ticketsRoutes } from "./tickets.routes";
+export { filesRoutes } from "./files.routes";
+export { deploymentsRoutes } from "./deployments.routes";
+export { notificationsRoutes } from "./notifications.routes";
+export { billingRoutes } from "./billing.routes";
+export { integrationsRoutes } from "./integrations.routes";
+export { webhooksRoutes } from "./webhooks.routes";
+export { activityRoutes } from "./activity.routes";

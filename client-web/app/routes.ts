@@ -11,10 +11,10 @@ export default [
   route("dashboard/ticket", "routes/dashboard-ticket.tsx"),
   route("dashboard/files", "routes/dashboard-files.tsx"),
   route("dashboard/milestones", "routes/dashboard-milestones.tsx"),
+  route("dashboard/milestones/:id", "routes/dashboard-milestone-detail.tsx"),
   route("dashboard/tasks", "routes/dashboard-tasks.tsx"),
   route("dashboard/deployments", "routes/dashboard-deployments.tsx"),
   route("dashboard/billing", "routes/dashboard-billing.tsx"),
   route("dashboard/activity", "routes/dashboard-activity.tsx"),
   route("dashboard/settings", "routes/dashboard-settings.tsx"),
 ] satisfies RouteConfig;
-

@@ -47,7 +47,7 @@ async function parseError(response: Response) {
   }
 }
 
-async function getJson<T>(path: string, options?: AdminRequestOptions): Promise<T> {
+export async function getJson<T>(path: string, options?: AdminRequestOptions): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {
@@ -73,13 +73,13 @@ async function getJson<T>(path: string, options?: AdminRequestOptions): Promise<
   throw new Error(`Invalid response format from ${path}`);
 }
 
-async function sendJson<T>(method: "POST" | "PATCH", path: string, body: unknown, options?: AdminRequestOptions): Promise<T> {
+export async function sendJson<T>(method: "POST" | "PATCH" | "PUT" | "DELETE", path: string, body?: unknown, options?: AdminRequestOptions): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {
       method,
       headers: getAuthHeaders(options),
-      body: JSON.stringify(body),
+      body: body ? JSON.stringify(body) : undefined,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch";
@@ -169,6 +169,50 @@ export async function createOrganization(name: string) {
   return sendJson<Record<string, unknown>>("POST", "/api/organizations", { name });
 }
 
+export async function deleteOrganization(id: string) {
+  const response = await fetch(`${apiBaseUrl}/api/organizations/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+
+export async function updateOrganization(payload: { id: string; name?: string; status?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/organizations/${encodeURIComponent(payload.id)}`,
+    { name: payload.name, status: payload.status }
+  );
+}
+
+export async function addOrganizationMember(organizationId: string, userId: string) {
+  return sendJson<Record<string, unknown>>("POST", "/api/organizations/members", {
+    organizationId,
+    userId,
+  });
+}
+
+export async function removeOrganizationMember(organizationId: string, userId: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/organizations/${encodeURIComponent(organizationId)}/members/${encodeURIComponent(userId)}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+
 export async function createProject(payload: { organizationId: string; name: string; description?: string }) {
   return sendJson<Record<string, unknown>>(
     "POST",
@@ -178,14 +222,36 @@ export async function createProject(payload: { organizationId: string; name: str
   );
 }
 
-export async function createMilestone(payload: { organizationId: string; projectId: string; title: string }) {
+export async function createMilestone(payload: { organizationId: string; projectId: string; title: string; dueDate?: string; description?: string; startDate?: string; status?: string; progressPercent?: number; stageBreakdown?: any; expectedDeliverables?: string }) {
   return sendJson<Record<string, unknown>>(
     "POST",
     "/api/milestones",
-    { projectId: payload.projectId, title: payload.title },
+    { 
+      projectId: payload.projectId, 
+      title: payload.title, 
+      dueDate: payload.dueDate,
+      description: payload.description,
+      startDate: payload.startDate,
+      status: payload.status,
+      progressPercent: payload.progressPercent,
+      stageBreakdown: payload.stageBreakdown,
+      expectedDeliverables: payload.expectedDeliverables
+    },
     { organizationId: payload.organizationId }
   );
 }
+
+export async function deleteMilestone(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/milestones/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
 
 export async function createTask(payload: { organizationId: string; projectId: string; title: string }) {
   return sendJson<Record<string, unknown>>(
@@ -205,14 +271,318 @@ export async function createTicket(payload: { organizationId: string; projectId:
   );
 }
 
-export async function updateRequestStatus(payload: { organizationId: string; id: string; status: string }) {
+export async function updateProject(payload: { organizationId: string; id: string; name?: string; description?: string; status?: string }) {
   return sendJson<Record<string, unknown>>(
     "PATCH",
-    `/api/project-requests/${encodeURIComponent(payload.id)}/status`,
+    `/api/projects/${encodeURIComponent(payload.id)}`,
+    { name: payload.name, description: payload.description, status: payload.status },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function deleteProject(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/projects/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function createDeployment(payload: { organizationId: string; projectId?: string; name: string; environment?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "POST",
+    "/api/deployments",
+    { projectId: payload.projectId, name: payload.name, environment: payload.environment, status: "IN_PROGRESS", metadata: {} },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateDeploymentStatus(payload: { organizationId: string; id: string; status: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/deployments/${encodeURIComponent(payload.id)}`,
     { status: payload.status },
     { organizationId: payload.organizationId }
   );
 }
+
+export async function deleteDeployment(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/deployments/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+
+export async function updateMilestone(payload: { 
+  organizationId: string; 
+  id: string; 
+  title?: string; 
+  description?: string; 
+  status?: string; 
+  dueDate?: string;
+  startDate?: string;
+  progressPercent?: number;
+  stageBreakdown?: any;
+  expectedDeliverables?: string;
+}) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/milestones/${encodeURIComponent(payload.id)}`,
+    { 
+      title: payload.title, 
+      description: payload.description, 
+      status: payload.status, 
+      dueDate: payload.dueDate,
+      startDate: payload.startDate,
+      progressPercent: payload.progressPercent,
+      stageBreakdown: payload.stageBreakdown,
+      expectedDeliverables: payload.expectedDeliverables
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function getMilestone(organizationId: string, id: string) {
+  return getJson<Record<string, any>>(`/api/milestones/${encodeURIComponent(id)}`, { organizationId });
+}
+
+export async function addMilestoneUpdate(payload: {
+  organizationId: string;
+  milestoneId: string;
+  title: string;
+  message: string;
+  attachments?: any;
+  tags?: string;
+  createdById: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/updates`,
+    { 
+      title: payload.title, 
+      message: payload.message, 
+      attachments: payload.attachments, 
+      tags: payload.tags, 
+      createdById: payload.createdById 
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function addMilestoneDeliverable(payload: {
+  organizationId: string;
+  milestoneId: string;
+  fileAssetId: string;
+  type: string;
+  description?: string;
+  uploadedById: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/deliverables`,
+    { 
+      fileAssetId: payload.fileAssetId, 
+      type: payload.type, 
+      description: payload.description, 
+      uploadedById: payload.uploadedById 
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function addMilestoneBlocker(payload: {
+  organizationId: string;
+  milestoneId: string;
+  title: string;
+  description: string;
+  severity: string;
+  status?: string;
+  createdById: string;
+  assignedResolverId?: string;
+  expectedResolutionDate?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/blockers`,
+    { 
+      title: payload.title, 
+      description: payload.description, 
+      severity: payload.severity, 
+      status: payload.status, 
+      createdById: payload.createdById,
+      assignedResolverId: payload.assignedResolverId,
+      expectedResolutionDate: payload.expectedResolutionDate
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateMilestoneBlocker(payload: {
+  organizationId: string;
+  milestoneId: string;
+  blockerId: string;
+  status: string;
+  resolutionDate?: string;
+  assignedResolverId?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "PATCH",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/blockers/${encodeURIComponent(payload.blockerId)}`,
+    { 
+      status: payload.status, 
+      resolutionDate: payload.resolutionDate,
+      assignedResolverId: payload.assignedResolverId
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function approveMilestone(payload: {
+  organizationId: string;
+  milestoneId: string;
+  approvedById: string;
+  comment?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/approve`,
+    { 
+      approvedById: payload.approvedById, 
+      comment: payload.comment 
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function requestMilestoneRevision(payload: {
+  organizationId: string;
+  milestoneId: string;
+  approvedById: string;
+  comment: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/revision-request`,
+    {
+      approvedById: payload.approvedById,
+      comment: payload.comment
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function addMilestoneTask(payload: {
+  organizationId: string;
+  milestoneId: string;
+  title: string;
+  description?: string;
+  assignedToId?: string;
+  dueDate?: string;
+  priority?: string;
+  status?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/tasks`,
+    {
+      title: payload.title,
+      description: payload.description,
+      assignedToId: payload.assignedToId,
+      dueDate: payload.dueDate,
+      priority: payload.priority || "MEDIUM",
+      status: payload.status || "TODO"
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateMilestoneTask(payload: {
+  organizationId: string;
+  milestoneId: string;
+  taskId: string;
+  title?: string;
+  description?: string;
+  assignedToId?: string;
+  dueDate?: string;
+  priority?: string;
+  status?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "PATCH",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/tasks/${encodeURIComponent(payload.taskId)}`,
+    {
+      title: payload.title,
+      description: payload.description,
+      assignedToId: payload.assignedToId,
+      dueDate: payload.dueDate,
+      priority: payload.priority,
+      status: payload.status
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateMilestoneStage(payload: {
+  organizationId: string;
+  milestoneId: string;
+  stageIndex: number;
+  status?: string;
+  notes?: string;
+  completionDate?: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "PATCH",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/stage`,
+    {
+      stageIndex: payload.stageIndex,
+      status: payload.status,
+      notes: payload.notes,
+      completionDate: payload.completionDate
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function addCommentToUpdate(payload: {
+  organizationId: string;
+  milestoneId: string;
+  updateId: string;
+  userId: string;
+  content: string;
+}) {
+  return sendJson<Record<string, any>>(
+    "POST",
+    `/api/milestones/${encodeURIComponent(payload.milestoneId)}/updates/${encodeURIComponent(payload.updateId)}/comments`,
+    {
+      userId: payload.userId,
+      content: payload.content
+    },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function getMilestoneComments(organizationId: string, milestoneId: string) {
+  return getJson<Array<Record<string, unknown>>>(`/api/milestones/${encodeURIComponent(milestoneId)}/comments`, { organizationId });
+}
+
+
+export async function updateRequestStatus(payload: { organizationId: string; id: string; status: string; internalNote?: string; rejectionReason?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/project-requests/${encodeURIComponent(payload.id)}/status`,
+    { status: payload.status, internalNote: payload.internalNote, rejectionReason: payload.rejectionReason },
+    { organizationId: payload.organizationId }
+  );
+}
+
 
 export async function updateTicketStatus(payload: { organizationId: string; id: string; status: string }) {
   return sendJson<Record<string, unknown>>(
@@ -222,3 +592,226 @@ export async function updateTicketStatus(payload: { organizationId: string; id: 
     { organizationId: payload.organizationId }
   );
 }
+
+export async function deleteRequest(id: string) {
+  const response = await fetch(`${apiBaseUrl}/api/project-requests/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function updateTask(payload: { organizationId: string; id: string; title?: string; description?: string; status?: string; dueDate?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/tasks/${encodeURIComponent(payload.id)}`,
+    { title: payload.title, description: payload.description, status: payload.status, dueDate: payload.dueDate },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function deleteTask(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/tasks/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function updateFile(payload: { organizationId: string; id: string; visibility?: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/files/${encodeURIComponent(payload.id)}`, {
+    method: "PATCH",
+    headers: { ...getAuthHeaders({ organizationId: payload.organizationId }), "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function deleteUser(id: string) {
+
+  const response = await fetch(`${apiBaseUrl}/api/users/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function suspendUser(payload: { id: string; reason: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/users/${encodeURIComponent(payload.id)}/suspend`, {
+    method: "PATCH",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ reason: payload.reason }),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+
+export async function unsuspendUser(id: string) {
+  const response = await fetch(`${apiBaseUrl}/api/users/${encodeURIComponent(id)}/unsuspend`, {
+    method: "PATCH",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+
+export async function restoreUser(id: string) {
+  const response = await fetch(`${apiBaseUrl}/api/users/${encodeURIComponent(id)}/restore`, {
+    method: "PATCH",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+export async function createIntegration(payload: { organizationId: string; name: string; provider: string }) {
+  return sendJson<Record<string, unknown>>(
+    "POST",
+    "/api/integrations",
+    { name: payload.name, provider: payload.provider, status: "ACTIVE" },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateIntegrationStatus(payload: { organizationId: string; id: string; status: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/integrations/${encodeURIComponent(payload.id)}`,
+    { status: payload.status },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function deleteIntegration(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/integrations/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function createWebhook(payload: { organizationId: string; integrationId: string; url: string; secret?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "POST",
+    "/api/webhooks",
+    { integrationId: payload.integrationId, url: payload.url, secret: payload.secret, events: {} },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function updateWebhook(payload: { organizationId: string; id: string; url?: string; secret?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/webhooks/${encodeURIComponent(payload.id)}`,
+    { url: payload.url, secret: payload.secret },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function deleteWebhook(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/webhooks/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function deleteTicket(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/tickets/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function uploadFile(payload: {
+  organizationId: string;
+  file: File;
+  name?: string;
+  fileType?: string;
+  projectId?: string;
+}) {
+  const form = new FormData();
+  form.append("file", payload.file);
+  if (payload.name) form.append("name", payload.name);
+  if (payload.fileType) form.append("fileType", payload.fileType);
+  if (payload.projectId) form.append("projectId", payload.projectId);
+
+  const response = await fetch(`${apiBaseUrl}/api/files`, {
+    method: "POST",
+    headers: {
+      "x-admin-crm": "true",
+      "x-organization-id": payload.organizationId,
+    },
+    body: form,
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+
+export async function updateFileStatus(payload: { organizationId: string; id: string; fileType?: string }) {
+  return sendJson<Record<string, unknown>>(
+    "PATCH",
+    `/api/files/${encodeURIComponent(payload.id)}`,
+    { fileType: payload.fileType },
+    { organizationId: payload.organizationId }
+  );
+}
+
+export async function deleteFile(payload: { organizationId: string; id: string }) {
+  const response = await fetch(`${apiBaseUrl}/api/files/${encodeURIComponent(payload.id)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders({ organizationId: payload.organizationId }),
+  });
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+}
+

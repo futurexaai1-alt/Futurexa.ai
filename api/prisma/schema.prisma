@@ -1,353 +1,400 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-}
-
-enum UserStatus {
-  NEW_USER
-  LEAD
-  ACTIVE_CLIENT
-  SUSPENDED
-}
-
-enum LeadRequestType {
-  DEMO
-  PROJECT
-}
-
-enum LeadRequestStatus {
-  SUBMITTED
-  IN_REVIEW
-  APPROVED
-  REJECTED
-}
-
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-}
-
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  DONE
-}
-
-enum DeploymentStatus {
-  SUCCESS
-  IN_PROGRESS
-  FAILED
-}
-
-enum NotificationChannel {
-  IN_APP
-  EMAIL
-  SMS
-}
-
-model Organization {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  status    String
-  planId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  members       OrganizationMember[]
-  projects      Project[]
-  milestones    Milestone[]
-  tickets       Ticket[]
-  tasks         Task[]
-  files         FileAsset[]
-  deployments   Deployment[]
-  subscriptions Subscription[]
-  invoices      Invoice[]
-  payments      Payment[]
-  activityLogs  ActivityLog[]
-  comments      Comment[]
-  notifications Notification[]
-  leadRequests  LeadRequest[]
-  integrations  Integration[]
-  webhooks      Webhook[]
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String     @id @default(uuid()) @db.Uuid
-  email     String     @unique
-  name      String?
-  status    UserStatus @default(NEW_USER)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String                @unique
+  name                 String?
+  status               String                @default("NEW_USER")
+  suspendedReason      String?
+  deletedAt            DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  organizationMembers  OrganizationMember[]
+  organizationRequests OrganizationRequest[]
+  leadRequests         LeadRequest[]
+}
 
-  memberships   OrganizationMember[]
-  leadRequests  LeadRequest[]
-  tickets       Ticket[]        @relation("TicketReporter")
-  assignedTo    Ticket[]        @relation("TicketAssignee")
-  tasksCreated  Task[]         @relation("TaskCreatedBy")
-  tasksAssigned Task[]         @relation("TaskAssignedTo")
-  files         FileAsset[]
-  activityLogs  ActivityLog[]
-  comments      Comment[]
-  notifications Notification[]
+model Organization {
+  id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shortCode            String?               @unique
+  name                 String
+  status               String                @default("PENDING_APPROVAL")
+  planId               String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  organizationMembers  OrganizationMember[]
+  organizationRequests OrganizationRequest[]
+  leadRequests         LeadRequest[]
+  projects             Project[]
+  milestones           Milestone[]
+  milestoneUpdates     MilestoneUpdate[]
+  tickets              Ticket[]
+  tasks                Task[]
+  fileAssets           FileAsset[]
+  fileAuditLogs        FileAuditLog[]
+  subscriptions        Subscription[]
+  invoices             Invoice[]
+  payments             Payment[]
+  activityLogs         ActivityLog[]
+  comments             Comment[]
+  notifications        Notification[]
+  deployments          Deployment[]
+  integrations         Integration[]
+  webhooks             Webhook[]
 }
 
 model OrganizationMember {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  userId         String   @db.Uuid
-  roleId         String?  @db.Uuid
-  joinedAt       DateTime @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  user         User         @relation(fields: [userId], references: [id])
-  role         Role?        @relation(fields: [roleId], references: [id])
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  userId         String       @db.Uuid
+  roleId         String?      @db.Uuid
+  joinedAt       DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, userId])
 }
 
 model Role {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  permissions RolePermission[]
-  members     OrganizationMember[]
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
 }
 
 model Permission {
-  id          String   @id @default(uuid()) @db.Uuid
-  key         String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  roles RolePermission[]
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key             String           @unique
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
 }
 
 model RolePermission {
-  id           String   @id @default(uuid()) @db.Uuid
-  roleId       String   @db.Uuid
-  permissionId String   @db.Uuid
-
-  role       Role       @relation(fields: [roleId], references: [id])
-  permission Permission @relation(fields: [permissionId], references: [id])
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  roleId       String     @db.Uuid
+  permissionId String     @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, permissionId])
 }
 
-model LeadRequest {
-  id             String             @id @default(uuid()) @db.Uuid
-  organizationId String             @db.Uuid
-  requestedById  String             @db.Uuid
-  type           LeadRequestType
-  status         LeadRequestStatus  @default(SUBMITTED)
-  description    String?
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
+model OrganizationRequest {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String       @db.Uuid
+  requestedById   String       @db.Uuid
+  status          String       @default("SUBMITTED")
+  rejectionReason String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  requestedBy     User         @relation(fields: [requestedById], references: [id], onDelete: Cascade)
+}
 
-  organization Organization @relation(fields: [organizationId], references: [id])
-  requestedBy  User         @relation(fields: [requestedById], references: [id])
+model LeadRequest {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String       @db.Uuid
+  requestedById   String       @db.Uuid
+  type            String
+  status          String       @default("SUBMITTED")
+  description     String?
+  internalNote    String?
+  rejectionReason String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  requestedBy     User         @relation(fields: [requestedById], references: [id], onDelete: Cascade)
 }
 
 model Project {
-  id             String     @id @default(uuid()) @db.Uuid
-  organizationId String     @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
   name           String
   description    String?
-  status         String
-  createdById    String?    @db.Uuid
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  status         String       @default("ACTIVE")
+  createdById    String?      @db.Uuid
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  milestones   Milestone[]
-  tickets      Ticket[]
-  tasks         Task[]
-  files        FileAsset[]
-  deployments  Deployment[]
-  integrations Integration[]
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  milestones     Milestone[]
+  tickets        Ticket[]
 }
 
 model Milestone {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  projectId      String   @db.Uuid
-  title          String
-  description    String?
-  status         String
-  dueDate        DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId      String              @db.Uuid
+  projectId           String              @db.Uuid
+  title               String
+  description         String?
+  status              String              @default("PENDING")
+  progressPercent     Int                 @default(0)
+  startDate           DateTime?
+  dueDate             DateTime?
+  stageBreakdown      Json?               // [{ name: string, status: string, estimatedDays: number, completionDate: string, notes: string }]
+  expectedDeliverables String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  organization        Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project             Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks               Task[]
+  updates             MilestoneUpdate[]
+  deliverables        Deliverable[]
+  blockers            Blocker[]
+  approvals           MilestoneApproval[]
+}
 
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project      @relation(fields: [projectId], references: [id])
+model MilestoneUpdate {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  milestoneId    String       @db.Uuid
+  organizationId String       @db.Uuid
+  title          String
+  message        String
+  createdById    String       @db.Uuid
+  createdAt      DateTime     @default(now())
+  attachments    Json?        // List of file labels/keys or IDs
+  tags           String?      // e.g., "Progress, Issue, Deployment"
+  
+  milestone      Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Deliverable {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  milestoneId    String       @db.Uuid
+  fileAssetId    String       @db.Uuid
+  type           String       // Design, PDF, Code, Document
+  description    String?
+  uploadedById   String       @db.Uuid
+  uploadedAt     DateTime     @default(now())
+  
+  milestone      Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  fileAsset      FileAsset    @relation(fields: [fileAssetId], references: [id], onDelete: Cascade)
+}
+
+model Blocker {
+  id                       String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  milestoneId              String       @db.Uuid
+  title                    String
+  description              String
+  severity                 String       // Low, Medium, Critical
+  status                   String       @default("OPEN")
+  createdById              String       @db.Uuid
+  assignedResolverId       String?      @db.Uuid
+  expectedResolutionDate   DateTime?
+  createdAt                DateTime     @default(now())
+  
+  milestone                Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+}
+
+model MilestoneApproval {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  milestoneId    String       @db.Uuid
+  approvedById   String       @db.Uuid
+  status         String       // APPROVED, REVISION_REQUESTED
+  comment        String?
+  approvedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  
+  milestone      Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
 }
 
 model Ticket {
-  id             String       @id @default(uuid()) @db.Uuid
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String          @db.Uuid
+  projectId       String?         @db.Uuid
+  email           String?
+  ticketNumber    String          @unique @default(dbgenerated("'FUT-' || replace(substr(gen_random_uuid()::text, 1, 4), '-', '')"))
+  title           String
+  description     String?
+  status          String          @default("OPEN")
+  priority        String          @default("MEDIUM")
+  category        String          @default("GENERAL_SUPPORT")
+  resolutionSummary String?
+  closedAt        DateTime?
+  lastReplyAt     DateTime?
+  slaDueAt        DateTime?
+  createdById     String?         @db.Uuid
+  assignedToId    String?         @db.Uuid
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project         Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  comments        TicketComment[]
+  history         TicketHistory[]
+}
+
+model TicketComment {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId     String    @db.Uuid
+  userId       String?
+  userRole     String    @default("CLIENT")
+  message      String
+  isInternalNote Boolean @default(false)
+  attachments  Json?
+  createdAt    DateTime  @default(now())
+  ticket       Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model TicketHistory {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId    String   @db.Uuid
+  userId     String?
+  action     String
+  field      String?
+  oldValue   String?
+  newValue   String?
+  createdAt  DateTime @default(now())
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   organizationId String       @db.Uuid
   projectId      String?      @db.Uuid
   title          String
   description    String?
-  status         TicketStatus @default(OPEN)
+  status         String       @default("PENDING")
+  priority       String       @default("MEDIUM")
   createdById    String?      @db.Uuid
   assignedToId   String?      @db.Uuid
+  dueDate        DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project?     @relation(fields: [projectId], references: [id])
-  createdBy    User?        @relation("TicketReporter", fields: [createdById], references: [id])
-  assignedTo   User?        @relation("TicketAssignee", fields: [assignedToId], references: [id])
-}
-
-model Task {
-  id             String      @id @default(uuid()) @db.Uuid
-  organizationId String      @db.Uuid
-  projectId      String?     @db.Uuid
-  title          String
-  description    String?
-  status         TaskStatus  @default(PENDING)
-  createdById    String?     @db.Uuid
-  assignedToId   String?     @db.Uuid
-  dueDate        DateTime?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project?     @relation(fields: [projectId], references: [id])
-  createdBy    User?        @relation("TaskCreatedBy", fields: [createdById], references: [id])
-  assignedTo   User?        @relation("TaskAssignedTo", fields: [assignedToId], references: [id])
-
-  @@index([organizationId])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  milestoneId    String?      @db.Uuid
+  milestone      Milestone?   @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
 }
 
 model FileAsset {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  projectId      String?  @db.Uuid
-  uploadedById   String?  @db.Uuid
-  fileUrl        String
-  fileType       String?
-  createdAt      DateTime @default(now())
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId   String       @db.Uuid
+  projectId        String?      @db.Uuid
+  uploadedById     String?      @db.Uuid
+  uploadedByRole   String?
+  originalFilename String
+  r2ObjectKey      String
+  mimeType         String
+  fileSize         Int          @default(0)
+  folder           String?
+  fileUrl          String
+  fileType         String?
+  status           String       @default("ACTIVE")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime?
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deliverables     Deliverable[]
+}
 
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project?     @relation(fields: [projectId], references: [id])
-  uploadedBy   User?        @relation(fields: [uploadedById], references: [id])
+model FileAuditLog {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  userId         String?      @db.Uuid
+  fileAssetId    String?      @db.Uuid
+  action         String
+  ipAddress      String?
+  userAgent      String?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Subscription {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
   planName       String
-  status         String
-  startedAt      DateTime @default(now())
+  status         String       @default("ACTIVE")
+  startedAt      DateTime     @default(now())
   endedAt        DateTime?
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  invoices     Invoice[]
-  payments     Payment[]
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Invoice {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  subscriptionId String?  @db.Uuid
-  amount         Decimal
-  currency       String
-  status         String
-  issuedAt       DateTime @default(now())
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  subscriptionId String?      @db.Uuid
+  amount         Float
+  currency       String       @default("USD")
+  status         String       @default("PENDING")
+  issuedAt       DateTime     @default(now())
   dueAt          DateTime?
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
-  payments     Payment[]
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  subscriptionId String?  @db.Uuid
-  invoiceId      String?  @db.Uuid
-  amount         Decimal
-  currency       String
-  status         String
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  subscriptionId String?      @db.Uuid
+  invoiceId      String?      @db.Uuid
+  amount         Float
+  currency       String       @default("USD")
+  status         String       @default("PENDING")
   paidAt         DateTime?
-  createdAt      DateTime @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
-  invoice      Invoice?      @relation(fields: [invoiceId], references: [id])
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model ActivityLog {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  userId         String?  @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  userId         String?      @db.Uuid
   action         String
   entityType     String
   entityId       String
   metadata       Json?
-  createdAt      DateTime @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  user         User?        @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
   entityType     String
   entityId       String
-  userId         String   @db.Uuid
+  userId         String       @db.Uuid
   content        String
-  createdAt      DateTime @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  user         User         @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
-  id             String              @id @default(uuid()) @db.Uuid
-  organizationId String              @db.Uuid
-  userId         String              @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  userId         String       @db.Uuid
   title          String
   body           String?
-  channel        NotificationChannel @default(IN_APP)
+  channel        String       @default("IN_APP")
   readAt         DateTime?
-  createdAt      DateTime            @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  user         User         @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Deployment {
-  id             String           @id @default(uuid()) @db.Uuid
-  organizationId String           @db.Uuid
-  projectId      String?          @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  projectId      String?      @db.Uuid
   name           String
-  status         DeploymentStatus @default(IN_PROGRESS)
+  status         String       @default("IN_PROGRESS")
   environment    String?
-  deployedAt     DateTime         @default(now())
+  deployedAt     DateTime     @default(now())
   metadata       Json?
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project?    @relation(fields: [projectId], references: [id])
-
-  @@index([organizationId])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Integration {
-  id             String       @id @default(uuid()) @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   organizationId String       @db.Uuid
   projectId      String?      @db.Uuid
   provider       String
@@ -355,26 +402,16 @@ model Integration {
   status         String       @default("ACTIVE")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  project      Project?    @relation(fields: [projectId], references: [id])
-  webhooks     Webhook[]
-
-  @@index([organizationId])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Webhook {
-  id             String      @id @default(uuid()) @db.Uuid
-  organizationId String      @db.Uuid
-  integrationId  String?     @db.Uuid
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  integrationId  String?      @db.Uuid
   url            String
   secret         String?
   events         Json?
-  createdAt      DateTime    @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-  integration  Integration? @relation(fields: [integrationId], references: [id])
-
-  @@index([organizationId])
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
-

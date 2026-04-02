@@ -6,6 +6,7 @@ import { createSupabaseBrowserClient } from "../utils/supabase";
 type LoaderData = {
   supabaseUrl: string;
   supabaseAnonKey: string;
+  apiBaseUrl: string;
 };
 
 export function loader({ context }: Route.LoaderArgs) {
@@ -13,11 +14,12 @@ export function loader({ context }: Route.LoaderArgs) {
   return {
     supabaseUrl: env.SUPABASE_URL,
     supabaseAnonKey: env.SUPABASE_ANON_KEY,
+    apiBaseUrl: env.API_BASE_URL || "http://localhost:8787",
   } satisfies LoaderData;
 }
 
 export default function AuthCallback(_: Route.ComponentProps) {
-  const { supabaseUrl, supabaseAnonKey } = useLoaderData() as LoaderData;
+  const { supabaseUrl, supabaseAnonKey, apiBaseUrl } = useLoaderData() as LoaderData;
   const navigate = useNavigate();
 
   const supabase = useMemo(() => {
@@ -52,7 +54,20 @@ export default function AuthCallback(_: Route.ComponentProps) {
 
         const { data } = await supabase.auth.getSession();
 
-        // Clean up tokens from the URL to avoid accidental reuse.
+        if (data.session) {
+          const onboardingRes = await fetch(`${apiBaseUrl}/api/onboarding`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${data.session.access_token}`,
+            },
+          });
+
+          if (!onboardingRes.ok) {
+            console.error("Onboarding failed:", await onboardingRes.json().catch(() => ({})));
+          }
+        }
+
         window.history.replaceState({}, document.title, "/auth/callback");
 
         if (data.session) navigate("/dashboard", { replace: true });
@@ -68,7 +83,7 @@ export default function AuthCallback(_: Route.ComponentProps) {
     return () => {
       cancelled = true;
     };
-  }, [navigate, supabase]);
+  }, [navigate, supabase, apiBaseUrl]);
 
   return (
     <main style={{ padding: 24, maxWidth: 520, margin: "0 auto" }}>

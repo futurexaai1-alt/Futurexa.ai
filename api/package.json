@@ -5,17 +5,22 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "db:push": "prisma db push",
+    "db:pull": "prisma db pull",
+    "db:generate": "prisma generate"
   },
   "devDependencies": {
-    "@prisma/adapter-pg": "^6.19.2",
-    "@prisma/client": "^7.5.0",
     "@types/node": "^22.19.15",
-    "prisma": "^7.5.0",
+    "prisma": "^6.0.0",
     "typescript": "^5.9.2",
     "wrangler": "^4.72.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1019.0",
+    "@aws-sdk/s3-request-presigner": "^3.1019.0",
+    "@prisma/client": "^6.19.2",
+    "@supabase/supabase-js": "^2.45.0",
     "hono": "^4.12.8"
   }
 }

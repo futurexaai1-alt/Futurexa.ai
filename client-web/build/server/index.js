@@ -1,6 +1,6 @@
-import { g } from "./assets/worker-entry-CuOXgUY9.js";
+import { i } from "./assets/worker-entry-Csh5YkU_.js";
 import "node:events";
 import "node:stream";
 export {
-  g as default
+  i as default
 };

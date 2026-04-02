@@ -41,6 +41,11 @@ type Pages = {
   "/dashboard/milestones": {
     params: {};
   };
+  "/dashboard/milestones/:id": {
+    params: {
+      "id": string;
+    };
+  };
   "/dashboard/tasks": {
     params: {};
   };
@@ -61,7 +66,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/signin" | "/signup" | "/auth/callback" | "/favicon.ico" | "/dashboard" | "/dashboard/project" | "/dashboard/ticket" | "/dashboard/files" | "/dashboard/milestones" | "/dashboard/tasks" | "/dashboard/deployments" | "/dashboard/billing" | "/dashboard/activity" | "/dashboard/settings";
+    page: "/" | "/signin" | "/signup" | "/auth/callback" | "/favicon.ico" | "/dashboard" | "/dashboard/project" | "/dashboard/ticket" | "/dashboard/files" | "/dashboard/milestones" | "/dashboard/milestones/:id" | "/dashboard/tasks" | "/dashboard/deployments" | "/dashboard/billing" | "/dashboard/activity" | "/dashboard/settings";
   };
   "routes/index.tsx": {
     id: "routes/index";
@@ -103,6 +108,10 @@ type RouteFiles = {
     id: "routes/dashboard-milestones";
     page: "/dashboard/milestones";
   };
+  "routes/dashboard-milestone-detail.tsx": {
+    id: "routes/dashboard-milestone-detail";
+    page: "/dashboard/milestones/:id";
+  };
   "routes/dashboard-tasks.tsx": {
     id: "routes/dashboard-tasks";
     page: "/dashboard/tasks";
@@ -137,6 +146,7 @@ type RouteModules = {
   "routes/dashboard-ticket": typeof import("./app/routes/dashboard-ticket.tsx");
   "routes/dashboard-files": typeof import("./app/routes/dashboard-files.tsx");
   "routes/dashboard-milestones": typeof import("./app/routes/dashboard-milestones.tsx");
+  "routes/dashboard-milestone-detail": typeof import("./app/routes/dashboard-milestone-detail.tsx");
   "routes/dashboard-tasks": typeof import("./app/routes/dashboard-tasks.tsx");
   "routes/dashboard-deployments": typeof import("./app/routes/dashboard-deployments.tsx");
   "routes/dashboard-billing": typeof import("./app/routes/dashboard-billing.tsx");
