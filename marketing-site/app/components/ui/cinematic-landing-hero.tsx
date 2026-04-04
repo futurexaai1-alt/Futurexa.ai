@@ -192,7 +192,7 @@ export function CinematicHero({
   ctaDescription = "Join thousands of others in the 12-step program and take control of your timeline today.",
   className, 
   ...props 
-}: CinematicHeroProps) {
+}: CinematicHeroProps): React.ReactElement {
   
   const containerRef = useRef<HTMLDivElement>(null);
   const mainCardRef = useRef<HTMLDivElement>(null);
@@ -212,8 +212,8 @@ export function CinematicHero({
           const mouseX = e.clientX - rect.left;
           const mouseY = e.clientY - rect.top;
           
-          mainCardRef.current.style.setProperty("--mouse-x", \`\${mouseX}px\`);
-          mainCardRef.current.style.setProperty("--mouse-y", \`\${mouseY}px\`);
+          mainCardRef.current.style.setProperty("--mouse-x", `${mouseX}px`);
+          mainCardRef.current.style.setProperty("--mouse-y", `${mouseY}px`);
 
           const xVal = (e.clientX / window.innerWidth - 0.5) * 2;
           const yVal = (e.clientY / window.innerHeight - 0.5) * 2;

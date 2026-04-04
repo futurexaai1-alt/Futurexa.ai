@@ -12,6 +12,9 @@
       "binding": "API",
       "service": "futurexa-api"
     }
-  ]
+  ],
+  "vars": {
+    "API_BASE_URL": "https://futurexaaiapi.futurexaai1.workers.dev"
+  }
 }
 
