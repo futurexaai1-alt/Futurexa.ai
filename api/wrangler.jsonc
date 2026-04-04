@@ -1,7 +1,3 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "futurexa-api",
@@ -17,6 +13,10 @@
       "bucket_name": "futurexaai"
     }
   ],
-  "vars": {}
+  "vars": {
+    "SUPABASE_URL": "https://efootsmlltfdsqfxtwdo.supabase.co",
+    "R2_ENDPOINT": "https://978b999641bc15882f5671c42285d97e.eu.r2.cloudflarestorage.com",
+    "R2_BUCKET_NAME": "futurexaai"
+  }
 }
 
