@@ -77,6 +77,8 @@ app.route("/", integrationsRoutes);
 app.route("/", webhooksRoutes);
 app.route("/", activityRoutes);
 
+app.get("/", (c) => c.json({ status: "ok", service: "futurexaaiapi" }));
+app.get("/health", (c) => c.json({ status: "ok" }));
 app.get("/api/health", (c) => c.json({ status: "ok" }));
 
 app.get("/api/admin/stats", async (c) => {
