@@ -15,15 +15,19 @@ import {
 import { createSupabaseBrowserClient } from "../utils/supabase";
 
 type LoaderData = {
-  supabaseUrl: string;
-  supabaseAnonKey: string;
+  supabaseUrl: string | null;
+  supabaseAnonKey: string | null;
+  supabaseConfigured: boolean;
 };
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
+  const supabaseUrl = env?.SUPABASE_URL ?? null;
+  const supabaseAnonKey = env?.SUPABASE_ANON_KEY ?? null;
   return {
-    supabaseUrl: env.SUPABASE_URL,
-    supabaseAnonKey: env.SUPABASE_ANON_KEY,
+    supabaseUrl,
+    supabaseAnonKey,
+    supabaseConfigured: Boolean(supabaseUrl && supabaseAnonKey),
   } satisfies LoaderData;
 }
 
@@ -38,10 +42,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function SignIn(_: Route.ComponentProps) {
-  const { supabaseUrl, supabaseAnonKey } = useLoaderData() as LoaderData;
+  const { supabaseUrl, supabaseAnonKey, supabaseConfigured } = useLoaderData() as LoaderData;
   const navigate = useNavigate();
 
   const supabase = useMemo(() => {
+    if (!supabaseUrl || !supabaseAnonKey) return null;
     return createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey);
   }, [supabaseUrl, supabaseAnonKey]);
 
@@ -54,6 +59,7 @@ export default function SignIn(_: Route.ComponentProps) {
   });
 
   useEffect(() => {
+    if (!supabase) return;
     let cancelled = false;
 
     async function checkSession() {
@@ -71,6 +77,7 @@ export default function SignIn(_: Route.ComponentProps) {
   }, [navigate, supabase]);
 
   async function handleOAuthSignIn(provider: "google" | "github") {
+    if (!supabase) return;
     setIsLoading(true);
     setErrorMessage("");
     const origin = window.location.origin;
@@ -90,6 +97,7 @@ export default function SignIn(_: Route.ComponentProps) {
 
   async function handleEmailSignIn(event: React.FormEvent) {
     event.preventDefault();
+    if (!supabase) return;
     setIsLoading(true);
     setErrorMessage("");
 
@@ -206,6 +214,7 @@ export default function SignIn(_: Route.ComponentProps) {
             >
               <button
                 onClick={() => handleOAuthSignIn("google")}
+                disabled={!supabaseConfigured}
                 className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-white border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group shadow-sm"
               >
                 <svg
@@ -233,6 +242,7 @@ export default function SignIn(_: Route.ComponentProps) {
               </button>
               <button
                 onClick={() => handleOAuthSignIn("github")}
+                disabled={!supabaseConfigured}
                 className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-white border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group shadow-sm"
               >
                 <Github className="h-5 w-5 text-gray-900 group-hover:scale-110 transition-transform" />
@@ -256,6 +266,13 @@ export default function SignIn(_: Route.ComponentProps) {
               onSubmit={handleEmailSignIn}
               className="space-y-4"
             >
+              {!supabaseConfigured && (
+                <div className="flex items-center gap-2 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <p>Supabase env missing in this Cloudflare environment (SUPABASE_URL, SUPABASE_ANON_KEY).</p>
+                </div>
+              )}
+
               <div className="space-y-1.5">
                 <label className="text-sm font-bold text-gray-500 ml-1">
                   Email Address
@@ -323,7 +340,7 @@ export default function SignIn(_: Route.ComponentProps) {
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !supabaseConfigured}
                 className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
               >
                 {isLoading ? (

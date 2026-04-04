@@ -136,3 +136,7 @@ Desktop.ini
 # Cloudflare Wrangler
 .wrangler
 .dev.vars
+
+# Project build outputs
+client-web/build/
+api/dist/
