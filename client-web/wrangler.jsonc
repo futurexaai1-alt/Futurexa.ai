@@ -6,15 +6,6 @@
   "observability": {
     "enabled": true
   },
-  "compatibility_flags": ["nodejs_compat"],
-  "services": [
-    {
-      "binding": "API",
-      "service": "futurexa-api"
-    }
-  ],
-  "vars": {
-    "API_BASE_URL": "https://futurexaaiapi.futurexaai1.workers.dev"
-  }
+  "compatibility_flags": ["nodejs_compat"]
 }
 

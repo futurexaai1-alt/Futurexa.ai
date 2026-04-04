@@ -1,22 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "futurexa-api",
+  "name": "futurexaaiapi",
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "observability": {
     "enabled": true
   },
-  "compatibility_flags": ["nodejs_compat"],
-  "r2_buckets": [
-    {
-      "binding": "R2_FILES",
-      "bucket_name": "futurexaai"
-    }
-  ],
-  "vars": {
-    "SUPABASE_URL": "https://efootsmlltfdsqfxtwdo.supabase.co",
-    "R2_ENDPOINT": "https://978b999641bc15882f5671c42285d97e.eu.r2.cloudflarestorage.com",
-    "R2_BUCKET_NAME": "futurexaai"
-  }
+  "compatibility_flags": ["nodejs_compat"]
 }
-
