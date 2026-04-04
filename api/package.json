@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node build.mjs",
     "typecheck": "tsc -b --noEmit",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
@@ -10,6 +11,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.15",
+    "esbuild": "^0.24.0",
     "prisma": "^6.0.0",
     "typescript": "^5.9.2"
   },

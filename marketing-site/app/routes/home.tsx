@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-import { CheckCircle, Zap, Globe, Shield, Activity, ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle, Zap, Globe, Shield, Activity } from "lucide-react";
 import { Navbar, Footer } from "../components/Layout";
 import { CinematicHero } from "../components/ui/cinematic-landing-hero";
 
@@ -12,29 +12,22 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
-  return { message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE };
-}
 
 export default function Home(_: Route.ComponentProps) {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
       <Navbar />
 
-      {/* Cinematic Hero — full-viewport GSAP scroll section */}
-      <CinematicHero
+      <CinematicHero 
         brandName="Futurexa"
         tagline1="Build the future,"
         tagline2="without limits."
-        cardHeading="Execution, redefined."
+        cardHeading="Scalability, redefined."
+        cardDescription={<>Expert squad for <span className="text-white font-semibold">SaaS & Enterprise</span>. 14 years of turning complex concepts into practical, profitable solutions with 500+ projects delivered.</>}
         metricValue={500}
-        metricLabel="Projects Delivered"
-        ctaHeading="Start your project."
-        ctaDescription="Join hundreds of companies that trust Futurexa.ai to build, scale, and ship faster."
-        ctaPrimaryLabel="Get Started"
-        ctaPrimaryHref="/contact"
-        ctaSecondaryLabel="View Services"
-        ctaSecondaryHref="/services"
+        metricLabel="Projects"
+        ctaHeading="Start your journey."
+        ctaDescription="Join the elite teams building the future with Futurexa.ai. From startups to enterprises, we deliver excellence."
       />
 
       <section className="py-10 border-y border-gray-100 bg-gray-50/30">
