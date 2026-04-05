@@ -7,7 +7,13 @@ export const authRoutes = new Hono<{ Bindings: Env }>();
 
 authRoutes.post("/api/onboarding", async (c) => {
   const env = c.env;
-  const supabase = getSupabaseClient(env);
+  let supabase;
+  try {
+    supabase = getSupabaseClient(env);
+  } catch (e: any) {
+    console.error("onboarding getSupabaseClient failed:", e?.message);
+    return c.json({ error: "Service configuration error" }, 500);
+  }
 
   const token = extractBearerToken(c.req.header("authorization") ?? undefined);
   if (!token) return c.json({ error: "Missing Authorization Bearer token" }, 401);
