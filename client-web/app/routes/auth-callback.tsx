@@ -71,7 +71,12 @@ export default function AuthCallback(_: Route.ComponentProps) {
           });
 
           if (!onboardingRes.ok) {
-            console.error("Onboarding failed:", await onboardingRes.json().catch(() => ({})));
+            const errorBody = await onboardingRes.text().catch(() => "");
+            console.error("Onboarding failed:", {
+              status: onboardingRes.status,
+              statusText: onboardingRes.statusText,
+              body: errorBody,
+            });
           }
         }
 
