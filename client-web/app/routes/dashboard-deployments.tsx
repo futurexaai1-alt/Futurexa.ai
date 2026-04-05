@@ -20,10 +20,17 @@ type Deployment = {
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
+  const configuredApiBaseUrl =
+    typeof env.API_BASE_URL === "string" && env.API_BASE_URL.length > 0
+      ? env.API_BASE_URL
+      : env.API || (typeof env.API_BASE_URL === "object" && env.API_BASE_URL)
+        ? ""
+        : "http://localhost:8787";
+
   return {
     supabaseUrl: env.SUPABASE_URL,
     supabaseAnonKey: env.SUPABASE_ANON_KEY,
-    apiBaseUrl: env.API_BASE_URL || "http://localhost:8787",
+    apiBaseUrl: configuredApiBaseUrl,
   } satisfies LoaderData;
 }
 
