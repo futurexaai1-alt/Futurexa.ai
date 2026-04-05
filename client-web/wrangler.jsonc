@@ -7,7 +7,7 @@
   "vars": {},
   "services": [
     {
-      "binding": "API_BASE_URL",
+      "binding": "API",
       "service": "futurexaaiapi"
     }
   ],
@@ -20,7 +20,7 @@
       "vars": {},
       "services": [
         {
-          "binding": "API_BASE_URL",
+          "binding": "API",
           "service": "futurexaaiapi"
         }
       ]
@@ -29,7 +29,7 @@
       "vars": {},
       "services": [
         {
-          "binding": "API_BASE_URL",
+          "binding": "API",
           "service": "futurexaaiapi"
         }
       ]
