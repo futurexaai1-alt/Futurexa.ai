@@ -29,6 +29,7 @@ import SelectedItemsPanel from "../features/dashboard/components/SelectedItemsPa
 import DemoRequestModal from "../features/dashboard/components/DemoRequestModal";
 import DemoRequestPage from "../features/dashboard/components/DemoRequestPage";
 import LockedState from "../features/dashboard/components/LockedState";
+import { resolveApiBaseUrl } from "../utils/api-base";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -65,18 +66,7 @@ function setStoredAuth(data: { userName: string; userStatus: string; organizatio
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
-  const apiBaseUrlRaw =
-    typeof env.API_BASE_URL === "string" && env.API_BASE_URL.length > 0
-      ? env.API_BASE_URL.trim()
-      : "";
-  const configuredApiBaseUrl =
-    apiBaseUrlRaw
-      ? /^https?:\/\//i.test(apiBaseUrlRaw)
-        ? apiBaseUrlRaw
-        : `https://${apiBaseUrlRaw}`
-      : env.API || (typeof env.API_BASE_URL === "object" && env.API_BASE_URL)
-        ? ""
-        : "";
+  const configuredApiBaseUrl = resolveApiBaseUrl(env);
 
   return {
     supabaseUrl: env.SUPABASE_URL,

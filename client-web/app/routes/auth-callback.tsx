@@ -2,6 +2,7 @@ import type { Route } from "./+types/auth-callback";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "../utils/supabase";
+import { resolveApiBaseUrl } from "../utils/api-base";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -11,18 +12,7 @@ type LoaderData = {
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
-  const apiBaseUrlRaw =
-    typeof env.API_BASE_URL === "string" && env.API_BASE_URL.length > 0
-      ? env.API_BASE_URL.trim()
-      : "";
-  const configuredApiBaseUrl =
-    apiBaseUrlRaw
-      ? /^https?:\/\//i.test(apiBaseUrlRaw)
-        ? apiBaseUrlRaw
-        : `https://${apiBaseUrlRaw}`
-      : env.API || (typeof env.API_BASE_URL === "object" && env.API_BASE_URL)
-        ? ""
-        : "";
+  const configuredApiBaseUrl = resolveApiBaseUrl(env);
 
   return {
     supabaseUrl: env.SUPABASE_URL,

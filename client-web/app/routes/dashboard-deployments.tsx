@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Rocket, Server, Activity, CheckCircle, XCircle, Clock } from "lucide-react";
 import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
+import { resolveApiBaseUrl } from "../utils/api-base";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -20,12 +21,7 @@ type Deployment = {
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
-  const configuredApiBaseUrl =
-    typeof env.API_BASE_URL === "string" && env.API_BASE_URL.length > 0
-      ? env.API_BASE_URL
-      : env.API || (typeof env.API_BASE_URL === "object" && env.API_BASE_URL)
-        ? ""
-        : "http://localhost:8787";
+  const configuredApiBaseUrl = resolveApiBaseUrl(env);
 
   return {
     supabaseUrl: env.SUPABASE_URL,

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
 import TasksPanel from "../features/dashboard/components/TasksPanel";
+import { resolveApiBaseUrl } from "../utils/api-base";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -19,12 +20,7 @@ type ListItem = {
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
-  const configuredApiBaseUrl =
-    typeof env.API_BASE_URL === "string" && env.API_BASE_URL.length > 0
-      ? env.API_BASE_URL
-      : env.API || (typeof env.API_BASE_URL === "object" && env.API_BASE_URL)
-        ? ""
-        : "http://localhost:8787";
+  const configuredApiBaseUrl = resolveApiBaseUrl(env);
 
   return {
     supabaseUrl: env.SUPABASE_URL,
