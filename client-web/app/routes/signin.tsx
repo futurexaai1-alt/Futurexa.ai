@@ -22,8 +22,8 @@ type LoaderData = {
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
-  const supabaseUrl = env?.SUPABASE_URL ?? null;
-  const supabaseAnonKey = env?.SUPABASE_ANON_KEY ?? null;
+  const supabaseUrl = env?.SUPABASE_URL ?? env?.SUPBASE_URL ?? null;
+  const supabaseAnonKey = env?.SUPABASE_ANON_KEY ?? env?.SUPBASE_ANON_KEY ?? null;
   return {
     supabaseUrl,
     supabaseAnonKey,
