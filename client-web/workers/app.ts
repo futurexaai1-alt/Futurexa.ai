@@ -22,9 +22,13 @@ export default {
       (typeof (env as any).API_BASE_URL === "object" ? (env as any).API_BASE_URL : null)) as
       | { fetch: (request: Request) => Promise<Response> }
       | null;
-    const apiBaseUrl =
+    const apiBaseUrlRaw =
       typeof (env as any).API_BASE_URL === "string" && (env as any).API_BASE_URL.length > 0
-        ? (env as any).API_BASE_URL.replace(/\/+$/, "")
+        ? String((env as any).API_BASE_URL).trim()
+        : "";
+    const apiBaseUrl =
+      apiBaseUrlRaw
+        ? (/^https?:\/\//i.test(apiBaseUrlRaw) ? apiBaseUrlRaw : `https://${apiBaseUrlRaw}`).replace(/\/+$/, "")
         : null;
 
     if (apiBinding && isApiRequest) {
