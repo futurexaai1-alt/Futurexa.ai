@@ -5,16 +5,34 @@
   "main": "./workers/app.ts",
   "keep_vars": true,
   "vars": {},
+  "r2_buckets": [
+    {
+      "binding": "R2_FILES",
+      "bucket_name": "futurexaai"
+    }
+  ],
   "observability": {
     "enabled": true
   },
   "compatibility_flags": ["nodejs_compat"],
   "env": {
     "dev": {
-      "vars": {}
+      "vars": {},
+      "r2_buckets": [
+        {
+          "binding": "R2_FILES",
+          "bucket_name": "futurexaai"
+        }
+      ]
     },
     "production": {
-      "vars": {}
+      "vars": {},
+      "r2_buckets": [
+        {
+          "binding": "R2_FILES",
+          "bucket_name": "futurexaai"
+        }
+      ]
     }
   }
 }

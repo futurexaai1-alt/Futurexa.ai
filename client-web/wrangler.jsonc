@@ -5,16 +5,34 @@
   "main": "./workers/app.ts",
   "keep_vars": true,
   "vars": {},
+  "services": [
+    {
+      "binding": "API",
+      "service": "futurexaaiapi"
+    }
+  ],
   "observability": {
     "enabled": true
   },
   "compatibility_flags": ["nodejs_compat"],
   "env": {
     "dev": {
-      "vars": {}
+      "vars": {},
+      "services": [
+        {
+          "binding": "API",
+          "service": "futurexaaiapi"
+        }
+      ]
     },
     "production": {
-      "vars": {}
+      "vars": {},
+      "services": [
+        {
+          "binding": "API",
+          "service": "futurexaaiapi"
+        }
+      ]
     }
   }
 }
