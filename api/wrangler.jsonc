@@ -7,7 +7,7 @@
   "vars": {},
   "r2_buckets": [
     {
-      "binding": "R2_FILES",
+      "binding": "R2_ENDPOINT",
       "bucket_name": "futurexaai"
     }
   ],
@@ -20,7 +20,7 @@
       "vars": {},
       "r2_buckets": [
         {
-          "binding": "R2_FILES",
+          "binding": "R2_ENDPOINT",
           "bucket_name": "futurexaai"
         }
       ]
@@ -29,7 +29,7 @@
       "vars": {},
       "r2_buckets": [
         {
-          "binding": "R2_FILES",
+          "binding": "R2_ENDPOINT",
           "bucket_name": "futurexaai"
         }
       ]
