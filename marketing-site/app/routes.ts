@@ -15,5 +15,4 @@ export default [
   route("resources", "routes/resources.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
-  route("api/hero-media", "routes/api.hero-media.ts"),
 ] satisfies RouteConfig;

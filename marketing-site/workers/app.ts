@@ -16,6 +16,15 @@ const requestHandler = createRequestHandler(
 
 export default {
   async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (url.pathname === "/app-config") {
+      const clientWebUrl =
+        typeof (env as any).CLIENT_WEB_URL === "string" ? (env as any).CLIENT_WEB_URL : "";
+      return new Response(JSON.stringify({ clientWebUrl }), {
+        headers: { "content-type": "application/json; charset=utf-8" },
+      });
+    }
+
     return requestHandler(request, {
       cloudflare: { env, ctx },
     });
