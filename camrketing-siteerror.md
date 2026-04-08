@@ -1,115 +1,114 @@
-2026-04-08T15:37:55.706Z	Initializing build environment...
-2026-04-08T15:39:25.886Z	Success: Finished initializing build environment
-2026-04-08T15:39:27.585Z	Cloning repository...
-2026-04-08T15:37:55.706Z	Initializing build environment...
-2026-04-08T15:39:25.886Z	Success: Finished initializing build environment
-2026-04-08T15:39:27.585Z	Cloning repository...
-2026-04-08T15:39:30.862Z	Restoring from dependencies cache
-2026-04-08T15:39:30.866Z	Restoring from build output cache
-2026-04-08T15:39:30.872Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
-2026-04-08T15:39:31.169Z	Installing project dependencies: npm clean-install --progress=false
-2026-04-08T15:39:53.596Z	
-2026-04-08T15:39:53.597Z	> postinstall
-2026-04-08T15:39:53.597Z	> npm run cf-typegen
-2026-04-08T15:39:53.598Z	
-2026-04-08T15:39:53.915Z	
-2026-04-08T15:39:53.916Z	> cf-typegen
-2026-04-08T15:39:53.916Z	> wrangler types
-2026-04-08T15:39:53.917Z	
-2026-04-08T15:39:56.087Z	
-2026-04-08T15:39:56.087Z	 ⛅️ wrangler 4.72.0 (update available 4.81.0)
-2026-04-08T15:39:56.087Z	─────────────────────────────────────────────
-2026-04-08T15:39:56.163Z	Generating project types...
-2026-04-08T15:39:56.163Z	
-2026-04-08T15:39:56.174Z	declare namespace Cloudflare {
-2026-04-08T15:39:56.174Z		interface GlobalProps {
-2026-04-08T15:39:56.174Z			mainModule: typeof import("./workers/app");
-2026-04-08T15:39:56.174Z		}
-2026-04-08T15:39:56.174Z		interface Env {
-2026-04-08T15:39:56.175Z			API: Fetcher /* futurexa-api */;
-2026-04-08T15:39:56.175Z		}
-2026-04-08T15:39:56.175Z	}
-2026-04-08T15:39:56.175Z	interface Env extends Cloudflare.Env {}
-2026-04-08T15:39:56.175Z	
-2026-04-08T15:39:56.175Z	Generating runtime types...
-2026-04-08T15:39:56.175Z	
-2026-04-08T15:40:01.372Z	Runtime types generated.
-2026-04-08T15:40:01.373Z	
-2026-04-08T15:40:01.374Z	
-2026-04-08T15:40:01.378Z	✨ Types written to worker-configuration.d.ts
-2026-04-08T15:40:01.379Z	
-2026-04-08T15:40:01.379Z	📖 Read about runtime types
-2026-04-08T15:40:01.379Z	https://developers.cloudflare.com/workers/languages/typescript/#generate-types
-2026-04-08T15:40:01.380Z	📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
-2026-04-08T15:40:01.380Z	
-2026-04-08T15:40:01.522Z	
-2026-04-08T15:40:01.522Z	added 171 packages, and audited 173 packages in 29s
-2026-04-08T15:40:01.522Z	
-2026-04-08T15:40:01.523Z	31 packages are looking for funding
-2026-04-08T15:40:01.523Z	  run `npm fund` for details
-2026-04-08T15:40:01.626Z	
-2026-04-08T15:40:01.627Z	7 high severity vulnerabilities
-2026-04-08T15:40:01.627Z	
-2026-04-08T15:40:01.627Z	To address all issues, run:
-2026-04-08T15:40:01.627Z	  npm audit fix
-2026-04-08T15:40:01.627Z	
-2026-04-08T15:40:01.627Z	Run `npm audit` for details.
-2026-04-08T15:40:02.354Z	Executing user build command: npm run build
-2026-04-08T15:40:02.801Z	
-2026-04-08T15:40:02.801Z	> build
-2026-04-08T15:40:02.802Z	> react-router build
-2026-04-08T15:40:02.802Z	
-2026-04-08T15:40:05.419Z	Using Vite Environment API (experimental)
-2026-04-08T15:40:05.424Z	vite v7.3.1 building client environment for production...
-2026-04-08T15:40:05.495Z	transforming...
-2026-04-08T15:40:06.914Z	✓ 51 modules transformed.
-2026-04-08T15:40:07.488Z	✘ [ERROR] The build was canceled
-2026-04-08T15:40:07.488Z	
-2026-04-08T15:40:07.538Z	✗ Build failed in 2.08s
-2026-04-08T15:40:07.539Z	[react-router:route-exports] SPA Mode: 1 invalid route export(s) in `routes/api.hero-media.ts`: `loader`. See https://reactrouter.com/how-to/spa for more information.
-2026-04-08T15:40:07.539Z	file: /opt/buildhome/repo/marketing-site/app/routes/api.hero-media.ts
-2026-04-08T15:40:07.539Z	    at Object.transform (/opt/buildhome/repo/marketing-site/node_modules/@react-router/dev/dist/vite.js:4219:19)
-2026-04-08T15:40:07.539Z	    at Object.handler (file:///opt/buildhome/repo/marketing-site/node_modules/vite/dist/node/chunks/config.js:33730:13)
-2026-04-08T15:40:07.540Z	    at file:///opt/buildhome/repo/marketing-site/node_modules/rollup/dist/es/shared/node-entry.js:22571:40
-2026-04-08T15:40:07.541Z	    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
-2026-04-08T15:40:07.541Z	  code: 'PLUGIN_ERROR',
-2026-04-08T15:40:07.542Z	  plugin: 'react-router:route-exports',
-2026-04-08T15:40:07.542Z	  hook: 'transform',
-2026-04-08T15:40:07.543Z	  id: '/opt/buildhome/repo/marketing-site/app/routes/api.hero-media.ts',
-2026-04-08T15:40:07.546Z	  watchFiles: [
-2026-04-08T15:40:07.550Z	    '/opt/buildhome/repo/marketing-site/app/root.tsx',
-2026-04-08T15:40:07.550Z	    '/opt/buildhome/repo/marketing-site/node_modules/@react-router/dev/dist/config/defaults/entry.client.tsx',
-2026-04-08T15:40:07.550Z	    '/opt/buildhome/repo/marketing-site/app/routes/services.tsx',
-2026-04-08T15:40:07.550Z	    '/opt/buildhome/repo/marketing-site/app/routes/service-detail.tsx',
-2026-04-08T15:40:07.551Z	    '/opt/buildhome/repo/marketing-site/app/routes/case-studies.tsx',
-2026-04-08T15:40:07.551Z	    '/opt/buildhome/repo/marketing-site/app/routes/case-study-detail.tsx',
-2026-04-08T15:40:07.551Z	    '/opt/buildhome/repo/marketing-site/app/routes/home.tsx',
-2026-04-08T15:40:07.552Z	    '/opt/buildhome/repo/marketing-site/app/routes/about.tsx',
-2026-04-08T15:40:07.552Z	    '/opt/buildhome/repo/marketing-site/app/routes/blog-post.tsx',
-2026-04-08T15:40:07.558Z	    '/opt/buildhome/repo/marketing-site/app/routes/pricing.tsx',
-2026-04-08T15:40:07.558Z	    '/opt/buildhome/repo/marketing-site/app/routes/contact.tsx',
-2026-04-08T15:40:07.558Z	    '/opt/buildhome/repo/marketing-site/app/routes/industries.tsx',
-2026-04-08T15:40:07.558Z	    '/opt/buildhome/repo/marketing-site/app/routes/privacy.tsx',
-2026-04-08T15:40:07.559Z	    '/opt/buildhome/repo/marketing-site/app/routes/blog.tsx',
-2026-04-08T15:40:07.559Z	    '/opt/buildhome/repo/marketing-site/app/routes/terms.tsx',
-2026-04-08T15:40:07.560Z	    '/opt/buildhome/repo/marketing-site/app/routes/resources.tsx',
-2026-04-08T15:40:07.561Z	    '/opt/buildhome/repo/marketing-site/app/routes/api.hero-media.ts',
-2026-04-08T15:40:07.561Z	    '/opt/buildhome/repo/marketing-site/node_modules/react/index.js',
-2026-04-08T15:40:07.562Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-dom/client.js',
-2026-04-08T15:40:07.562Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-router/dist/development/dom-export.mjs',
-2026-04-08T15:40:07.562Z	    '/opt/buildhome/repo/marketing-site/node_modules/react/jsx-runtime.js',
-2026-04-08T15:40:07.562Z	    '/opt/buildhome/repo/marketing-site/node_modules/react/cjs/react.production.js',
-2026-04-08T15:40:07.563Z	    '/opt/buildhome/repo/marketing-site/node_modules/react/cjs/react-jsx-runtime.production.js',
-2026-04-08T15:40:07.563Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-dom/cjs/react-dom-client.production.js',
-2026-04-08T15:40:07.563Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-dom/index.js',
-2026-04-08T15:40:07.563Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-router/dist/development/chunk-JPUPSTYD.mjs',
-2026-04-08T15:40:07.563Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-router/dist/development/chunk-LFPYN7LY.mjs',
-2026-04-08T15:40:07.564Z	    '/opt/buildhome/repo/marketing-site/node_modules/scheduler/index.js',
-2026-04-08T15:40:07.564Z	    '/opt/buildhome/repo/marketing-site/node_modules/react-dom/cjs/react-dom.production.js',
-2026-04-08T15:40:07.564Z	    '/opt/buildhome/repo/marketing-site/node_modules/scheduler/cjs/scheduler.production.js',
-2026-04-08T15:40:07.564Z	    '/opt/buildhome/repo/marketing-site/node_modules/cookie/dist/index.js',
-2026-04-08T15:40:07.564Z	    '/opt/buildhome/repo/marketing-site/node_modules/set-cookie-parser/lib/set-cookie.js',
-2026-04-08T15:40:07.565Z	    '/opt/buildhome/repo/marketing-site/package.json'
-2026-04-08T15:40:07.565Z	  ]
-2026-04-08T15:40:07.565Z	}
-2026-04-08T15:40:07.638Z	Failed: error occurred while running build command
+2026-04-08T16:19:56.053Z	Initializing build environment...
+2026-04-08T16:19:56.053Z	Initializing build environment...
+2026-04-08T16:20:50.444Z	Success: Finished initializing build environment
+2026-04-08T16:20:52.224Z	Cloning repository...
+2026-04-08T16:20:54.311Z	Restoring from dependencies cache
+2026-04-08T16:20:54.313Z	Restoring from build output cache
+2026-04-08T16:20:54.317Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2026-04-08T16:20:54.446Z	Installing project dependencies: npm clean-install --progress=false
+2026-04-08T16:21:12.948Z	
+2026-04-08T16:21:12.949Z	> postinstall
+2026-04-08T16:21:12.950Z	> npm run cf-typegen
+2026-04-08T16:21:12.950Z	
+2026-04-08T16:21:13.276Z	
+2026-04-08T16:21:13.277Z	> cf-typegen
+2026-04-08T16:21:13.277Z	> wrangler types
+2026-04-08T16:21:13.277Z	
+2026-04-08T16:21:15.125Z	
+2026-04-08T16:21:15.126Z	 ⛅️ wrangler 4.72.0 (update available 4.81.0)
+2026-04-08T16:21:15.127Z	─────────────────────────────────────────────
+2026-04-08T16:21:15.212Z	Generating project types...
+2026-04-08T16:21:15.214Z	
+2026-04-08T16:21:15.219Z	declare namespace Cloudflare {
+2026-04-08T16:21:15.220Z		interface GlobalProps {
+2026-04-08T16:21:15.220Z			mainModule: typeof import("./workers/app");
+2026-04-08T16:21:15.220Z		}
+2026-04-08T16:21:15.221Z		interface Env {
+2026-04-08T16:21:15.221Z			API: Fetcher /* futurexa-api */;
+2026-04-08T16:21:15.221Z		}
+2026-04-08T16:21:15.221Z	}
+2026-04-08T16:21:15.225Z	interface Env extends Cloudflare.Env {}
+2026-04-08T16:21:15.225Z	
+2026-04-08T16:21:15.225Z	Generating runtime types...
+2026-04-08T16:21:15.225Z	
+2026-04-08T16:21:19.454Z	Runtime types generated.
+2026-04-08T16:21:19.455Z	
+2026-04-08T16:21:19.455Z	
+2026-04-08T16:21:19.461Z	✨ Types written to worker-configuration.d.ts
+2026-04-08T16:21:19.461Z	
+2026-04-08T16:21:19.462Z	📖 Read about runtime types
+2026-04-08T16:21:19.462Z	https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-04-08T16:21:19.463Z	📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-04-08T16:21:19.463Z	
+2026-04-08T16:21:19.585Z	
+2026-04-08T16:21:19.586Z	added 171 packages, and audited 173 packages in 24s
+2026-04-08T16:21:19.586Z	
+2026-04-08T16:21:19.586Z	31 packages are looking for funding
+2026-04-08T16:21:19.587Z	  run `npm fund` for details
+2026-04-08T16:21:19.684Z	
+2026-04-08T16:21:19.684Z	7 high severity vulnerabilities
+2026-04-08T16:21:19.684Z	
+2026-04-08T16:21:19.684Z	To address all issues, run:
+2026-04-08T16:21:19.684Z	  npm audit fix
+2026-04-08T16:21:19.684Z	
+2026-04-08T16:21:19.684Z	Run `npm audit` for details.
+2026-04-08T16:21:20.505Z	Executing user build command: npm run build
+2026-04-08T16:21:20.885Z	
+2026-04-08T16:21:20.886Z	> build
+2026-04-08T16:21:20.887Z	> react-router build
+2026-04-08T16:21:20.887Z	
+2026-04-08T16:21:23.181Z	Using Vite Environment API (experimental)
+2026-04-08T16:21:23.182Z	vite v7.3.1 building client environment for production...
+2026-04-08T16:21:23.241Z	transforming...
+2026-04-08T16:21:30.546Z	✓ 2180 modules transformed.
+2026-04-08T16:21:30.944Z	rendering chunks...
+2026-04-08T16:21:30.985Z	computing gzip size...
+2026-04-08T16:21:31.007Z	build/client/.assetsignore                           0.02 kB
+2026-04-08T16:21:31.008Z	build/client/.vite/manifest.json                     6.26 kB │ gzip:  0.83 kB
+2026-04-08T16:21:31.008Z	build/client/assets/root-DJsnp10p.css               74.70 kB │ gzip: 12.88 kB
+2026-04-08T16:21:31.008Z	build/client/assets/arrow-left-f7CAtGPE.js           0.17 kB │ gzip:  0.16 kB
+2026-04-08T16:21:31.009Z	build/client/assets/circle-check-BueJIrKw.js         0.18 kB │ gzip:  0.17 kB
+2026-04-08T16:21:31.009Z	build/client/assets/globe-Bbe037hU.js                0.24 kB │ gzip:  0.19 kB
+2026-04-08T16:21:31.010Z	build/client/assets/zap-CCBxkCZR.js                  0.67 kB │ gzip:  0.40 kB
+2026-04-08T16:21:31.010Z	build/client/assets/root-BxQjTIN7.js                 1.14 kB │ gzip:  0.65 kB
+2026-04-08T16:21:31.010Z	build/client/assets/service-detail-5oqXVott.js       2.96 kB │ gzip:  1.34 kB
+2026-04-08T16:21:31.011Z	build/client/assets/case-study-detail-CqlKaC7X.js    3.12 kB │ gzip:  1.35 kB
+2026-04-08T16:21:31.011Z	build/client/assets/case-studies-dgWb0oXo.js         3.81 kB │ gzip:  1.71 kB
+2026-04-08T16:21:31.011Z	build/client/assets/blog-Bf9mfKZ-.js                 4.00 kB │ gzip:  1.71 kB
+2026-04-08T16:21:31.011Z	build/client/assets/pricing-qpY7eoKe.js              4.18 kB │ gzip:  1.78 kB
+2026-04-08T16:21:31.011Z	build/client/assets/blog-post-DccY-Isb.js            4.55 kB │ gzip:  1.84 kB
+2026-04-08T16:21:31.011Z	build/client/assets/privacy-BC2hAQJn.js              4.84 kB │ gzip:  1.70 kB
+2026-04-08T16:21:31.011Z	build/client/assets/about-BDmqRIdw.js                4.95 kB │ gzip:  1.99 kB
+2026-04-08T16:21:31.012Z	build/client/assets/resources-B2I8JbKj.js            5.04 kB │ gzip:  2.08 kB
+2026-04-08T16:21:31.012Z	build/client/assets/industries-aQb9DJgW.js           5.18 kB │ gzip:  2.06 kB
+2026-04-08T16:21:31.012Z	build/client/assets/services-cLl-7sAG.js             5.91 kB │ gzip:  2.41 kB
+2026-04-08T16:21:31.012Z	build/client/assets/terms-CjZPhFqI.js                6.13 kB │ gzip:  2.11 kB
+2026-04-08T16:21:31.012Z	build/client/assets/contact-Cyf7Edhf.js              7.51 kB │ gzip:  2.21 kB
+2026-04-08T16:21:31.012Z	build/client/assets/home-CtPLyWz3.js                20.30 kB │ gzip:  4.99 kB
+2026-04-08T16:21:31.012Z	build/client/assets/chunk-LFPYN7LY-CVywkgeQ.js     124.95 kB │ gzip: 42.10 kB
+2026-04-08T16:21:31.012Z	build/client/assets/Layout-CFrXplmH.js             134.57 kB │ gzip: 44.43 kB
+2026-04-08T16:21:31.012Z	build/client/assets/entry.client-Dyqq_xvW.js       190.54 kB │ gzip: 60.05 kB
+2026-04-08T16:21:31.016Z	✓ built in 7.79s
+2026-04-08T16:21:31.016Z	vite v7.3.1 building ssr environment for production...
+2026-04-08T16:21:31.019Z	transforming...
+2026-04-08T16:21:32.415Z	✓ 58 modules transformed.
+2026-04-08T16:21:32.512Z	rendering chunks...
+2026-04-08T16:21:32.607Z	build/server/.vite/manifest.json                 0.72 kB
+2026-04-08T16:21:32.608Z	build/server/wrangler.json                       1.24 kB
+2026-04-08T16:21:32.608Z	build/server/assets/server-build-DJsnp10p.css   74.70 kB
+2026-04-08T16:21:32.608Z	build/server/index.js                            0.13 kB
+2026-04-08T16:21:32.608Z	build/server/assets/worker-entry-DSh9KFgy.js   273.73 kB
+2026-04-08T16:21:32.609Z	build/server/assets/server-build-CUiegrpJ.js   518.81 kB
+2026-04-08T16:21:32.889Z	Success: Build command completed
+2026-04-08T16:21:33.576Z	Executing user deploy command: npx wrangler versions upload
+2026-04-08T16:21:35.222Z	
+2026-04-08T16:21:35.224Z	 ⛅️ wrangler 4.72.0 (update available 4.81.0)
+2026-04-08T16:21:35.224Z	─────────────────────────────────────────────
+2026-04-08T16:21:35.253Z	
+2026-04-08T16:21:35.332Z	✘ [ERROR] There is a deploy configuration at ".wrangler/deploy/config.json".
+2026-04-08T16:21:35.332Z	
+2026-04-08T16:21:35.332Z	  But the redirected configuration path it points to, "build/server/wrangler.json", does not exist.
+2026-04-08T16:21:35.333Z	
+2026-04-08T16:21:35.333Z	
+2026-04-08T16:21:35.447Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-04-08_16-21-34_922.log"
+2026-04-08T16:21:35.588Z	Failed: error occurred while running deploy command
