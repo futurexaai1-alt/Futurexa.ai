@@ -8,7 +8,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "marketing-site",
+	"name": "marketingsite",
 	"compatibility_date": "2025-04-04",
 	"main": "./workers/app.ts",
 	"observability": {

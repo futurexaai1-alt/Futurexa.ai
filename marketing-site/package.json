@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "react-router build",
 		"cf-typegen": "wrangler types",
-		"deploy": "rm -rf .wrangler/deploy && wrangler deploy --config wrangler.jsonc",
+		"deploy": "rm -rf .wrangler/deploy && wrangler deploy --config build/server/wrangler.json",
 		"dev": "react-router dev",
 		"postinstall": "npm run cf-typegen",
 		"preview": "npm run build && vite preview",
