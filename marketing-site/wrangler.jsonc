@@ -10,7 +10,8 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "marketing-site",
 	"compatibility_date": "2025-04-04",
-	"main": "./workers/app.ts",
+	"main": "./build/server/index.js",
+	"no_bundle": true,
 	"observability": {
 		"enabled": true
 	},
