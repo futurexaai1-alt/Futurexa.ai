@@ -11,6 +11,8 @@
 	"name": "marketingsite",
 	"compatibility_date": "2025-04-04",
 	"main": "./workers/app.ts",
+	"keep_vars": true,
+	"vars": {},
 	"observability": {
 		"enabled": true
 	},
@@ -25,7 +27,27 @@
 	"services": [
 		{
 			"binding": "API",
-			"service": "futurexa-api"
+			"service": "futurexaaiapi"
 		}
-	]
+	],
+	"env": {
+		"dev": {
+			"vars": {},
+			"services": [
+				{
+					"binding": "API",
+					"service": "futurexaaiapi"
+				}
+			]
+		},
+		"production": {
+			"vars": {},
+			"services": [
+				{
+					"binding": "API",
+					"service": "futurexaaiapi"
+				}
+			]
+		}
+	}
 }
