@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router";
-import { Menu, X, Globe, ArrowRight } from "lucide-react";
+import { Menu, X, Globe, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
 import { useState } from "react";
 import { clsx } from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -174,11 +174,21 @@ export function Footer() {
               14 years of turning complex concepts into practical, profitable solutions. Partner with Futurexa.ai to build your digital future.
             </p>
             <div className="flex items-center gap-4">
-               {/* Social Icons Placeholder */}
-               {[1, 2, 3, 4].map((i) => (
-                 <div key={i} className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-all cursor-pointer">
-                    <Globe className="h-5 w-5" />
-                 </div>
+               {[
+                 { Icon: Linkedin, href: "https://linkedin.com" },
+                 { Icon: Twitter, href: "https://twitter.com" },
+                 { Icon: Github, href: "https://github.com" },
+                 { Icon: Instagram, href: "https://instagram.com" },
+               ].map((social, i) => (
+                 <a 
+                   key={i} 
+                   href={social.href} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-all cursor-pointer border border-gray-100"
+                 >
+                    <social.Icon className="h-5 w-5" />
+                 </a>
                ))}
             </div>
           </div>
@@ -210,20 +220,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">Stay Updated</h4>
-            <p className="text-gray-500 mb-4 text-sm">
-              Subscribe to our newsletter for the latest tech insights.
+            <h4 className="font-bold text-gray-900 mb-6">Let's Connect</h4>
+            <p className="text-gray-500 mb-6 text-sm leading-relaxed">
+              Ready to scale your digital infrastructure? Reach out to our team of experts today.
             </p>
-            <form className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm"
-              />
-              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                Join
-              </button>
-            </form>
+            <Link 
+              to="/contact" 
+              className="group inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
+            >
+              Start a Project
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
         </div>
 
