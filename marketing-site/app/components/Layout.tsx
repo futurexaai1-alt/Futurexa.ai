@@ -2,7 +2,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X, Globe, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,20 +13,12 @@ export function Navbar() {
   const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
   const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
 
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 80);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    // Only triggers a re-render if the boolean value actually changes 
+    setScrolled(latest > 80);
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -72,8 +64,8 @@ export function Navbar() {
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
       style={{ willChange: 'transform, opacity' }}
       className={clsx(
-        "fixed top-0 w-full z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500",
-        (isHome && !scrolled) ? "pointer-events-none" : "bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)]"
+        "fixed top-0 w-full z-50 bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)]",
+        (isHome && !scrolled) && "pointer-events-none"
       )}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">

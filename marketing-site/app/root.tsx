@@ -12,6 +12,11 @@ import "./app.css";
 import { SmoothScroll } from "./components/SmoothScroll";
 
 export const links: Route.LinksFunction = () => [
+  {
+    rel: "icon",
+    type: "image/png",
+    href: "/favicon.png",
+  },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
