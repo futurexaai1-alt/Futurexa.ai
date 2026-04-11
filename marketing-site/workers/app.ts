@@ -18,8 +18,19 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/app-config") {
-      const clientWebUrl =
-        typeof (env as any).CLIENT_WEB_URL === "string" ? (env as any).CLIENT_WEB_URL : "";
+      const clientWebBinding = (env as any).CLIENT_WEB as
+        | { fetch: (request: Request) => Promise<Response> }
+        | undefined;
+      let clientWebUrl = "";
+      if (clientWebBinding) {
+        try {
+          const response = await clientWebBinding.fetch(new Request("https://internal/worker-info"));
+          if (response.ok) {
+            const data = (await response.json()) as { url?: string };
+            clientWebUrl = data?.url ?? "";
+          }
+        } catch {}
+      }
       return new Response(JSON.stringify({ clientWebUrl }), {
         headers: { "content-type": "application/json; charset=utf-8" },
       });

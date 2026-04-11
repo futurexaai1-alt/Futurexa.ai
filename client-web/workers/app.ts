@@ -31,6 +31,15 @@ export default {
         ? (/^https?:\/\//i.test(apiBaseUrlRaw) ? apiBaseUrlRaw : `https://${apiBaseUrlRaw}`).replace(/\/+$/, "")
         : null;
 
+    if (url.pathname === "/worker-info") {
+      const workerUrl = typeof (env as any).WORKER_URL === "string" 
+        ? (env as any).WORKER_URL 
+        : `https://${url.host}`;
+      return new Response(JSON.stringify({ url: workerUrl }), {
+        headers: { "content-type": "application/json; charset=utf-8" },
+      });
+    }
+
     if (apiBinding && isApiRequest) {
       return apiBinding.fetch(request);
     }
