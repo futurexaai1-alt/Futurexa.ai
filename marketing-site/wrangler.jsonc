@@ -28,6 +28,10 @@
 		{
 			"binding": "API",
 			"service": "futurexaaiapi"
+		},
+		{
+			"binding": "CLIENT_WEB",
+			"service": "clientweb"
 		}
 	],
 	"env": {
@@ -37,6 +41,10 @@
 				{
 					"binding": "API",
 					"service": "futurexaaiapi"
+				},
+				{
+					"binding": "CLIENT_WEB",
+					"service": "clientweb"
 				}
 			]
 		},
@@ -46,6 +54,10 @@
 				{
 					"binding": "API",
 					"service": "futurexaaiapi"
+				},
+				{
+					"binding": "CLIENT_WEB",
+					"service": "clientweb"
 				}
 			]
 		}
