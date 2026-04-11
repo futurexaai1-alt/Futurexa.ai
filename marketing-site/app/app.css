@@ -263,14 +263,14 @@ body {
 }
 
 .portal-page .primary-button {
-  background: linear-gradient(120deg, #38bdf8, #6366f1);
+  background: linear-gradient(120deg, #38bdf8, #2563eb);
   color: #0f172a;
   box-shadow: none;
 }
 
 .portal-page .primary-button:hover {
   transform: translateY(-1px);
-  background: linear-gradient(120deg, #4fc3ff, #7c83ff);
+  background: linear-gradient(120deg, #4fc3ff, #38bdf8);
 }
 
 .portal-page .ghost-button {

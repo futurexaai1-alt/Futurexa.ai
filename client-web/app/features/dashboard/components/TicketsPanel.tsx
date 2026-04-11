@@ -80,7 +80,7 @@ export default function TicketsPanel({
         {liveTickets.map((ticket) => (
           <div
             key={ticket.id}
-            className="rounded-xl border border-gray-100 bg-white px-4 py-3 flex items-center justify-between gap-3"
+            className="rounded-xl border border-gray-100 bg-white px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div>
               <p className="text-sm font-semibold text-gray-900">{ticket.title}</p>
@@ -99,7 +99,7 @@ export default function TicketsPanel({
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-end md:self-auto w-full md:w-auto mt-2 md:mt-0 justify-end">
               <select
                 value={ticket.status}
                 onChange={(e) =>
