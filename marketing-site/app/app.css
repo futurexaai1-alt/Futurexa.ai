@@ -30,10 +30,30 @@ body {
 
 :root {
   color-scheme: light;
-  scroll-behavior: smooth;
   --page-background: #fafcff;
   --header-height: 80px;
   --content-max-width: 1200px;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -697,10 +717,10 @@ body {
 
 .entry {
   opacity: 0;
-  transform: translateX(0);
-  filter: blur(10px);
-  transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
-  will-change: opacity, transform, filter;
+  transform: translateY(20px);
+  filter: blur(8px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  will-change: opacity, transform;
 }
 
 .entry.from-left {
@@ -711,9 +731,10 @@ body {
   transform: translateX(46px);
 }
 
-.entry.in-view {
+.entry.in-view,
+.reveal-immediate {
   opacity: 1;
-  transform: translateX(0);
+  transform: translate(0, 0);
   filter: blur(0);
 }
 

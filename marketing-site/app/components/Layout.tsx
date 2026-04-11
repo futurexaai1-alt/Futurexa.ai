@@ -9,15 +9,22 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
-  const [clientPortalBaseUrl, setClientPortalBaseUrl] = useState("");
+  const [clientPortalBaseUrl, setClientPortalBaseUrl] = useState("https://clientweb.futurexaai1.workers.dev");
   const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
   const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 80);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 80);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -32,7 +39,7 @@ export function Navbar() {
         }
         const payload = (await response.json()) as { clientWebUrl?: string };
         const url = payload?.clientWebUrl?.trim() ?? "";
-        if (!cancelled && url) {
+        if (!cancelled && url && !/^https?:\/\/internal(?:\/|$)/i.test(url)) {
           setClientPortalBaseUrl(url.replace(/\/+$/, ""));
         }
       } catch {}
@@ -63,8 +70,9 @@ export function Navbar() {
         opacity: (isHome && !scrolled) ? 0 : 1
       }}
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+      style={{ willChange: 'transform, opacity' }}
       className={clsx(
-        "fixed top-0 w-full z-50 transition-all duration-500",
+        "fixed top-0 w-full z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500",
         (isHome && !scrolled) ? "pointer-events-none" : "bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)]"
       )}
     >

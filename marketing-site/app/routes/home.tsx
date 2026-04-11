@@ -6,13 +6,25 @@ import { ArrowRight, Briefcase, Library } from "lucide-react";
 import type { Route } from "./+types/home";
 
 export function meta({ }: Route.MetaArgs) {
+  const title = "Futurexa.ai | Premium Digital Transformation";
+  const description = "Experts in transforming businesses through strategic implementation and premium digital experiences.";
+  const ogImage = "/assets/seo/og-preview.png";
+
   return [
-    { title: "Futurexa.ai | Premium Digital Transformation" },
-    {
-      name: "description",
-      content:
-        "Experts in transforming businesses through strategic implementation and premium digital experiences.",
-    },
+    { title },
+    { name: "description", content: description },
+    // Open Graph / Facebook
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://futurexa.ai" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:image", content: ogImage },
+    // Twitter
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:url", content: "https://futurexa.ai" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+    { name: "twitter:image", content: ogImage },
   ];
 }
 
@@ -27,27 +39,25 @@ function FuturexaHeroAnimation() {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 0;
-            height: 0;
+            width: 1000px;
+            height: 1000px;
             border-radius: 50%;
-            border: 2px solid rgba(59, 130, 246, 0.4);
-            animation: heroRippleExpand 4s ease-out infinite;
-            will-change: width, height, opacity;
-            transform: translate(-50%, -50%);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            animation: heroRippleExpand 4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+            will-change: transform, opacity;
+            transform: translate(-50%, -50%) scale(0);
           }
 
           @keyframes heroRippleExpand {
             0% {
-              width: 0;
-              height: 0;
+              transform: translate(-50%, -50%) scale(0);
               opacity: 0;
             }
-            10% {
-              opacity: 1;
+            5% {
+              opacity: 0.8;
             }
             100% {
-              width: 1200px;
-              height: 1200px;
+              transform: translate(-50%, -50%) scale(1.5);
               opacity: 0;
             }
           }
@@ -102,38 +112,38 @@ function FuturexaHeroAnimation() {
 
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto flex-1 flex flex-col justify-center items-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.5, rotateY: 90, filter: "blur(20px)" }}
+          initial={{ opacity: 0, scale: 0.8, rotateY: 45, filter: "blur(20px)" }}
           animate={{ opacity: 1, scale: 1, rotateY: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.5, ease: [0.34, 1.56, 0.64, 1] }}
+          transition={{ duration: 1.0, ease: [0.34, 1.56, 0.64, 1], delay: 0.1 }}
           className="font-['Outfit'] text-[4rem] md:text-[5rem] font-bold text-gradient-ocean mb-8 logo-pulse-glow"
         >
           Futurexa.ai
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, x: -50, rotateX: 20, filter: "blur(12px)" }}
-          animate={{ opacity: 1, x: 0, rotateX: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.2, delay: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.0, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
           className="font-['Outfit'] text-4xl md:text-6xl font-light text-slate-900 mb-6 tracking-wide"
         >
           Transforming Visions into Reality
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, x: 50, rotateX: -10, filter: "blur(12px)" }}
-          animate={{ opacity: 1, x: 0, rotateX: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.2, delay: 0.8, ease: [0.23, 1, 0.32, 1] }}
+          initial={{ opacity: 0, y: 20, filter: "blur(12px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.0, delay: 0.45, ease: [0.23, 1, 0.32, 1] }}
           className="text-xl md:text-2xl font-normal max-w-3xl leading-relaxed text-slate-500/90 mb-12"
         >
           We specialize in turning complex concepts into practical, profitable solutions
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0, rotate: 180 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 0.8, delay: 1.2, type: "spring", bounce: 0.5 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Link to="/services" className="inline-block px-12 py-5 text-lg font-bold text-white bg-gradient-to-br from-blue-600 to-sky-500 rounded-full tracking-widest shadow-[0_15px_50px_rgba(37,99,235,0.2)] hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_25px_60px_rgba(37,99,235,0.4)] transition-all duration-500 ease-out">
+          <Link to="/services" className="inline-block px-12 py-5 text-lg font-bold text-white bg-gradient-to-br from-blue-600 to-sky-500 rounded-full tracking-widest shadow-[0_15px_50px_rgba(37,99,235,0.2)] hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_25px_60px_rgba(37,99,235,0.4)] transition-[transform,shadow,background-color] duration-500 ease-out">
             EXPLORE SERVICES
           </Link>
         </motion.div>
@@ -142,7 +152,7 @@ function FuturexaHeroAnimation() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 1.8 }}
+        transition={{ duration: 1.0, delay: 0.8 }}
         className="relative z-10 w-full max-w-6xl px-6 pb-30 mt-6"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-14 lg:gap-16 justify-items-center items-start">
@@ -190,7 +200,7 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.05 }
     );
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
@@ -255,8 +265,8 @@ export default function Home() {
         )}
       </section>
 
-      {/* Trusted By - Redesigned as a Floating Glass Tray */}
-      <section className="py-16 relative z-10 overflow-hidden" id="services">
+      {/* Trusted By - Early Reveal for seamless transition from Hero */}
+      <section className="py-16 relative z-10 overflow-hidden reveal-immediate" id="services">
         <div className="absolute inset-0 pointer-events-none">
           <div className="floating-mesh-orb top-20 right-[20%] w-[300px] h-[300px] bg-blue-400/10" />
         </div>
@@ -327,7 +337,7 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Link to="/services" className="group flex items-center gap-3 px-8 py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-500 tracking-widest">
+              <Link to="/services" className="group flex items-center gap-3 px-8 py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-[background-color,color,box-shadow,transform] duration-500 tracking-widest">
                 View All Capabilities
                 <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
               </Link>
@@ -364,7 +374,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -10 }}
-                className="glass-morphism liquid-shimmer p-10 rounded-[2.5rem] group hover:border-blue-300/50 transition-all duration-500 flex flex-col h-full"
+                className="glass-morphism liquid-shimmer p-10 rounded-[2.5rem] group hover:border-blue-300/50 transition-[border-color,transform,box-shadow] duration-500 flex flex-col h-full"
               >
                 <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500 origin-left grayscale group-hover:grayscale-0">
                   {service.icon}
@@ -375,7 +385,7 @@ export default function Home() {
                 <p className="text-gray-500 leading-relaxed font-light mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className="w-12 h-1 bg-gray-100 group-hover:w-full group-hover:bg-blue-600 transition-all duration-700 rounded-full" />
+                <div className="w-12 h-1 bg-gray-100 group-hover:w-full group-hover:bg-blue-600 transition-[width,background-color] duration-700 rounded-full" />
               </motion.div>
             ))}
           </div>
@@ -398,7 +408,7 @@ export default function Home() {
               </h2>
               <div className="flex flex-wrap gap-3 mb-10">
                 {["Fintech", "Healthcare", "Retail", "Logistics", "SaaS"].map(badge => (
-                  <span key={badge} className="px-5 py-2 glass-morphism-light text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  <span key={badge} className="px-5 py-2 glass-morphism-light text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase group-hover:bg-blue-600 group-hover:text-white transition-[background-color,color] duration-300">
                     {badge}
                   </span>
                 ))}

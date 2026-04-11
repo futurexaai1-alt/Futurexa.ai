@@ -38,31 +38,27 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
   const [loadProgress, setLoadProgress] = useState(0);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const lastFrameIndex = useRef<number>(-1);
+  const dimensionsRef = useRef({ width: 0, height: 0, dpr: 1 });
   
   const getFilePath = (index: number) => {
     const paddedIndex = String(index).padStart(padding, '0');
     return `${directory}/${fileNamePrefix}${paddedIndex}.${extension}`;
   };
 
-  const renderFrame = (index: number) => {
+  const renderFrame = React.useCallback((index: number) => {
     const canvas = canvasRef.current;
     if (!canvas || !imagesRef.current[index] || index === lastFrameIndex.current) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Optimization: opaque canvas
     if (!ctx) return;
 
     const img = imagesRef.current[index];
     if (!img.complete) return;
 
-    // Retina support & Scaling
-    const dpr = window.devicePixelRatio || 1;
-    const canvasWidth = canvas.clientWidth;
-    const canvasHeight = canvas.clientHeight;
-
-    if (canvas.width !== canvasWidth * dpr || canvas.height !== canvasHeight * dpr) {
-        canvas.width = canvasWidth * dpr;
-        canvas.height = canvasHeight * dpr;
-    }
+    const { width: canvasWidth, height: canvasHeight, dpr } = dimensionsRef.current;
+    
+    // Fallback if dimensions aren't set yet (rare)
+    if (canvasWidth === 0) return;
 
     ctx.save();
     ctx.scale(dpr, dpr);
@@ -79,14 +75,15 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
     ctx.restore();
 
     lastFrameIndex.current = index;
-  };
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     let loadedCount = 0;
     const images: HTMLImageElement[] = [];
-    const bufferThreshold = Math.floor(frameCount * 0.1); // 10% for faster start
+    const bufferThreshold = Math.floor(frameCount * 0.1); 
+    let lastReportedProgress = 0;
 
     for (let i = startFrame; i < startFrame + frameCount; i++) {
       const img = new Image();
@@ -94,13 +91,18 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
       
       const handleLoad = () => {
         loadedCount++;
-        setLoadProgress((loadedCount / frameCount) * 100);
+        const currentProgress = (loadedCount / frameCount) * 100;
+        
+        // Only update state every 5% to avoid render flooding
+        if (currentProgress - lastReportedProgress >= 5 || loadedCount === frameCount) {
+          setLoadProgress(currentProgress);
+          lastReportedProgress = currentProgress;
+        }
         
         if (loadedCount >= bufferThreshold && !isReady) {
           setIsReady(true);
         }
         
-        // Initial paint when first frame is ready
         if (i === startFrame) renderFrame(0);
       };
 
@@ -120,24 +122,37 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isReady || !containerRef.current || !canvasRef.current) return;
+    const updateDimensions = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      
+      dimensionsRef.current = { width, height, dpr };
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+    };
+
+    updateDimensions();
 
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
       end: `+=${scrollDistance}`,
       pin: true,
-      scrub: 0.1, // Slight lag for buttery smoothness
+      scrub: 0.1,
       onUpdate: (self) => {
         const frameIndex = Math.min(
           frameCount - 1,
           Math.floor(self.progress * (frameCount - 1))
         );
-        requestAnimationFrame(() => renderFrame(frameIndex));
+        renderFrame(frameIndex);
       },
     });
 
     const handleResize = () => {
+        updateDimensions();
         lastFrameIndex.current = -1; // Force re-render
         const frameIndex = Math.min(
             frameCount - 1,
@@ -152,7 +167,7 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
       st.kill();
       window.removeEventListener('resize', handleResize);
     };
-  }, [isReady]);
+  }, [isReady, frameCount, scrollDistance, renderFrame]);
 
   // Initial paint when ready
   useEffect(() => {
