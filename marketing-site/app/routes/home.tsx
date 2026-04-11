@@ -266,7 +266,7 @@ export default function Home() {
       </section>
 
       {/* Trusted By - Early Reveal for seamless transition from Hero */}
-      <section className="py-16 relative z-10 overflow-hidden reveal-immediate" id="services">
+      <section className="py-32 relative z-10 overflow-hidden reveal-immediate" id="services">
         <div className="absolute inset-0 pointer-events-none">
           <div className="floating-mesh-orb top-20 right-[20%] w-[300px] h-[300px] bg-blue-400/10" />
         </div>
@@ -311,7 +311,7 @@ export default function Home() {
       </section>
 
       {/* Services Section - Redesigned with Liquid Glass Cards */}
-      <section className="py-16 relative z-10">
+      <section className="py-40 relative z-10">
         <div className="absolute inset-0 pointer-events-none">
           <div className="floating-mesh-orb bottom-40 left-[10%] w-[400px] h-[400px] bg-blue-400/10" />
         </div>
@@ -393,7 +393,7 @@ export default function Home() {
       </section>
 
       {/* Industries Section - Redesigned with Asymmetric Depth */}
-      <section className="py-12 relative z-10" id="industries">
+      <section className="py-32 relative z-10" id="industries">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 gap-12 items-center">
             <motion.div
@@ -442,7 +442,7 @@ export default function Home() {
       </section>
 
       {/* Portfolio Section - Redesigned with Depth-of-Field Glass */}
-      <section className="py-12 relative z-10" id="portfolio">
+      <section className="py-40 relative z-10" id="portfolio">
         <div className="absolute inset-0 pointer-events-none">
           <div className="floating-mesh-orb top-1/2 left-[30%] w-[500px] h-[500px] bg-purple-400/5" />
         </div>
@@ -495,7 +495,7 @@ export default function Home() {
       </section>
 
       {/* About Section - Redesigned as a Wide Cinematic Panel */}
-      <section className="py-12 relative z-10" id="about">
+      <section className="py-32 relative z-10" id="about">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -535,7 +535,7 @@ export default function Home() {
       </section>
 
       {/* Careers & Resources - Redesigned as Alternating Glass Cards */}
-      <section className="py-12 relative z-10 overflow-hidden">
+      <section className="py-32 relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Careers */}
@@ -593,7 +593,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section - Redesigned as a Cinematic Call to Action */}
-      <section className="py-16 relative z-10" id="contact">
+      <section className="py-40 relative z-10" id="contact">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 50 }}

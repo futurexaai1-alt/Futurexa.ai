@@ -1212,4 +1212,30 @@ body {
   gap: 20px;
   width: 100%;
   align-items: center;
+/* Accessibility: prefers-reduced-motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: scroll !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Disable heavy mesh/ripple effects */
+  .hero-ripple,
+  .floating-mesh-orb,
+  .liquid-shimmer::after {
+    display: none !important;
+  }
+
+  /* Force immediate visibility for entry elements */
+  .entry {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
 }
