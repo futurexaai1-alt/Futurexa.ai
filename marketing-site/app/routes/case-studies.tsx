@@ -34,7 +34,7 @@ const cases = [
   },
   {
     id: "retail-data-hub",
-    client: "Fortune 500 Retailer",
+    client: "Global Retail Leader",
     title: "Retail Data Intelligence Hub",
     category: "Retail",
     outcome: "Unified inventory, personalization, and forecasting pipelines.",

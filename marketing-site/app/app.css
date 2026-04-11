@@ -32,12 +32,88 @@ body {
   color-scheme: light;
   scroll-behavior: smooth;
   --page-background: #fafcff;
+  --header-height: 80px;
+  --content-max-width: 1200px;
 }
 
 body {
   font-family: var(--font-sans);
   background: var(--page-background);
   color: #0f172a;
+  overflow-x: hidden;
+}
+
+/* Liquid Glass Utilities */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.glass-morphism-dark {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-morphism-light {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+}
+
+.liquid-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-shimmer::after {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 55%
+  );
+  animation: liquidShimmer 6s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes liquidShimmer {
+  0% { transform: translate(-10%, -10%); }
+  100% { transform: translate(10%, 10%); }
+}
+
+.text-gradient-ocean {
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.floating-mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  mix-blend-mode: plus-lighter;
+  animation: orbFloat 20s infinite alternate ease-in-out;
+}
+
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 40px) scale(0.9); }
+  100% { transform: translate(10px, -10px) scale(1); }
 }
 
 .app-shell {

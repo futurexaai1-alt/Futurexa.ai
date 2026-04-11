@@ -2,9 +2,10 @@ import { Navbar, Footer } from '../components/Layout';
 import React from "react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
+import { ArrowRight, Briefcase, Library } from "lucide-react";
 import type { Route } from "./+types/home";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Futurexa.ai | Premium Digital Transformation" },
     {
@@ -17,7 +18,7 @@ export function meta({}: Route.MetaArgs) {
 
 function FuturexaHeroAnimation() {
   return (
-    <div className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-[#fafcff] pt-20">
+    <div className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-[var(--page-background)] pt-12">
       {/* Background orbs natively styled with Tailwind and Framer Motion */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Pure CSS GPU-Accelerated Ripple for Perfect FPS */}
@@ -56,13 +57,13 @@ function FuturexaHeroAnimation() {
 
           .stat-line-glow {
             position: absolute;
-            top: -1rem;
+            top: -1.2rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #2563eb, transparent);
-            animation: statLinePulse 2s ease-in-out infinite;
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+            animation: statLinePulse 2.5s ease-in-out infinite;
           }
 
           @keyframes statLinePulse {
@@ -79,23 +80,23 @@ function FuturexaHeroAnimation() {
             50% { text-shadow: 0 0 50px rgba(37,99,235,0.5); }
           }
         `}</style>
-        
+
         <div className="hero-ripple"></div>
 
-        <motion.div 
-          animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} 
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} 
-          className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-[80px]" 
+        <motion.div
+          animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-[80px]"
         />
-        <motion.div 
-          animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }} 
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} 
-          className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-indigo-100/40 rounded-full blur-[80px]" 
+        <motion.div
+          animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-sky-200/20 rounded-full blur-[80px]"
         />
-        <motion.div 
-          animate={{ x: [0, -20, 0], y: [0, -20, 0], scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }} 
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} 
-          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-sky-100/40 rounded-full blur-[80px]" 
+        <motion.div
+          animate={{ x: [0, -20, 0], y: [0, -20, 0], scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-sky-100/40 rounded-full blur-[80px]"
         />
       </div>
 
@@ -104,25 +105,25 @@ function FuturexaHeroAnimation() {
           initial={{ opacity: 0, scale: 0.5, rotateY: 90, filter: "blur(20px)" }}
           animate={{ opacity: 1, scale: 1, rotateY: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.5, ease: [0.34, 1.56, 0.64, 1] }}
-          className="font-['Outfit'] text-[4rem] md:text-[5rem] font-bold text-blue-600 mb-8 logo-pulse-glow"
+          className="font-['Outfit'] text-[4rem] md:text-[5rem] font-bold text-gradient-ocean mb-8 logo-pulse-glow"
         >
           Futurexa.ai
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, x: -50, filter: "blur(10px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="font-['Outfit'] text-4xl md:text-6xl font-light text-gray-900 mb-6 tracking-wide"
+          initial={{ opacity: 0, x: -50, rotateX: 20, filter: "blur(12px)" }}
+          animate={{ opacity: 1, x: 0, rotateX: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.2, delay: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          className="font-['Outfit'] text-4xl md:text-6xl font-light text-slate-900 mb-6 tracking-wide"
         >
           Transforming Visions into Reality
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, x: 50, filter: "blur(10px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="text-xl md:text-2xl font-normal max-w-3xl leading-relaxed bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 mb-12"
+          initial={{ opacity: 0, x: 50, rotateX: -10, filter: "blur(12px)" }}
+          animate={{ opacity: 1, x: 0, rotateX: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.2, delay: 0.8, ease: [0.23, 1, 0.32, 1] }}
+          className="text-xl md:text-2xl font-normal max-w-3xl leading-relaxed text-slate-500/90 mb-12"
         >
           We specialize in turning complex concepts into practical, profitable solutions
         </motion.p>
@@ -132,29 +133,33 @@ function FuturexaHeroAnimation() {
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, delay: 1.2, type: "spring", bounce: 0.5 }}
         >
-          <Link to="/services" className="inline-block px-12 py-5 text-lg font-bold text-white bg-gradient-to-br from-blue-600 to-blue-800 rounded-full tracking-widest shadow-[0_15px_50px_rgba(37,99,235,0.3)] hover:-translate-y-1 hover:scale-105 hover:shadow-[0_20px_60px_rgba(37,99,235,0.5)] transition-all duration-300">
+          <Link to="/services" className="inline-block px-12 py-5 text-lg font-bold text-white bg-gradient-to-br from-blue-600 to-sky-500 rounded-full tracking-widest shadow-[0_15px_50px_rgba(37,99,235,0.2)] hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_25px_60px_rgba(37,99,235,0.4)] transition-all duration-500 ease-out">
             EXPLORE SERVICES
           </Link>
         </motion.div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 1.8 }}
-        className="relative z-10 w-full max-w-6xl px-6 pb-20 mt-16"
+        className="relative z-10 w-full max-w-6xl px-6 pb-30 mt-6"
       >
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-12 md:gap-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-14 lg:gap-16 justify-items-center items-start">
           {[
-            { value: "14 Years", label: "Building digital futures" },
+            { value: "10+ Years", label: "Building digital futures" },
             { value: "500+", label: "Projects Delivered" },
             { value: "95%", label: "Return Customers" },
-            { value: "Fortune 500", label: "Trusted partner" }
+            { value: "Global", label: "Presence & Delivery" }
           ].map((stat, i) => (
-            <div key={i} className="text-center relative">
-               <div className="stat-line-glow" />
-               <span className="block font-['Outfit'] text-[2.4rem] md:text-[2.8rem] font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-800 to-blue-500 mb-2">{stat.value}</span>
-               <span className="block text-sm md:text-[0.95rem] text-gray-600 font-medium tracking-wide uppercase">{stat.label}</span>
+            <div key={i} className="text-center relative group flex flex-col items-center">
+              <div className="stat-line-glow" />
+              <span className="block font-['Outfit'] text-[2.2rem] md:text-[2.5rem] font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-600 to-sky-400 mb-2 group-hover:scale-105 transition-transform duration-500 whitespace-nowrap">
+                {stat.value}
+              </span>
+              <span className="block text-sm md:text-[0.95rem] text-slate-500 font-semibold tracking-widest uppercase max-w-[200px] leading-snug">
+                {stat.label}
+              </span>
             </div>
           ))}
         </div>
@@ -172,32 +177,6 @@ export default function Home() {
   const [heroMode, setHeroMode] = React.useState<"video" | "animation">(
     "animation"
   );
-
-  React.useEffect(() => {
-    const loadHeroMedia = async () => {
-      try {
-        const response = await fetch("/api/hero-media");
-        if (!response.ok) {
-          return;
-        }
-        const payload = (await response.json()) as {
-          data?: {
-            mode?: string;
-            videoUrl?: string;
-          };
-        };
-        const data = payload?.data;
-        if (!data) return;
-        if (data.mode) {
-          setHeroMode(data.mode === "animation" ? "animation" : "video");
-        }
-        if (data.videoUrl !== undefined) {
-          setHeroVideoUrl(data.videoUrl || defaultVideo);
-        }
-      } catch {}
-    };
-    loadHeroMedia();
-  }, []);
 
   React.useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".entry"));
@@ -218,12 +197,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div id="home" className="landing relative overflow-x-hidden bg-[#fafcff] selection:bg-blue-100 selection:text-blue-900">
+    <div id="home" className="landing relative overflow-x-hidden bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900">
       {/* Permanent Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/50 to-indigo-100/30 rounded-full blur-[120px] opacity-80" />
-        <div className="absolute top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/40 to-blue-50/20 rounded-full blur-[100px] opacity-70" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-purple-100/30 to-blue-100/40 rounded-full blur-[120px] opacity-60" />
+        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/40 to-sky-200/20 opacity-80 animate-pulse" />
+        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/40 to-blue-50/10 opacity-70 animate-pulse" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
+        <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-sky-100/30 to-blue-100/30 opacity-60 animate-pulse" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
       </div>
 
       <Navbar />
@@ -256,7 +235,7 @@ export default function Home() {
             </div>
             <div className="opening-stats">
               <div className="stat-item">
-                <span className="stat-number">14 Years</span>
+                <span className="stat-number">10+ Years</span>
                 <span className="stat-label">Building digital futures</span>
               </div>
               <div className="stat-item">
@@ -268,322 +247,370 @@ export default function Home() {
                 <span className="stat-label">Return Customers</span>
               </div>
               <div className="stat-item">
-                <span className="stat-number">Fortune 500</span>
-                <span className="stat-label">Trusted partner</span>
+                <span className="stat-number">Global</span>
+                <span className="stat-label">Presence & Delivery</span>
               </div>
             </div>
           </>
         )}
       </section>
 
-      {/* Logos Section */}
-      <section className="py-24 bg-white relative z-10" id="services">
+      {/* Trusted By - Redesigned as a Floating Glass Tray */}
+      <section className="py-16 relative z-10 overflow-hidden" id="services">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-mesh-orb top-20 right-[20%] w-[300px] h-[300px] bg-blue-400/10" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
+            className="mb-16"
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 font-['Outfit']">Trusted by global teams</h2>
-            <p className="text-xl text-gray-500 mb-12">Enterprise and growth-stage partners who need secure velocity</p>
+            <h2 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 font-['Outfit'] tracking-tight">
+              Trusted by <span className="text-blue-600">Global Leaders</span>
+            </h2>
+            <p className="text-xl text-slate-500/80 max-w-2xl mx-auto font-light leading-relaxed">
+              Powering the next generation of enterprise value through elite digital engineering.
+            </p>
           </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[
               "Gap Inc.", "Continental", "Gojek", "Ubisoft", "Sears", "Dropbox",
               "Spotify", "Airbnb", "Adobe", "Salesforce", "Samsung", "Nintendo"
             ].map((logo, i) => (
               <motion.div
                 key={logo}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm flex items-center justify-center hover:shadow-md transition-shadow duration-300"
+                transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -5, scale: 1.05 }}
+                className="glass-morphism-light p-6 rounded-[2rem] flex items-center justify-center group cursor-default"
               >
-                <span className="font-semibold text-gray-700">{logo}</span>
+                <span className="font-bold text-gray-400 group-hover:text-blue-600 transition-colors duration-300 tracking-wide text-sm md:text-base">
+                  {logo}
+                </span>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-24 bg-gray-50/50 relative z-10">
+      {/* Services Section - Redesigned with Liquid Glass Cards */}
+      <section className="py-16 relative z-10">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-mesh-orb bottom-40 left-[10%] w-[400px] h-[400px] bg-blue-400/10" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 font-['Outfit']">Services built for modern IT teams</h2>
-            <p className="text-xl text-gray-500">
-              Dedicated squads across cloud, security, data, and AI with clear delivery milestones.
-            </p>
-          </motion.div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="flex flex-col lg:flex-row items-end justify-between mb-12 gap-8">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="max-w-2xl"
+            >
+              <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-['Outfit'] leading-tight">
+                Architecting the <br /> <span className="text-gradient-ocean">Impossible</span>
+              </h2>
+              <p className="text-xl text-gray-500 font-light leading-relaxed">
+                We don't just build software. We engineer competitive advantages using the most advanced technological stacks available today.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <Link to="/services" className="group flex items-center gap-3 px-8 py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-500 tracking-widest">
+                View All Capabilities
+                <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
+              </Link>
+            </motion.div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                title: "Cloud & Infrastructure",
-                description: "Migration, modernization, and SRE practices for resilient platforms.",
+                title: "Cloud Forge",
+                description: "Transcendent infrastructure that scales with human ambition, secured by zero-trust protocols.",
+                icon: "☁️"
               },
               {
-                title: "Cybersecurity",
-                description: "Zero-trust programs, risk reduction, and continuous monitoring.",
+                title: "Cyber Sentinel",
+                description: "Proactive, multi-layered defense systems designed to neutralize threats before they materialize.",
+                icon: "🛡️"
               },
               {
-                title: "Managed Services",
-                description: "24/7 operations, performance optimization, and proactive support.",
+                title: "managed.ai",
+                description: "Continuous optimization of your digital ecosystem using autonomous agents and predictive SRE.",
+                icon: "⚙️"
               },
               {
-                title: "Data & AI",
-                description: "Analytics, automation, and AI enablement to accelerate decisions.",
+                title: "Cognitive Data",
+                description: "Transforming raw noise into strategic clarity through advanced ML models and neural analytics.",
+                icon: "🧠"
               },
             ].map((service, i) => (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg hover:border-blue-100 transition-all duration-300"
+                whileHover={{ y: -10 }}
+                className="glass-morphism liquid-shimmer p-10 rounded-[2.5rem] group hover:border-blue-300/50 transition-all duration-500 flex flex-col h-full"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                <p className="text-gray-500 leading-relaxed">{service.description}</p>
+                <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500 origin-left grayscale group-hover:grayscale-0">
+                  {service.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-500 leading-relaxed font-light mb-8 flex-1">
+                  {service.description}
+                </p>
+                <div className="w-12 h-1 bg-gray-100 group-hover:w-full group-hover:bg-blue-600 transition-all duration-700 rounded-full" />
               </motion.div>
             ))}
-          </div>
-          <div className="mt-12 text-center">
-             <Link to="/services" className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
-                View all services
-             </Link>
           </div>
         </div>
       </section>
 
-      {/* Industries Section */}
-      <section className="py-24 bg-white relative z-10" id="industries">
+      {/* Industries Section - Redesigned with Asymmetric Depth */}
+      <section className="py-12 relative z-10" id="industries">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-5 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9, x: -30 }}
+              whileInView={{ opacity: 1, scale: 1, x: 0 }}
               viewport={{ once: true }}
+              className="lg:col-span-3 glass-morphism p-12 rounded-[3.5rem] relative overflow-hidden group"
             >
-              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 font-['Outfit']">Industries we elevate</h2>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Financial services, retail, healthcare, mobility, and enterprise SaaS trust Futurexa.ai to accelerate growth.
-              </p>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-                We tailor compliance, data, and delivery playbooks to each industry’s risk profile and customer expectations.
-              </p>
-              <Link to="/industries" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                Explore industries
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-gray-50/50 p-10 rounded-[3rem] border border-gray-100 shadow-sm"
-            >
-              <div className="flex flex-wrap gap-3 mb-8">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[60px] -mr-32 -mt-32 group-hover:bg-blue-500/10 transition-colors" />
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 font-['Outfit'] leading-tight">
+                Specialized in <span className="text-blue-600">Complexity</span>
+              </h2>
+              <div className="flex flex-wrap gap-3 mb-10">
                 {["Fintech", "Healthcare", "Retail", "Logistics", "SaaS"].map(badge => (
-                  <span key={badge} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold">
+                  <span key={badge} className="px-5 py-2 glass-morphism-light text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                     {badge}
                   </span>
                 ))}
               </div>
-              <p className="text-lg text-gray-500 leading-relaxed">
-                We align strategy, product, and engineering to deliver measurable transformation programs.
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed font-light">
+                We align elite strategy with flawless technical execution to deliver measurable transformation programs in high-stakes environments.
               </p>
+              <Link to="/industries" className="inline-flex items-center gap-2 font-bold text-blue-600 group/link">
+                Explore focus areas <ArrowRight className="h-4 w-4 group-hover/link:translate-x-2 transition-transform" />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 space-y-6"
+            >
+              <h3 className="text-3xl font-bold text-gray-900 font-['Outfit']">Regulatory Precision</h3>
+              <p className="text-lg text-gray-500 font-light leading-relaxed">
+                Our delivery playbooks are tailored to each industry’s risk profile, ensuring compliance is built into the architecture, not added as an afterthought.
+              </p>
+              <div className="p-8 glass-morphism-light rounded-[2rem] border-l-4 border-blue-600">
+                <p className="italic text-gray-600 font-medium">
+                  "Futurexa didn't just understand our tech; they understood our market's gravitational forces."
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Portfolio Section */}
-      <section className="py-24 bg-gray-50/50 relative z-10" id="portfolio">
+      {/* Portfolio Section - Redesigned with Depth-of-Field Glass */}
+      <section className="py-12 relative z-10" id="portfolio">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-mesh-orb top-1/2 left-[30%] w-[500px] h-[500px] bg-purple-400/5" />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-['Outfit'] tracking-tight">
+                Case Studies <br /> of <span className="text-gradient-ocean">Velocity</span>
+              </h2>
+              <p className="text-xl text-gray-500 mb-10 font-light leading-relaxed">
+                We deliver rapid wins and long-term value, pairing elite UX with enterprise-grade engineering. Every project is a testament to precision.
+              </p>
+              <Link to="/portfolio" className="inline-flex items-center justify-center px-10 py-4 glass-morphism rounded-full font-bold text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-500 shadow-xl shadow-gray-200/20">
+                View Performance Portfolio
+              </Link>
+            </motion.div>
+
+            <div className="grid gap-6">
+              {[
+                { label: "Incident Volume Reduction", value: "-42%", color: "blue" },
+                { label: "Release Velocity Increase", value: "3x", color: "blue" },
+                { label: "Global Platform Uptime", value: "99.99%", color: "sky" }
+              ].map((item, i) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, x: 100 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, type: "spring" }}
+                  whileHover={{ scale: 1.02 }}
+                  className="glass-morphism p-8 rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-r from-${item.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="relative z-10">
+                    <span className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">{item.label}</span>
+                    <span className={`text-4xl font-bold text-${item.color}-600 font-['Outfit']`}>{item.value}</span>
+                  </div>
+                  <div className={`w-12 h-12 rounded-full glass-morphism-light flex items-center justify-center text-${item.color}-600 group-hover:rotate-45 transition-transform duration-500`}>
+                    ↗
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section - Redesigned as a Wide Cinematic Panel */}
+      <section className="py-12 relative z-10" id="about">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="glass-morphism p-10 rounded-[4rem] relative overflow-hidden group"
+          >
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full group-hover:bg-blue-600/20 transition-colors" />
+            <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
+              <div>
+                <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-['Outfit'] tracking-tight">
+                  Beyond <span className="text-blue-600">Innovation</span>
+                </h2>
+                <p className="text-xl text-gray-600 mb-10 leading-relaxed font-light">
+                  Futurexa.ai is a senior collective of strategists, designers, and engineers dedicated to crafting high-impact digital experiences that stand the test of time.
+                </p>
+                <Link to="/about" className="group flex items-center gap-3 w-fit px-10 py-4 glass-morphism-light rounded-full font-bold text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-500 tracking-widest">
+                  Learn Our Story
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
+                </Link>
+              </div>
+              <div className="p-12 glass-morphism-light rounded-[3rem]">
+                <p className="text-2xl text-gray-700 leading-relaxed font-medium italic">
+                  "We blend premium design, data intelligence, and technical execution to create unforgettable digital legacies."
+                </p>
+                <div className="mt-8 flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-sky-600" />
+                  <div>
+                    <span className="block font-bold text-gray-900">Elite Standards</span>
+                    <span className="block text-sm text-gray-500 tracking-widest uppercase font-bold">The Futurexa Creed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Careers & Resources - Redesigned as Alternating Glass Cards */}
+      <section className="py-12 relative z-10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Careers */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm"
+              whileHover={{ y: -8, scale: 1.01 }}
+              className="glass-morphism p-8 rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Portfolio highlights</h3>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-                Measurable outcomes across cloud, security, and digital product modernization.
+              <div className="h-16 w-16 glass-morphism-light rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                <Briefcase className="h-8 w-8" />
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900 mb-6 font-['Outfit']">Join the Collective</h3>
+              <p className="text-lg text-gray-500 mb-8 leading-relaxed font-light">
+                We're looking for ambitious builders who thrive on excellence and want to shape the future of digital transformation.
               </p>
-              <div className="flex flex-col gap-4">
-                {[
-                  "-42% incident volume",
-                  "3x release velocity",
-                  "99.99% uptime"
-                ].map(badge => (
-                   <div key={badge} className="flex items-center px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100">
-                      <span className="text-gray-900 font-semibold">{badge}</span>
-                   </div>
+              <div className="flex flex-wrap gap-2 mb-10">
+                {["Remote-first", "Growth Budgets", "Mission-Led"].map(tag => (
+                  <span key={tag} className="px-4 py-1 glass-morphism-light text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">{tag}</span>
                 ))}
               </div>
+              <Link to="/careers" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
+                View Open Roles <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
+              </Link>
             </motion.div>
+
+            {/* Resources */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ y: -8, scale: 1.01 }}
+              className="glass-morphism p-8 rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
             >
-              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 font-['Outfit']">Case studies that drive momentum</h2>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                We deliver rapid wins and long-term value, pairing elite UX with enterprise-grade engineering.
+              <div className="h-16 w-16 glass-morphism-light rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+                <Library className="h-8 w-8" />
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900 mb-6 font-['Outfit']">Intelligence Hub</h3>
+              <p className="text-lg text-gray-500 mb-8 leading-relaxed font-light">
+                Executive playbooks, transformation guides, and AI readiness toolkits curated for modern IT leaders.
               </p>
-              <Link to="/portfolio" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                View portfolio
+              <div className="flex flex-wrap gap-2 mb-10">
+                {["Cloud Guides", "AI Playbooks", "Market Trends"].map(tag => (
+                  <span key={tag} className="px-4 py-1 glass-morphism-light text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">{tag}</span>
+                ))}
+              </div>
+              <Link to="/resources" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
+                Browse Insights <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
               </Link>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="py-24 bg-white relative z-10" id="about">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="grid lg:grid-cols-2 gap-16 items-center">
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-             >
-                <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 font-['Outfit']">About Futurexa.ai</h2>
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  A senior team of strategists, designers, and engineers crafting high-impact digital experiences.
-                </p>
-                <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                  Learn about Futurexa.ai
-                </Link>
-             </motion.div>
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.1 }}
-                 className="bg-gray-50/50 p-10 rounded-[3rem] border border-gray-100 shadow-sm"
-             >
-               <p className="text-xl text-gray-700 leading-relaxed font-medium">
-                 We blend premium design, data intelligence, and technical
-                 execution to create unforgettable experiences.
-               </p>
-             </motion.div>
-           </div>
-         </div>
+      {/* Contact Section - Redesigned as a Cinematic Call to Action */}
+      <section className="py-16 relative z-10" id="contact">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto glass-morphism p-12 rounded-[4rem] relative overflow-hidden"
+          >
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-sky-600 to-sky-400" />
+            <h2 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 font-['Outfit'] tracking-tighter">
+              Initiate <br /> <span className="text-gradient-ocean">Transformation</span>
+            </h2>
+            <p className="text-2xl text-gray-500 mb-12 leading-relaxed font-light max-w-2xl mx-auto">
+              Partner with the world's most elite digital squad. Your next breakthrough starts with a single dialogue.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link to="/contact" className="group flex items-center justify-center gap-3 px-10 py-5 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/40 w-full sm:w-auto tracking-widest">
+                Book Strategy Session
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
+              </Link>
+              <Link to="/resources" className="px-12 py-5 glass-morphism rounded-full font-bold text-lg text-gray-900 hover:bg-gray-900 hover:text-white transition-all w-full sm:w-auto tracking-widest">
+                Explore Guides
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </section>
-
-      {/* Careers Section */}
-      <section className="py-24 bg-gray-50/50 relative z-10" id="careers">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="grid lg:grid-cols-2 gap-16 items-center">
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm"
-             >
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Careers</h3>
-                <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-                  Join an elite studio shaping the future of digital transformation.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {["Remote-friendly", "Growth budgets", "Mission teams"].map(badge => (
-                    <span key={badge} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold">
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-             </motion.div>
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.1 }}
-             >
-               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 font-['Outfit']">Grow with the team</h2>
-               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  We&apos;re always looking for ambitious builders who thrive on excellence.
-               </p>
-               <Link to="/careers" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                 View open roles
-               </Link>
-             </motion.div>
-           </div>
-         </div>
-      </section>
-
-      {/* Resources Section */}
-      <section className="py-24 bg-white relative z-10" id="resources">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="grid lg:grid-cols-2 gap-16 items-center">
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-             >
-               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 font-['Outfit']">Resources</h2>
-               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                 Executive playbooks, transformation guides, and AI readiness toolkits curated for leaders.
-               </p>
-               <Link to="/resources" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                 Browse resources
-               </Link>
-             </motion.div>
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.1 }}
-                 className="bg-gray-50/50 p-10 rounded-[3rem] border border-gray-100 shadow-sm"
-             >
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Weekly insights, benchmark reports, and incident response checklists for modern IT leaders.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {["Cloud migration guide", "SOC playbook", "AI readiness"].map(badge => (
-                    <span key={badge} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold">
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-             </motion.div>
-           </div>
-         </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-32 bg-gray-50/50 relative z-10" id="contact">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-             <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 className="max-w-3xl mx-auto"
-             >
-                <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 font-['Outfit']">Let&apos;s build your next breakthrough</h2>
-                <p className="text-xl text-gray-500 mb-10 leading-relaxed">
-                  Tell us about your vision and we&apos;ll respond within one business day.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link to="/contact" className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30 w-full sm:w-auto">
-                    Book a strategy call
-                  </Link>
-                  <Link to="/resources" className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors w-full sm:w-auto">
-                    Explore resources
-                  </Link>
-                </div>
-             </motion.div>
-         </div>
-      </section>
-          <Footer />
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X, Globe, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
@@ -6,9 +6,20 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const [clientPortalBaseUrl, setClientPortalBaseUrl] = useState("");
   const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
   const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,7 +46,10 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Services", path: "/services" },
+    { name: "Industries", path: "/industries" },
     { name: "Case Studies", path: "/case-studies" },
+    { name: "Resources", path: "/resources" },
+    { name: "Careers", path: "/careers" },
     { name: "About", path: "/about" },
     { name: "Blog", path: "/blog" },
     { name: "Pricing", path: "/pricing" },
@@ -43,31 +57,37 @@ export function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100"
+      initial={false}
+      animate={{ 
+        y: (isHome && !scrolled) ? -100 : 0,
+        opacity: (isHome && !scrolled) ? 0 : 1
+      }}
+      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+      className={clsx(
+        "fixed top-0 w-full z-50 transition-all duration-500",
+        (isHome && !scrolled) ? "pointer-events-none" : "bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)]"
+      )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform duration-300">
+      <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/25 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out">
             F
           </div>
-          <span className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors">
+          <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-all duration-300">
             Futurexa.ai
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
                 clsx(
-                  "text-sm font-medium transition-all duration-300 hover:text-blue-600 relative group",
-                  isActive ? "text-blue-600" : "text-gray-600"
+                  "text-[13px] lg:text-sm font-medium transition-all duration-300 hover:text-blue-600 relative group",
+                  isActive ? "text-blue-600" : "text-slate-600/90"
                 )
               }
             >
@@ -87,25 +107,19 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           <a
             href={clientPortalBaseUrl ? clientSignInUrl : "#"}
-            className="h-10 px-6 rounded-full border border-gray-200 text-gray-700 text-sm font-medium flex items-center justify-center transition-all hover:border-blue-200 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-100/40"
+            className="h-9 px-4 rounded-full border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center transition-all hover:border-blue-400 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 tracking-widest uppercase"
           >
             Sign In
           </a>
-          <a
-            href={clientPortalBaseUrl ? clientSignUpUrl : "#"}
-            className="h-10 px-6 rounded-full border border-blue-200 text-blue-700 text-sm font-medium flex items-center justify-center transition-all hover:border-blue-300 hover:text-blue-800 hover:shadow-lg hover:shadow-blue-100/50"
-          >
-            Sign Up
-          </a>
           <Link
             to="/contact"
-            className="group relative h-10 px-6 rounded-full bg-gray-900 text-white text-sm font-medium flex items-center justify-center overflow-hidden transition-all hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900/20"
+            className="group relative h-9 px-6 rounded-full bg-slate-900 text-white text-xs font-semibold flex items-center justify-center overflow-hidden transition-all hover:bg-black hover:shadow-xl hover:shadow-slate-900/20 tracking-widest uppercase"
           >
             <span className="relative z-10 flex items-center gap-2">
-              Book Consultation <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              Contact <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
             </span>
           </Link>
         </div>
@@ -113,7 +127,7 @@ export function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -126,9 +140,9 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white/90 backdrop-blur-xl overflow-hidden"
+            className="md:hidden border-t border-slate-100 bg-white/80 backdrop-blur-2xl overflow-hidden"
           >
-            <div className="px-4 py-6 space-y-4">
+            <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
@@ -136,35 +150,30 @@ export function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
                     clsx(
-                      "block text-lg font-medium transition-colors",
-                      isActive ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
+                      "block text-lg font-semibold transition-colors",
+                      isActive ? "text-blue-600" : "text-slate-600 hover:text-slate-900"
                     )
                   }
                 >
                   {link.name}
                 </NavLink>
               ))}
-              <a
-                href={clientPortalBaseUrl ? clientSignInUrl : "#"}
-                onClick={() => setIsOpen(false)}
-                className="block w-full py-3 rounded-xl border border-gray-200 text-gray-700 text-center font-bold shadow-sm hover:border-blue-200 hover:text-blue-600"
-              >
-                Sign In
-              </a>
-              <a
-                href={clientPortalBaseUrl ? clientSignUpUrl : "#"}
-                onClick={() => setIsOpen(false)}
-                className="block w-full py-3 rounded-xl border border-blue-200 text-blue-700 text-center font-bold shadow-sm hover:border-blue-300 hover:text-blue-800"
-              >
-                Sign Up
-              </a>
-              <Link
-                to="/contact"
-                onClick={() => setIsOpen(false)}
-                className="block w-full py-3 rounded-xl bg-blue-600 text-white text-center font-bold shadow-lg shadow-blue-500/30"
-              >
-                Book Consultation
-              </Link>
+              <div className="pt-4 space-y-3">
+                <a
+                  href={clientPortalBaseUrl ? clientSignInUrl : "#"}
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-4 rounded-xl border border-slate-200 text-slate-700 text-center font-bold shadow-sm hover:border-blue-200 hover:text-blue-600"
+                >
+                  Sign In
+                </a>
+                <Link
+                  to="/contact"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-3 rounded-xl bg-blue-600 text-white text-center font-bold shadow-lg shadow-blue-500/30"
+                >
+                  Book Consultation
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}
@@ -175,25 +184,25 @@ export function Navbar() {
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-100 pt-20 pb-10 relative overflow-hidden">
+    <footer className="glass-morphism-light border-t border-white/20 pt-16 pb-12 relative overflow-hidden">
        {/* Background Elements */}
        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px]" />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-50/50 rounded-full blur-[100px]" />
+          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-100/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-sky-100/20 rounded-full blur-[120px]" />
        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gray-900 flex items-center justify-center text-white font-bold shadow-lg shadow-gray-900/20">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 group-hover:rotate-6 transition-transform">
                 F
               </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900">
+              <span className="text-xl font-bold tracking-tight text-slate-900">
                 Futurexa.ai
               </span>
             </Link>
-            <p className="text-gray-500 leading-relaxed">
+            <p className="text-slate-500/90 leading-relaxed font-medium">
               14 years of turning complex concepts into practical, profitable solutions. Partner with Futurexa.ai to build your digital future.
             </p>
             <div className="flex items-center gap-4">
@@ -208,7 +217,7 @@ export function Footer() {
                    href={social.href} 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-all cursor-pointer border border-gray-100"
+                   className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer border border-slate-100"
                  >
                     <social.Icon className="h-5 w-5" />
                  </a>
@@ -217,12 +226,38 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">Services</h4>
+            <h4 className="font-bold text-slate-900 mb-6">Services</h4>
             <ul className="space-y-4">
-              {["Cloud Services", "Cybersecurity", "Managed Services", "Data Analytics"].map((item) => (
-                <li key={item}>
-                  <Link to={`/services`} className="text-gray-500 hover:text-blue-600 transition-colors">
-                    {item}
+              {[
+                { name: "Cloud Services", slug: "cloud-services" },
+                { name: "Cybersecurity", slug: "cybersecurity" },
+                { name: "Managed Services", slug: "managed-services" },
+                { name: "AI & ML", slug: "ai-ml-implementation" }
+              ].map((item) => (
+                <li key={item.slug}>
+                  <Link to={`/services/${item.slug}`} className="text-slate-500 hover:text-blue-600 font-medium transition-colors">
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+              <li><Link to="/services" className="text-blue-600 text-sm font-bold">View All Services</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-6">Company</h4>
+            <ul className="space-y-4">
+              {[
+                { name: "About Us", path: "/about" },
+                { name: "Industries", path: "/industries" },
+                { name: "Resources", path: "/resources" },
+                { name: "Careers", path: "/careers" },
+                { name: "Blog", path: "/blog" },
+                { name: "Contact", path: "/contact" }
+              ].map((item) => (
+                <li key={item.path}>
+                  <Link to={item.path} className="text-slate-500 hover:text-blue-600 font-medium transition-colors">
+                    {item.name}
                   </Link>
                 </li>
               ))}
@@ -230,26 +265,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">Company</h4>
-            <ul className="space-y-4">
-              {["About Us", "Careers", "Blog", "Contact"].map((item) => (
-                <li key={item}>
-                  <Link to={`/${item.toLowerCase().replace(" ", "-")}`} className="text-gray-500 hover:text-blue-600 transition-colors">
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-gray-900 mb-6">Let's Connect</h4>
-            <p className="text-gray-500 mb-6 text-sm leading-relaxed">
+            <h4 className="font-bold text-slate-900 mb-6">Let's Connect</h4>
+            <p className="text-slate-500/90 mb-8 text-sm leading-relaxed font-medium">
               Ready to scale your digital infrastructure? Reach out to our team of experts today.
             </p>
             <Link 
               to="/contact" 
-              className="group inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
+              className="group inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 tracking-widest uppercase"
             >
               Start a Project
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -257,11 +279,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+        <div className="pt-8 border-t border-slate-200/50 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500 font-medium">
           <p>© 2026 Futurexa.ai Inc. All rights reserved.</p>
           <div className="flex gap-8">
-            <Link to="/privacy" className="hover:text-gray-600">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-gray-600">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

@@ -12,10 +12,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 const stats = [
-  { id: 1, label: "Building Digital Futures", value: "14 Years", icon: Globe, iconBg: "bg-blue-50", iconText: "text-blue-600" },
+  { id: 1, label: "Building Digital Futures", value: "10+ Years", icon: Globe, iconBg: "bg-blue-50", iconText: "text-blue-600" },
   { id: 2, label: "Projects Delivered", value: "500+", icon: Target, iconBg: "bg-indigo-50", iconText: "text-indigo-600" },
   { id: 3, label: "Return Customers", value: "95%", icon: Award, iconBg: "bg-purple-50", iconText: "text-purple-600" },
-  { id: 4, label: "Trusted Partner", value: "Fortune 500", icon: Users, iconBg: "bg-yellow-50", iconText: "text-yellow-600" },
+  { id: 4, label: "Presence & Delivery", value: "Global", icon: Users, iconBg: "bg-yellow-50", iconText: "text-yellow-600" },
 ];
 
 export default function About() {

@@ -7,6 +7,7 @@ export default [
   route("case-studies", "routes/case-studies.tsx"),
   route("case-studies/:slug", "routes/case-study-detail.tsx"),
   route("about", "routes/about.tsx"),
+  route("careers", "routes/careers.tsx"),
   route("blog", "routes/blog.tsx"),
   route("blog/:slug", "routes/blog-post.tsx"),
   route("pricing", "routes/pricing.tsx"),
@@ -15,4 +16,5 @@ export default [
   route("resources", "routes/resources.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
+  route("new-home", "routes/new-home.tsx"),
 ] satisfies RouteConfig;
