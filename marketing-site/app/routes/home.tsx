@@ -273,46 +273,30 @@ export default function Home() {
 
       {/* Trusted By - Enhanced with Volumetric Lighting */}
       <section className="py-20 md:py-32 relative z-10 overflow-hidden reveal-immediate bg-gradient-to-b from-transparent via-blue-50/20 to-transparent" id="trusted">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-mesh-orb top-20 right-[20%] w-[400px] h-[400px] bg-blue-400/15" />
-          <div className="floating-mesh-orb bottom-10 left-[10%] w-[300px] h-[300px] bg-sky-300/10" />
-        </div>
-
         <div className="container text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={inViewViewport}
-            transition={inViewTransition}
-            className="mb-16 md:mb-24"
-          >
+          <div className="mb-16 md:mb-24">
             <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 font-['Outfit'] tracking-tighter">
               Trusted by <span className="text-gradient-ocean">Global Leaders</span>
             </h2>
             <p className="text-lg md:text-2xl text-slate-500/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
               Powering the next generation of enterprise value through elite digital engineering.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
             {[
               "Gap Inc.", "Continental", "Gojek", "Ubisoft", "Sears", "Dropbox", 
               "Spotify", "Airbnb", "Adobe", "Salesforce", "Samsung", "Nintendo"
-            ].map((name, i) => (
-              <motion.div
+            ].map((name) => (
+              <div
                 key={name}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={inViewViewport}
-                transition={{ ...inViewTransition, delay: i * 0.03 }}
-                whileHover={{ y: -6, scale: 1.03, rotate: i % 2 === 0 ? 1 : -1 }}
-                className="bg-gradient-to-br from-slate-400/5 to-slate-400/2 backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-[transform,box-shadow,background-color,border-color] duration-300 hover:border-blue-400/30 hover:bg-blue-50/10"
-                style={{ boxShadow: "0 4px 20px rgba(15, 23, 42, 0.05)" }}
+                className="bg-white/85 border border-slate-200/80 p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-colors duration-200 hover:border-blue-300/40 hover:bg-blue-50/20"
+                style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
               >
-                <span className="font-['Outfit'] font-bold text-slate-500 group-hover:text-blue-600 group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_rgba(37,99,235,0.2)] transition-[transform,filter,color] duration-300 tracking-wider text-sm md:text-base">
+                <span className="font-['Outfit'] font-bold text-slate-500 group-hover:text-blue-600 transition-colors duration-200 tracking-wider text-sm md:text-base">
                   {name}
                 </span>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -320,38 +304,23 @@ export default function Home() {
 
       {/* Services Section - Redesigned with Liquid Glass Cards */}
       <section className="py-16 md:py-24 relative z-10">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-mesh-orb bottom-40 left-[10%] w-[400px] h-[400px] bg-blue-400/10" />
-        </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-end justify-between mb-12 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={inViewViewport}
-              transition={inViewTransition}
-              className="max-w-2xl"
-            >
+            <div className="max-w-2xl">
               <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] leading-tight">
                 Architecting the <br /> <span className="text-gradient-ocean">Impossible</span>
               </h2>
               <p className="text-lg md:text-xl text-slate-500 font-light leading-relaxed">
                 We don't just build software. We engineer competitive advantages using the most advanced technological stacks available today.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={inViewViewport}
-              transition={inViewTransition}
-            >
+            <div>
               <Link to="/services" className="group flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-[background-color,color,box-shadow,transform] duration-500 tracking-widest text-sm md:text-base">
                 View All Capabilities
                 <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
               </Link>
-            </motion.div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -363,7 +332,6 @@ export default function Home() {
                 accent: "from-blue-500/12 via-sky-400/8 to-transparent",
                 border: "hover:border-blue-400/60",
                 bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
               },
@@ -374,7 +342,6 @@ export default function Home() {
                 accent: "from-blue-500/12 via-sky-400/8 to-transparent",
                 border: "hover:border-blue-400/60",
                 bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
               },
@@ -385,7 +352,6 @@ export default function Home() {
                 accent: "from-blue-500/12 via-sky-400/8 to-transparent",
                 border: "hover:border-blue-400/60",
                 bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
               },
@@ -396,23 +362,18 @@ export default function Home() {
                 accent: "from-blue-500/12 via-sky-400/8 to-transparent",
                 border: "hover:border-blue-400/60",
                 bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
               },
             ] as const).map((service, i) => (
-              <motion.div
+              <div
                 key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inViewViewport}
-                transition={{ ...inViewTransition, delay: i * 0.04 }}
-                whileHover={{ y: -10 }}
-                className={`relative bg-gradient-to-br ${service.accent} backdrop-blur-xl border border-white/50 liquid-shimmer p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} ${service.glow} transition-[transform,box-shadow,border-color,background-color] duration-300 flex flex-col h-full overflow-hidden`}
+                className={`relative bg-gradient-to-br ${service.accent} border border-white/70 p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} transition-[border-color,background-color] duration-200 flex flex-col h-full overflow-hidden`}
+                style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
               >
                 {/* Colored top border accent */}
-                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
-                <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500 origin-left grayscale group-hover:grayscale-0">
+                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-60`} />
+                <div className="text-4xl mb-6 grayscale">
                   {service.icon}
                 </div>
                 <h3 className={`text-2xl font-bold text-slate-900 mb-4 ${service.text} transition-colors`}>
@@ -421,8 +382,8 @@ export default function Home() {
                 <p className="text-slate-500 leading-relaxed font-light mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className={`w-full h-1 origin-left scale-x-[0.22] bg-slate-100 group-hover:scale-x-100 ${service.bar} transition-[transform,background] duration-500 rounded-full`} />
-              </motion.div>
+                <div className={`w-full h-1 bg-slate-100 ${service.bar} transition-colors duration-200 rounded-full`} />
+              </div>
             ))}
           </div>
         </div>
@@ -580,15 +541,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
             {/* Careers */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={inViewViewport}
-              transition={inViewTransition}
-              whileHover={{ y: -8, scale: 1.01 }}
-              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
+            <div
+              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group border border-white/70 transition-colors duration-200"
+              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
             >
-              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8 group-hover:scale-110 group-hover:rotate-6 transition-transform">
+              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8">
                 <Briefcase className="h-6 w-6 md:h-8 md:w-8" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit']">Join the Collective</h3>
@@ -601,20 +558,16 @@ export default function Home() {
                 ))}
               </div>
               <Link to="/careers" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
-                View Open Roles <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
+                View Open Roles <ArrowRight className="h-4 w-4" />
               </Link>
-            </motion.div>
+            </div>
 
             {/* Resources */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={inViewViewport}
-              transition={{ ...inViewTransition, delay: 0.04 }}
-              whileHover={{ y: -8, scale: 1.01 }}
-              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
+            <div
+              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group border border-white/70 transition-colors duration-200"
+              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
             >
-              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8">
                 <Library className="h-6 w-6 md:h-8 md:w-8" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit']">Intelligence Hub</h3>
@@ -627,9 +580,9 @@ export default function Home() {
                 ))}
               </div>
               <Link to="/resources" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
-                Browse Insights <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
+                Browse Insights <ArrowRight className="h-4 w-4" />
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
