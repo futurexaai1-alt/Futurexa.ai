@@ -296,32 +296,22 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
-            {([
-              { name: "Gap Inc.",     color: "from-blue-500/10 to-sky-500/5",      shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
-              { name: "Continental", color: "from-indigo-500/10 to-violet-500/5", shadow: "rgba(99,102,241,0.18)",  text: "text-indigo-600" },
-              { name: "Gojek",        color: "from-sky-500/10 to-cyan-500/5",      shadow: "rgba(14,165,233,0.18)",   text: "text-sky-600" },
-              { name: "Ubisoft",      color: "from-violet-500/10 to-purple-500/5", shadow: "rgba(139,92,246,0.18)",   text: "text-violet-600" },
-              { name: "Sears",        color: "from-teal-500/10 to-emerald-500/5",  shadow: "rgba(20,184,166,0.18)",   text: "text-teal-600" },
-              { name: "Dropbox",      color: "from-blue-500/10 to-indigo-500/5",   shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
-              { name: "Spotify",      color: "from-cyan-500/10 to-teal-500/5",     shadow: "rgba(6,182,212,0.18)",    text: "text-cyan-600" },
-              { name: "Airbnb",       color: "from-indigo-500/10 to-blue-500/5",   shadow: "rgba(99,102,241,0.18)",   text: "text-indigo-600" },
-              { name: "Adobe",        color: "from-purple-500/10 to-fuchsia-500/5",shadow: "rgba(168,85,247,0.18)",   text: "text-purple-600" },
-              { name: "Salesforce",   color: "from-sky-500/10 to-blue-500/5",      shadow: "rgba(14,165,233,0.18)",   text: "text-sky-600" },
-              { name: "Samsung",      color: "from-blue-500/10 to-indigo-500/5",   shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
-              { name: "Nintendo",     color: "from-violet-500/10 to-purple-500/5", shadow: "rgba(139,92,246,0.18)",   text: "text-violet-600" },
-            ] as const).map((logo, i) => (
+            {[
+              "Gap Inc.", "Continental", "Gojek", "Ubisoft", "Sears", "Dropbox", 
+              "Spotify", "Airbnb", "Adobe", "Salesforce", "Samsung", "Nintendo"
+            ].map((name, i) => (
               <motion.div
-                key={logo.name}
+                key={name}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={inViewViewport}
                 transition={{ ...inViewTransition, delay: i * 0.03 }}
                 whileHover={{ y: -6, scale: 1.03, rotate: i % 2 === 0 ? 1 : -1 }}
-                className={`bg-gradient-to-br ${logo.color} backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-[transform,box-shadow,background-color,border-color] duration-300`}
-                style={{ boxShadow: `0 4px 20px ${logo.shadow}` }}
+                className="bg-gradient-to-br from-slate-400/5 to-slate-400/2 backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-[transform,box-shadow,background-color,border-color] duration-300 hover:border-blue-400/30 hover:bg-blue-50/10"
+                style={{ boxShadow: "0 4px 20px rgba(15, 23, 42, 0.05)" }}
               >
-                <span className={`font-['Outfit'] font-bold ${logo.text} group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_currentColor] transition-[transform,filter,color] duration-300 tracking-wider text-sm md:text-base`}>
-                  {logo.name}
+                <span className="font-['Outfit'] font-bold text-slate-500 group-hover:text-blue-600 group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_rgba(37,99,235,0.2)] transition-[transform,filter,color] duration-300 tracking-wider text-sm md:text-base">
+                  {name}
                 </span>
               </motion.div>
             ))}
