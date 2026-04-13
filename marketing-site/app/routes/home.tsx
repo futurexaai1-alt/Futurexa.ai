@@ -209,6 +209,9 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  const inViewViewport = { once: true, amount: 0.2, margin: "0px 0px -10% 0px" } as const;
+  const inViewTransition = { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const };
+
   return (
     <div id="home" className="landing relative overflow-x-hidden bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900">
       {/* Permanent Ambient Background */}
@@ -280,8 +283,8 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            viewport={inViewViewport}
+            transition={inViewTransition}
             className="mb-16 md:mb-24"
           >
             <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 font-['Outfit'] tracking-tighter">
@@ -311,13 +314,13 @@ export default function Home() {
                 key={logo.name}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -8, scale: 1.06, rotate: i % 2 === 0 ? 1 : -1 }}
-                className={`bg-gradient-to-br ${logo.color} backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-all duration-500`}
+                viewport={inViewViewport}
+                transition={{ ...inViewTransition, delay: i * 0.03 }}
+                whileHover={{ y: -6, scale: 1.03, rotate: i % 2 === 0 ? 1 : -1 }}
+                className={`bg-gradient-to-br ${logo.color} backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-[transform,box-shadow,background-color,border-color] duration-300`}
                 style={{ boxShadow: `0 4px 20px ${logo.shadow}` }}
               >
-                <span className={`font-['Outfit'] font-bold ${logo.text} group-hover:scale-110 group-hover:drop-shadow-[0_0_12px_currentColor] transition-all duration-300 tracking-wider text-sm md:text-base`}>
+                <span className={`font-['Outfit'] font-bold ${logo.text} group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_currentColor] transition-[transform,filter,color] duration-300 tracking-wider text-sm md:text-base`}>
                   {logo.name}
                 </span>
               </motion.div>
@@ -337,7 +340,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
               className="max-w-2xl"
             >
               <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] leading-tight">
@@ -351,7 +355,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
             >
               <Link to="/services" className="group flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-[background-color,color,box-shadow,transform] duration-500 tracking-widest text-sm md:text-base">
                 View All Capabilities
@@ -411,10 +416,10 @@ export default function Home() {
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                viewport={inViewViewport}
+                transition={{ ...inViewTransition, delay: i * 0.04 }}
                 whileHover={{ y: -10 }}
-                className={`relative bg-gradient-to-br ${service.accent} backdrop-blur-xl border border-white/50 liquid-shimmer p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} ${service.glow} transition-all duration-500 flex flex-col h-full overflow-hidden`}
+                className={`relative bg-gradient-to-br ${service.accent} backdrop-blur-xl border border-white/50 liquid-shimmer p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} ${service.glow} transition-[transform,box-shadow,border-color,background-color] duration-300 flex flex-col h-full overflow-hidden`}
               >
                 {/* Colored top border accent */}
                 <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -427,7 +432,7 @@ export default function Home() {
                 <p className="text-slate-500 leading-relaxed font-light mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className={`w-12 h-1 bg-slate-100 group-hover:w-full ${service.bar} transition-all duration-700 rounded-full`} />
+                <div className={`w-full h-1 origin-left scale-x-[0.22] bg-slate-100 group-hover:scale-x-100 ${service.bar} transition-[transform,background] duration-500 rounded-full`} />
               </motion.div>
             ))}
           </div>
@@ -441,7 +446,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9, x: -30 }}
               whileInView={{ opacity: 1, scale: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
               className="lg:col-span-3 glass-morphism liquid-shimmer p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group border border-white/40"
             >
               <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 blur-[80px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-colors animate-pulse" />
@@ -467,7 +473,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
               className="lg:col-span-2 space-y-6"
             >
               <h3 className="text-3xl font-bold text-slate-900 font-['Outfit']">Regulatory Precision</h3>
@@ -494,7 +501,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
             >
               <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
                 Case Studies <br /> of <span className="text-gradient-ocean">Velocity</span>
@@ -517,8 +525,8 @@ export default function Home() {
                   key={item.label}
                   initial={{ opacity: 0, x: 100 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, type: "spring" }}
+                  viewport={inViewViewport}
+                  transition={{ ...inViewTransition, delay: i * 0.04 }}
                   whileHover={{ scale: 1.02 }}
                   className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative"
                 >
@@ -543,7 +551,8 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={inViewViewport}
+            transition={inViewTransition}
             className="glass-morphism p-6 md:p-10 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden group"
           >
             <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full group-hover:bg-blue-600/20 transition-colors" />
@@ -585,7 +594,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
               whileHover={{ y: -8, scale: 1.01 }}
               className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
             >
@@ -610,8 +620,8 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+              viewport={inViewViewport}
+              transition={{ ...inViewTransition, delay: 0.04 }}
               whileHover={{ y: -8, scale: 1.01 }}
               className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500"
             >
@@ -641,7 +651,8 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={inViewViewport}
+            transition={inViewTransition}
             className="max-w-4xl mx-auto glass-morphism p-8 md:p-12 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden"
           >
             <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-sky-600 to-sky-400" />
