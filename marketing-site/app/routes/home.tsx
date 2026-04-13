@@ -398,16 +398,15 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1, x: 0 }}
               viewport={inViewViewport}
               transition={inViewTransition}
-              className="lg:col-span-3 glass-morphism liquid-shimmer p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group border border-white/40"
+              className="lg:col-span-3 bg-white/90 p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group border border-slate-200/70"
+              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
             >
-              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 blur-[80px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-colors animate-pulse" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-400/10 blur-[60px] -ml-32 -mb-32 group-hover:bg-sky-400/20 transition-colors" />
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] leading-tight">
                 Specialized in <span className="text-gradient-ocean">Complexity</span>
               </h2>
               <div className="flex flex-wrap gap-3 mb-10">
                 {["Fintech", "Healthcare", "Retail", "Logistics", "SaaS"].map(badge => (
-                  <span key={badge} className="px-5 py-2 glass-morphism-light text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:border-blue-300 transition-all duration-300">
+                  <span key={badge} className="px-5 py-2 bg-white border border-slate-200 text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase">
                     {badge}
                   </span>
                 ))}
@@ -415,8 +414,8 @@ export default function Home() {
               <p className="text-xl text-slate-600 mb-8 leading-relaxed font-light">
                 We align elite strategy with flawless technical execution to deliver measurable transformation programs in high-stakes environments.
               </p>
-              <Link to="/industries" className="inline-flex items-center gap-2 font-bold text-blue-600 group/link">
-                Explore focus areas <ArrowRight className="h-4 w-4 group-hover/link:translate-x-2 transition-transform" />
+              <Link to="/industries" className="inline-flex items-center gap-2 font-bold text-blue-600">
+                Explore focus areas <ArrowRight className="h-4 w-4" />
               </Link>
             </motion.div>
 
@@ -443,9 +442,6 @@ export default function Home() {
 
       {/* Portfolio Section - Redesigned with Depth-of-Field Glass */}
       <section className="py-16 md:py-24 relative z-10" id="portfolio">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-mesh-orb top-1/2 left-[30%] w-[500px] h-[500px] bg-blue-400/5" />
-        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
             <motion.div
@@ -460,7 +456,7 @@ export default function Home() {
               <p className="text-lg md:text-xl text-slate-500 mb-8 md:mb-10 font-light leading-relaxed">
                 We deliver rapid wins and long-term value, pairing elite UX with enterprise-grade engineering. Every project is a testament to precision.
               </p>
-              <Link to="/portfolio" className="inline-flex items-center justify-center px-8 py-3 md:px-10 md:py-4 glass-morphism rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl shadow-slate-200/20 text-sm md:text-base">
+              <Link to="/portfolio" className="inline-flex items-center justify-center px-8 py-3 md:px-10 md:py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-[background-color,color,border-color] duration-200 shadow-sm text-sm md:text-base">
                 View Performance Portfolio
               </Link>
             </motion.div>
@@ -477,15 +473,14 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={inViewViewport}
                   transition={{ ...inViewTransition, delay: i * 0.04 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative"
+                  className="bg-white/90 border border-slate-200/70 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative"
+                  style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-r from-${item.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                   <div className="relative z-10">
                     <span className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</span>
                     <span className={`text-4xl font-bold text-${item.color}-600 font-['Outfit']`}>{item.value}</span>
                   </div>
-                  <div className={`w-12 h-12 rounded-full glass-morphism-light flex items-center justify-center text-${item.color}-600 group-hover:rotate-45 transition-transform duration-500`}>
+                  <div className={`w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-${item.color}-600`}>
                     ↗
                   </div>
                 </motion.div>
@@ -503,9 +498,9 @@ export default function Home() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={inViewViewport}
             transition={inViewTransition}
-            className="glass-morphism p-6 md:p-10 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden group"
+            className="bg-white/90 border border-slate-200/70 p-6 md:p-10 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden group"
+            style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
           >
-            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full group-hover:bg-blue-600/20 transition-colors" />
             <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center relative z-10">
               <div>
                 <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
@@ -514,12 +509,12 @@ export default function Home() {
                 <p className="text-lg md:text-xl text-slate-600 mb-8 md:mb-10 leading-relaxed font-light">
                   Futurexa.ai is a senior collective of strategists, designers, and engineers dedicated to crafting high-impact digital experiences that stand the test of time.
                 </p>
-                <Link to="/about" className="group flex items-center gap-2 md:gap-3 w-fit px-6 py-3 md:px-10 md:py-4 glass-morphism-light rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-500 tracking-widest text-sm md:text-base">
+                <Link to="/about" className="group flex items-center gap-2 md:gap-3 w-fit px-6 py-3 md:px-10 md:py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-[background-color,color,border-color] duration-200 tracking-widest text-sm md:text-base">
                   Learn Our Story
-                  <ArrowRight className="h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                 </Link>
               </div>
-              <div className="p-8 md:p-12 glass-morphism-light rounded-[2rem] md:rounded-[3rem]">
+              <div className="p-8 md:p-12 bg-white border border-slate-200 rounded-[2rem] md:rounded-[3rem]">
                 <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-medium italic">
                   "We blend premium design, data intelligence, and technical execution to create unforgettable digital legacies."
                 </p>
