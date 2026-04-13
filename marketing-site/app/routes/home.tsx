@@ -216,10 +216,9 @@ export default function Home() {
     <div id="home" className="landing relative overflow-x-hidden bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900">
       {/* Permanent Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
-        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60 animate-pulse" />
-        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/30 to-indigo-50/10 opacity-50 animate-pulse" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
-        <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-blue-100/20 to-sky-100/20 opacity-40 animate-pulse" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
-        <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60" />
+        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/30 to-indigo-50/10 opacity-50" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
+        <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-blue-100/20 to-sky-100/20 opacity-40" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
       </div>
 
       <Navbar />
@@ -372,34 +371,34 @@ export default function Home() {
                 title: "Cyber Sentinel",
                 description: "Proactive, multi-layered defense systems designed to neutralize threats before they materialize.",
                 icon: "🛡️",
-                accent: "from-indigo-500/12 via-violet-400/8 to-transparent",
-                border: "hover:border-indigo-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-violet-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(99,102,241,0.22)]",
-                topBorder: "from-indigo-400 to-violet-400",
-                text: "group-hover:text-indigo-600",
+                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
+                border: "hover:border-blue-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
+                topBorder: "from-blue-400 to-sky-400",
+                text: "group-hover:text-blue-600",
               },
               {
                 title: "managed.ai",
                 description: "Continuous optimization of your digital ecosystem using autonomous agents and predictive SRE.",
                 icon: "⚙️",
-                accent: "from-cyan-500/12 via-teal-400/8 to-transparent",
-                border: "hover:border-cyan-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-cyan-500 group-hover:to-teal-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(6,182,212,0.2)]",
-                topBorder: "from-cyan-400 to-teal-400",
-                text: "group-hover:text-cyan-600",
+                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
+                border: "hover:border-blue-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
+                topBorder: "from-blue-400 to-sky-400",
+                text: "group-hover:text-blue-600",
               },
               {
                 title: "Cognitive Data",
                 description: "Transforming raw noise into strategic clarity through advanced ML models and neural analytics.",
                 icon: "🧠",
-                accent: "from-violet-500/12 via-fuchsia-400/8 to-transparent",
-                border: "hover:border-violet-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:to-fuchsia-400",
-                glow: "group-hover:shadow-[0_25px_60px_rgba(139,92,246,0.2)]",
-                topBorder: "from-violet-400 to-fuchsia-400",
-                text: "group-hover:text-violet-600",
+                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
+                border: "hover:border-blue-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
+                topBorder: "from-blue-400 to-sky-400",
+                text: "group-hover:text-blue-600",
               },
             ] as const).map((service, i) => (
               <motion.div

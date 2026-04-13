@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X, Globe, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 
@@ -12,12 +12,16 @@ export function Navbar() {
   const [clientPortalBaseUrl, setClientPortalBaseUrl] = useState("https://clientweb.futurexaai1.workers.dev");
   const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
   const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
+  const scrolledRef = useRef(scrolled);
 
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    // Only triggers a re-render if the boolean value actually changes 
-    setScrolled(latest > 80);
+    const next = latest > 80;
+    if (scrolledRef.current !== next) {
+      scrolledRef.current = next;
+      setScrolled(next);
+    }
   });
 
   useEffect(() => {

@@ -13,6 +13,9 @@ export function SmoothScroll() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    const shouldUseVirtualScroll = location.pathname === "/new-home";
+    if (!shouldUseVirtualScroll) return;
+
     // Respect user motion settings and avoid virtual scroll on coarse touch devices.
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
@@ -62,18 +65,7 @@ export function SmoothScroll() {
       }
       lenisRef.current = null;
     };
-  }, []);
-
-  // Recalculate dimensions on route change
-  useEffect(() => {
-    if (lenisRef.current) {
-        // Short delay to ensure DOM has rendered
-        const timer = setTimeout(() => {
-            lenisRef.current?.resize();
-        }, 100);
-        return () => clearTimeout(timer);
-    }
-  }, [location]);
+  }, [location.pathname]);
 
   return null; // This component doesn't render anything visible
 }
