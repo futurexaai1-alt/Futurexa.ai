@@ -1,5 +1,5 @@
 import { JPGSequenceScroller } from "../components/JPGSequenceScroller";
-import { Navbar, Footer } from "../components/Layout";
+
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Shield, Zap, Globe } from "lucide-react";
 import { Link } from "react-router";
@@ -7,8 +7,6 @@ import { Link } from "react-router";
 export default function NewHome() {
   return (
     <main className="bg-slate-900 min-h-screen text-white selection:bg-blue-500/30">
-      <Navbar />
-
       {/* Hero Section with Scroll Sequence */}
       <section className="relative">
         <JPGSequenceScroller 
@@ -89,7 +87,7 @@ export default function NewHome() {
          </div>
       </section>
 
-      <Footer />
+
     </main>
   );
 }

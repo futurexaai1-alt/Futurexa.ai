@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Footer } from "../components/Layout";
+
 import { motion } from "framer-motion";
 
 export function meta() {
@@ -21,8 +21,6 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
-      
       {/* Compact Header Area */}
       <section className="relative pt-24 pb-8 overflow-hidden bg-white">
         <div className="absolute inset-0 pointer-events-none">
@@ -127,7 +125,7 @@ export default function PrivacyPolicy() {
         </div>
       </section>
 
-      <Footer />
+
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { Route } from "./+types/contact";
 import { motion } from "framer-motion";
-import { Navbar, Footer } from "../components/Layout";
+
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
@@ -13,8 +13,6 @@ export function meta({}: Route.MetaArgs) {
 export default function Contact() {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
-
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-50/50 to-purple-50/50 rounded-full blur-[100px] opacity-60" />
@@ -135,7 +133,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <Footer />
+
     </div>
   );
 }

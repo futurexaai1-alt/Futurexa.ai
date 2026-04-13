@@ -1,4 +1,4 @@
-import { Navbar, Footer } from '../components/Layout';
+import { Navbar, Footer } from "../components/Layout";
 import React from "react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
