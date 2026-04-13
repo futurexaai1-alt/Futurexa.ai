@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "../utils/supabase";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { Loader2, AlertCircle } from "lucide-react";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -56,30 +57,39 @@ export default function AuthCallback(_: Route.ComponentProps) {
         }
 
         const { data } = await supabase.auth.getSession();
+        const session = data.session;
 
-        if (data.session) {
-          const onboardingRes = await fetch(`${apiBaseUrl}/api/onboarding`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${data.session.access_token}`,
-            },
-          });
+        if (session) {
+          window.history.replaceState({}, document.title, "/auth/callback");
+          navigate("/dashboard", { replace: true });
 
-          if (!onboardingRes.ok) {
-            const errorBody = await onboardingRes.text().catch(() => "");
-            console.error("Onboarding failed:", {
-              status: onboardingRes.status,
-              statusText: onboardingRes.statusText,
-              body: errorBody,
-            });
+          if (apiBaseUrl) {
+            fetch(`${apiBaseUrl}/api/onboarding`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.access_token}`,
+              },
+            })
+              .then(async (onboardingRes) => {
+                if (!onboardingRes.ok) {
+                  const errorBody = await onboardingRes.text().catch(() => "");
+                  console.error("Onboarding failed:", {
+                    status: onboardingRes.status,
+                    statusText: onboardingRes.statusText,
+                    body: errorBody,
+                  });
+                }
+              })
+              .catch((onboardingError) => {
+                console.error("Onboarding request error:", onboardingError);
+              });
           }
+          return;
         }
 
         window.history.replaceState({}, document.title, "/auth/callback");
-
-        if (data.session) navigate("/dashboard", { replace: true });
-        else navigate("/signin", { replace: true });
+        navigate("/signin", { replace: true });
       } catch (e) {
         if (cancelled) return;
         setError(e instanceof Error ? e.message : "Auth callback failed");
@@ -94,9 +104,28 @@ export default function AuthCallback(_: Route.ComponentProps) {
   }, [navigate, supabase, apiBaseUrl]);
 
   return (
-    <main style={{ padding: 24, maxWidth: 520, margin: "0 auto" }}>
-      <h1>Signing you in...</h1>
-      {error && <p style={{ color: "#b91c1c" }}>{error}</p>}
+    <main className="min-h-screen bg-gray-50 text-gray-900 selection:bg-blue-100 font-sans relative overflow-hidden flex flex-col items-center justify-center p-6 sm:p-12">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] right-[-10%] h-[780px] w-[780px] rounded-full bg-blue-100/50 blur-[110px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-[620px] w-[620px] rounded-full bg-purple-100/40 blur-[110px]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md bg-white/70 border border-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-blue-100/30 flex flex-col items-center text-center">
+        <Loader2 className="h-10 w-10 text-blue-600 animate-spin mb-6" />
+        <h1 className="text-2xl font-bold mb-2 text-gray-900 tracking-tight">
+          Authenticating
+        </h1>
+        <p className="text-gray-500 font-medium">
+          Securely signing you in...
+        </p>
+
+        {error && (
+          <div className="mt-8 flex items-center gap-3 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium w-full text-left">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

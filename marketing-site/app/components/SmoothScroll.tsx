@@ -12,36 +12,39 @@ export function SmoothScroll() {
   const lenisRef = useRef<any>(null);
 
   useEffect(() => {
-    // Dynamically import Lenis to avoid SSR issues in Cloudflare Workers
+    if (typeof window === 'undefined') return;
+    // Respect user motion settings and avoid virtual scroll on coarse touch devices.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    if (prefersReducedMotion || hasCoarsePointer) return;
+
     let lenisInstance: any = null;
+    let tickerCallback: ((time: number) => void) | null = null;
     
     const initLenis = async () => {
       const { default: Lenis } = await import('lenis');
       
       const lenis = new Lenis({
-        duration: 1.2,
+        duration: 0.65,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
         wheelMultiplier: 1,
-        touchMultiplier: 2,
+        touchMultiplier: 1,
       });
 
       lenisRef.current = lenis;
       lenisInstance = lenis;
 
-      // 2. Synchronize with GSAP
       lenis.on('scroll', ScrollTrigger.update);
 
-      gsap.ticker.add((time) => {
+      tickerCallback = (time: number) => {
         lenis.raf(time * 1000);
-      });
+      };
+      gsap.ticker.add(tickerCallback);
 
       gsap.ticker.lagSmoothing(0);
-
-      // 3. Handle potential initial jump and refresh triggers
-      window.scrollTo(0, 0);
       ScrollTrigger.refresh();
     };
 
@@ -49,9 +52,15 @@ export function SmoothScroll() {
 
     return () => {
       if (lenisInstance) {
-        lenisInstance.destroy();
-        gsap.ticker.remove(lenisInstance.raf);
+        lenisInstance.off('scroll', ScrollTrigger.update);
       }
+      if (tickerCallback) {
+        gsap.ticker.remove(tickerCallback);
+      }
+      if (lenisInstance) {
+        lenisInstance.destroy();
+      }
+      lenisRef.current = null;
     };
   }, []);
 

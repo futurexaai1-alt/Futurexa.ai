@@ -73,7 +73,9 @@ export default function DashboardProject(_: Route.ComponentProps) {
 
     async function fetchData() {
       try {
-        const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
+        const orgId = organizationId;
+        if (!orgId) return;
+        const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}`, "x-organization-id": orgId };
         const res = await fetch(`${apiBaseUrl}/api/projects`, { headers });
 
         if (res.ok) {

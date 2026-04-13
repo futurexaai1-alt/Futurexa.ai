@@ -23,12 +23,17 @@ type MilestoneItem = ListItem & {
   dueDate: string;
 };
 
+type StoredAuth = {
+  accessToken: string | null;
+  organizationId: string | null;
+};
+
 const AUTH_KEY = "futurexa_auth";
 
-function getStoredAuth() {
+function getStoredAuth(): StoredAuth | null {
   try {
     const stored = sessionStorage.getItem(AUTH_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) return JSON.parse(stored) as StoredAuth;
   } catch {}
   return null;
 }
@@ -77,9 +82,9 @@ export default function DashboardOverview(_: Route.ComponentProps) {
           headers: { Authorization: `Bearer ${stored?.accessToken}` },
         });
         if (res.ok) {
-          const json = await res.json();
-          setOrganizationId(json?.organizationId || stored?.organizationId);
-          setAccessToken(stored?.accessToken);
+          const json = await res.json() as { organizationId?: string | null };
+          setOrganizationId(json?.organizationId || stored?.organizationId || null);
+          setAccessToken(stored?.accessToken || null);
         }
         setIsLoading(false);
       };
@@ -96,7 +101,9 @@ export default function DashboardOverview(_: Route.ComponentProps) {
 
     async function fetchData() {
       try {
-        const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
+        const orgId = organizationId;
+        if (!orgId) return;
+        const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}`, "x-organization-id": orgId };
         const [pRes, mRes, tRes, ticRes, dRes, fRes, sRes] = await Promise.all([
           fetch(`${apiBaseUrl}/api/projects`, { headers }),
           fetch(`${apiBaseUrl}/api/milestones`, { headers }),

@@ -99,7 +99,7 @@ export default function DemoRequestModal({
           });
         }, 2500);
       } else {
-        const data = await res.json();
+        const data = await res.json() as { error?: string };
         setError(data.error || "Failed to submit request");
       }
     } catch (err) {

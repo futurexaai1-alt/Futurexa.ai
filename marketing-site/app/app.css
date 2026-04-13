@@ -1212,6 +1212,8 @@ body {
   gap: 20px;
   width: 100%;
   align-items: center;
+}
+
 /* Accessibility: prefers-reduced-motion fallback */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -1237,5 +1239,4 @@ body {
     transform: none !important;
     filter: none !important;
   }
-}
 }

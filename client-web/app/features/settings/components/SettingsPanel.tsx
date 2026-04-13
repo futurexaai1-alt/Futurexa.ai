@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { User, Bell, Shield, Save, Key, Mail, Smartphone } from "lucide-react";
+import { User, Shield, Save, Key, UserCircle, ShieldCheck } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SettingsPanel({
   accessToken,
@@ -12,16 +13,13 @@ export default function SettingsPanel({
   userName: string;
   onSaved: (nextName: string) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"profile" | "notifications" | "security">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
   const [draftName, setDraftName] = useState(userName);
+  const [phone, setPhone] = useState("+1 (555) 000-0000");
+  const [address, setAddress] = useState("123 Futurexa St, Tech City, TC 10101");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  // Mock preferences state
-  const [emailNotifs, setEmailNotifs] = useState(true);
-  const [pushNotifs, setPushNotifs] = useState(false);
-  const [marketingEmails, setMarketingEmails] = useState(true);
 
   useEffect(() => {
     setDraftName(userName);
@@ -42,7 +40,11 @@ export default function SettingsPanel({
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ name: draftName }),
+        body: JSON.stringify({ 
+          name: draftName,
+          phone: phone,
+          address: address
+        }),
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({} as any))) as any;
@@ -72,224 +74,225 @@ export default function SettingsPanel({
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
+    <div className="flex flex-col lg:flex-row gap-8 items-start">
       {/* Sidebar Navigation */}
-      <div className="w-full md:w-64 shrink-0">
-        <nav className="flex md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0">
+      <div className="w-full lg:w-72 shrink-0">
+        <nav className="flex lg:flex-col gap-3 p-1 bg-white/40 backdrop-blur-md rounded-2xl border border-white/60">
           <button
             onClick={() => { setActiveTab("profile"); setError(null); setSuccess(false); }}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-              activeTab === "profile" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            className={`flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-bold transition-all relative overflow-hidden group ${
+              activeTab === "profile" ? "text-blue-600" : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            <User className="h-4 w-4" />
-            Profile details
+            {activeTab === "profile" && (
+              <motion.div layoutId="activeTab" className="absolute inset-0 bg-white shadow-sm border border-gray-100/50" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
+            )}
+            <User className={`h-4 w-4 relative z-10 transition-colors ${activeTab === "profile" ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
+            <span className="relative z-10">Profile details</span>
           </button>
-          <button
-            onClick={() => { setActiveTab("notifications"); setError(null); setSuccess(false); }}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-              activeTab === "notifications" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-          >
-            <Bell className="h-4 w-4" />
-            Notifications
-          </button>
+
           <button
             onClick={() => { setActiveTab("security"); setError(null); setSuccess(false); }}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-              activeTab === "security" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            className={`flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-bold transition-all relative overflow-hidden group ${
+              activeTab === "security" ? "text-blue-600" : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            <Shield className="h-4 w-4" />
-            Security & Access
+            {activeTab === "security" && (
+              <motion.div layoutId="activeTab" className="absolute inset-0 bg-white shadow-sm border border-gray-100/50" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
+            )}
+            <Shield className={`h-4 w-4 relative z-10 transition-colors ${activeTab === "security" ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
+            <span className="relative z-10">Security & Access</span>
           </button>
         </nav>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 max-w-2xl">
-        <div className="rounded-3xl border border-gray-100 bg-white shadow-sm overflow-hidden min-h-[400px]">
-          
+      <div className="flex-1 w-full">
+        <motion.div 
+          layout
+          className="rounded-[2.5rem] border border-white/80 bg-white/70 backdrop-blur-3xl shadow-2xl shadow-blue-500/5 overflow-hidden"
+        >
           {/* Header */}
-          <div className="border-b border-gray-100 px-6 sm:px-8 py-6 bg-gray-50/50">
-            <h2 className="text-xl font-bold text-gray-900">
-              {activeTab === "profile" && "Profile Details"}
-              {activeTab === "notifications" && "Notification Preferences"}
-              {activeTab === "security" && "Security & Password"}
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {activeTab === "profile" && "Manage your personal information and display name."}
-              {activeTab === "notifications" && "Choose what updates you want to receive."}
-              {activeTab === "security" && "Protect your account with a strong password."}
-            </p>
+          <div className="border-b border-white/60 px-8 py-8 bg-white/30">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                {activeTab === "profile" ? <UserCircle className="h-6 w-6" /> : <ShieldCheck className="h-6 w-6" />}
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight font-outfit">
+                  {activeTab === "profile" && "Profile Details"}
+                  {activeTab === "security" && "Security & Password"}
+                </h2>
+                <p className="text-sm text-gray-500 font-medium tracking-tight">
+                  {activeTab === "profile" && "Manage your professional presence and contact information."}
+                  {activeTab === "security" && "Enhanced encryption and access control settings."}
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-8 animate-in fade-in duration-300">
-            {/* Status Messages */}
-            {error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                <p className="text-sm font-semibold text-red-800">{error}</p>
-              </div>
-            )}
-            {success && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                <p className="text-sm font-semibold text-emerald-800">Changes saved successfully!</p>
-              </div>
-            )}
+          <div className="p-8 sm:p-10 space-y-10">
+            <AnimatePresence mode="wait">
+              {/* Profile Tab */}
+              {activeTab === "profile" && (
+                <motion.div 
+                  key="profile"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-8"
+                >
+                  {/* Status Messages inside motion div for smooth transition */}
+                  {(error || success) && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                      {error && (
+                        <div className="rounded-2xl border border-red-100 bg-red-50/50 p-4 mb-4">
+                          <p className="text-sm font-bold text-red-600">{error}</p>
+                        </div>
+                      )}
+                      {success && (
+                        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4 mb-4">
+                          <p className="text-sm font-bold text-emerald-800 tracking-tight">Changes synchronized successfully.</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
 
-            {/* Profile Tab */}
-            {activeTab === "profile" && (
-              <div className="space-y-6">
-                <div className="flex items-center gap-6 pb-6 border-b border-gray-100">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-2xl font-bold">
-                    {draftName.charAt(0).toUpperCase()}
+                  <div className="flex items-center gap-8 pb-8 border-b border-gray-100/50">
+                    <div className="relative group">
+                      <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-tr from-blue-100 to-indigo-100 flex items-center justify-center text-indigo-700 text-3xl font-black shadow-inner">
+                        {draftName.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="absolute inset-0 rounded-[2rem] bg-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div>
+                      <button className="px-5 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-gray-200">
+                        Change Avatar
+                      </button>
+                      <p className="mt-3 text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">Min. 512x512px • Max 2MB</p>
+                    </div>
                   </div>
-                  <div>
-                    <button className="rounded-xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors">
-                      Change Avatar
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] ml-1">Identity Name</label>
+                      <input
+                        value={draftName}
+                        onChange={(e) => setDraftName(e.target.value)}
+                        className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm"
+                        placeholder="Futurexa Identity"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] ml-1">Contact Protocol</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm"
+                        placeholder="+0 (000) 000-0000"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] ml-1">Corporate Presence Address</label>
+                    <textarea
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      rows={3}
+                      className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm resize-none"
+                      placeholder="Verified business location"
+                    />
+                  </div>
+
+                  <div className="pt-6">
+                    <button
+                      onClick={handleSaveProfile}
+                      disabled={saving || !draftName.trim()}
+                      className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 px-8 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/20 hover:scale-[1.02] transition-all active:scale-[0.98] disabled:opacity-50"
+                    >
+                      <Save className="h-5 w-5" />
+                      {saving ? "Synchronizing..." : "Save Identity"}
                     </button>
-                    <p className="mt-2 text-xs text-gray-500">JPG, GIF or PNG. 1MB max.</p>
                   </div>
-                </div>
+                </motion.div>
+              )}
 
-                <div className="space-y-1">
-                  <label className="text-sm font-semibold text-gray-700 uppercase tracking-wider text-[11px]">Display Name</label>
-                  <input
-                    value={draftName}
-                    onChange={(e) => setDraftName(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                    placeholder="Enter your name"
-                  />
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    onClick={handleSaveProfile}
-                    disabled={saving || !draftName.trim()}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-gray-800 transition-all disabled:opacity-50"
-                  >
-                    <Save className="h-4 w-4" />
-                    {saving ? "Saving..." : "Save Profile"}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Notifications Tab */}
-            {activeTab === "notifications" && (
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between rounded-xl border border-gray-100 p-4 hover:border-gray-200 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 rounded-lg bg-blue-50 p-2 text-blue-600">
-                        <Mail className="h-5 w-5" />
+              {/* Security Tab */}
+              {activeTab === "security" && (
+                <motion.div 
+                  key="security"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-10"
+                >
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 text-blue-600 border-b border-blue-50 pb-4">
+                      <Key className="h-5 w-5" />
+                      <h3 className="text-sm font-black uppercase tracking-widest">Credential Rotation</h3>
+                    </div>
+                    <div className="space-y-5">
+                      <div className="space-y-2">
+                         <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Verification Code (Current)</label>
+                         <input
+                           type="password"
+                           placeholder="••••••••"
+                           className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white transition-all"
+                         />
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Email Notifications</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Receive updates about your account activity via email.</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">New Secure Cipher</label>
+                          <input
+                            type="password"
+                            placeholder="New passphrase"
+                            className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white transition-all"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Confirm Cipher</label>
+                          <input
+                            type="password"
+                            placeholder="Repeat passphrase"
+                            className="w-full rounded-2xl border border-gray-100 bg-white/50 px-5 py-4 text-sm font-bold text-gray-900 outline-none focus:border-blue-500 focus:bg-white transition-all"
+                          />
+                        </div>
                       </div>
                     </div>
-                    <label className="relative inline-flex cursor-pointer items-center">
-                      <input type="checkbox" className="peer sr-only" checked={emailNotifs} onChange={(e) => setEmailNotifs(e.target.checked)} />
-                      <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-                    </label>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl border border-gray-100 p-4 hover:border-gray-200 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 rounded-lg bg-emerald-50 p-2 text-emerald-600">
-                        <Smartphone className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Push Notifications</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Get real-time alerts on your devices.</p>
-                      </div>
+                  <div className="pt-6">
+                    <button
+                      onClick={handleSimulateSave}
+                      disabled={saving}
+                      className="inline-flex items-center gap-3 rounded-2xl bg-gray-900 px-8 py-4 text-sm font-black text-white shadow-xl shadow-gray-200 hover:scale-[1.02] transition-all active:scale-[0.98] disabled:opacity-50"
+                    >
+                      <Shield className="h-5 w-5 text-blue-400" />
+                      {saving ? "Updating Vault..." : "Update Vault Access"}
+                    </button>
+                  </div>
+
+                  <div className="mt-8 pt-10 border-t border-gray-100">
+                    <div className="rounded-3xl bg-red-50/50 border border-red-100 p-8">
+                       <h3 className="text-sm font-black text-red-600 uppercase tracking-widest mb-2 flex items-center gap-2">
+                         Destruction Protocol
+                       </h3>
+                       <p className="text-xs text-gray-500 font-bold mb-6 tracking-tight">Permanently erase your identity and associated project metadata. This action is irreversible.</p>
+                       <button className="px-6 py-3 rounded-xl border border-red-200 bg-white text-red-600 text-xs font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all group active:scale-[0.98]">
+                         Terminate Account
+                       </button>
                     </div>
-                    <label className="relative inline-flex cursor-pointer items-center">
-                      <input type="checkbox" className="peer sr-only" checked={pushNotifs} onChange={(e) => setPushNotifs(e.target.checked)} />
-                      <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-                    </label>
                   </div>
-
-                  <div className="flex items-center justify-between rounded-xl border border-gray-100 p-4 hover:border-gray-200 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 rounded-lg bg-amber-50 p-2 text-amber-600">
-                        <Bell className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Marketing & News</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Receive news, updates, and special offers.</p>
-                      </div>
-                    </div>
-                    <label className="relative inline-flex cursor-pointer items-center">
-                      <input type="checkbox" className="peer sr-only" checked={marketingEmails} onChange={(e) => setMarketingEmails(e.target.checked)} />
-                      <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    onClick={handleSimulateSave}
-                    disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-gray-800 transition-all disabled:opacity-50"
-                  >
-                    <Save className="h-4 w-4" />
-                    {saving ? "Saving..." : "Save Preferences"}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Security Tab */}
-            {activeTab === "security" && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Key className="h-4 w-4 text-gray-400" />
-                    Change Password
-                  </h3>
-                  <div className="space-y-4">
-                    <input
-                      type="password"
-                      placeholder="Current password"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                    />
-                    <input
-                      type="password"
-                      placeholder="New password"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                    />
-                    <input
-                      type="password"
-                      placeholder="Confirm new password"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    onClick={handleSimulateSave}
-                    disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-gray-800 transition-all disabled:opacity-50"
-                  >
-                    <Save className="h-4 w-4" />
-                    {saving ? "Updating..." : "Update Password"}
-                  </button>
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-gray-100">
-                  <h3 className="text-sm font-bold text-red-600 mb-2">Danger Zone</h3>
-                  <p className="text-xs text-gray-500 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-                  <button className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 hover:border-red-300 transition-all">
-                    Delete Account
-                  </button>
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

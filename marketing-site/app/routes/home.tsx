@@ -9,10 +9,13 @@ export function meta({ }: Route.MetaArgs) {
   const title = "Futurexa.ai | Premium Digital Transformation";
   const description = "Experts in transforming businesses through strategic implementation and premium digital experiences.";
   const ogImage = "/assets/seo/og-preview.png";
+  const canonical = "https://futurexa.ai/";
 
   return [
     { title },
     { name: "description", content: description },
+    { tagName: "link", rel: "canonical", href: canonical },
+    { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
     // Open Graph / Facebook
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://futurexa.ai" },
@@ -77,8 +80,8 @@ function FuturexaHeroAnimation() {
           }
 
           @keyframes statLinePulse {
-            0%, 100% { opacity: 0.4; filter: blur(1px); }
-            50% { opacity: 1; filter: blur(0px); box-shadow: 0 0 15px rgba(37, 99, 235, 0.6); }
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
           }
           
           .logo-pulse-glow {
@@ -96,24 +99,24 @@ function FuturexaHeroAnimation() {
         <motion.div
           animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-[80px]"
+          className="absolute top-[10%] left-[10%] w-[360px] h-[360px] bg-blue-100/30 rounded-full blur-[48px]"
         />
         <motion.div
           animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-sky-200/20 rounded-full blur-[80px]"
+          className="absolute bottom-[20%] right-[15%] w-[320px] h-[320px] bg-sky-200/15 rounded-full blur-[44px]"
         />
         <motion.div
           animate={{ x: [0, -20, 0], y: [0, -20, 0], scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-sky-100/40 rounded-full blur-[80px]"
+          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] bg-sky-100/30 rounded-full blur-[40px]"
         />
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto flex-1 flex flex-col justify-start md:justify-center items-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotateY: 45, filter: "blur(20px)" }}
-          animate={{ opacity: 1, scale: 1, rotateY: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, scale: 0.8, rotateY: 45 }}
+          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
           transition={{ duration: 1.0, ease: [0.34, 1.56, 0.64, 1], delay: 0.1 }}
           className="font-['Outfit'] text-5xl md:text-[5rem] font-bold text-gradient-ocean mb-6 md:mb-8 logo-pulse-glow"
         >
@@ -121,8 +124,8 @@ function FuturexaHeroAnimation() {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.0, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
           className="font-['Outfit'] text-4xl md:text-6xl font-light text-slate-900 mb-4 md:mb-6 tracking-wide px-2"
         >
@@ -130,8 +133,8 @@ function FuturexaHeroAnimation() {
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 20, filter: "blur(12px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.0, delay: 0.45, ease: [0.23, 1, 0.32, 1] }}
           className="text-lg md:text-2xl font-normal max-w-3xl leading-relaxed text-slate-500/90 mb-8 md:mb-12"
         >
@@ -209,10 +212,11 @@ export default function Home() {
   return (
     <div id="home" className="landing relative overflow-x-hidden bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900">
       {/* Permanent Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/40 to-sky-200/20 opacity-80 animate-pulse" />
-        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/40 to-blue-50/10 opacity-70 animate-pulse" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
-        <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-sky-100/30 to-blue-100/30 opacity-60 animate-pulse" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
+      <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
+        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60 animate-pulse" />
+        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/30 to-indigo-50/10 opacity-50 animate-pulse" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
+        <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-blue-100/20 to-sky-100/20 opacity-40 animate-pulse" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
+        <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
       </div>
 
       <Navbar />
@@ -265,44 +269,56 @@ export default function Home() {
         )}
       </section>
 
-      {/* Trusted By - Early Reveal for seamless transition from Hero */}
-      <section className="py-16 md:py-24 relative z-10 overflow-hidden reveal-immediate" id="services">
+      {/* Trusted By - Enhanced with Volumetric Lighting */}
+      <section className="py-20 md:py-32 relative z-10 overflow-hidden reveal-immediate bg-gradient-to-b from-transparent via-blue-50/20 to-transparent" id="trusted">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-mesh-orb top-20 right-[20%] w-[300px] h-[300px] bg-blue-400/10" />
+          <div className="floating-mesh-orb top-20 right-[20%] w-[400px] h-[400px] bg-blue-400/15" />
+          <div className="floating-mesh-orb bottom-10 left-[10%] w-[300px] h-[300px] bg-sky-300/10" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-16"
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            className="mb-16 md:mb-24"
           >
-            <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
-              Trusted by <span className="text-blue-600">Global Leaders</span>
+            <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 font-['Outfit'] tracking-tighter">
+              Trusted by <span className="text-gradient-ocean">Global Leaders</span>
             </h2>
-            <p className="text-lg md:text-xl text-slate-500/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
+            <p className="text-lg md:text-2xl text-slate-500/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
               Powering the next generation of enterprise value through elite digital engineering.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {[
-              "Gap Inc.", "Continental", "Gojek", "Ubisoft", "Sears", "Dropbox",
-              "Spotify", "Airbnb", "Adobe", "Salesforce", "Samsung", "Nintendo"
-            ].map((logo, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
+            {([
+              { name: "Gap Inc.",     color: "from-blue-500/10 to-sky-500/5",      shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
+              { name: "Continental", color: "from-indigo-500/10 to-violet-500/5", shadow: "rgba(99,102,241,0.18)",  text: "text-indigo-600" },
+              { name: "Gojek",        color: "from-sky-500/10 to-cyan-500/5",      shadow: "rgba(14,165,233,0.18)",   text: "text-sky-600" },
+              { name: "Ubisoft",      color: "from-violet-500/10 to-purple-500/5", shadow: "rgba(139,92,246,0.18)",   text: "text-violet-600" },
+              { name: "Sears",        color: "from-teal-500/10 to-emerald-500/5",  shadow: "rgba(20,184,166,0.18)",   text: "text-teal-600" },
+              { name: "Dropbox",      color: "from-blue-500/10 to-indigo-500/5",   shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
+              { name: "Spotify",      color: "from-cyan-500/10 to-teal-500/5",     shadow: "rgba(6,182,212,0.18)",    text: "text-cyan-600" },
+              { name: "Airbnb",       color: "from-indigo-500/10 to-blue-500/5",   shadow: "rgba(99,102,241,0.18)",   text: "text-indigo-600" },
+              { name: "Adobe",        color: "from-purple-500/10 to-fuchsia-500/5",shadow: "rgba(168,85,247,0.18)",   text: "text-purple-600" },
+              { name: "Salesforce",   color: "from-sky-500/10 to-blue-500/5",      shadow: "rgba(14,165,233,0.18)",   text: "text-sky-600" },
+              { name: "Samsung",      color: "from-blue-500/10 to-indigo-500/5",   shadow: "rgba(59,130,246,0.18)",   text: "text-blue-600" },
+              { name: "Nintendo",     color: "from-violet-500/10 to-purple-500/5", shadow: "rgba(139,92,246,0.18)",   text: "text-violet-600" },
+            ] as const).map((logo, i) => (
               <motion.div
-                key={logo}
+                key={logo.name}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -5, scale: 1.05 }}
-                className="glass-morphism-light p-6 rounded-[2rem] flex items-center justify-center group cursor-default"
+                whileHover={{ y: -8, scale: 1.06, rotate: i % 2 === 0 ? 1 : -1 }}
+                className={`bg-gradient-to-br ${logo.color} backdrop-blur-xl border border-white/60 liquid-shimmer p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-all duration-500`}
+                style={{ boxShadow: `0 4px 20px ${logo.shadow}` }}
               >
-                <span className="font-bold text-slate-400 group-hover:text-blue-600 transition-colors duration-300 tracking-wide text-sm md:text-base">
-                  {logo}
+                <span className={`font-['Outfit'] font-bold ${logo.text} group-hover:scale-110 group-hover:drop-shadow-[0_0_12px_currentColor] transition-all duration-300 tracking-wider text-sm md:text-base`}>
+                  {logo.name}
                 </span>
               </motion.div>
             ))}
@@ -345,28 +361,52 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
+            {([
               {
                 title: "Cloud Forge",
                 description: "Transcendent infrastructure that scales with human ambition, secured by zero-trust protocols.",
-                icon: "☁️"
+                icon: "☁️",
+                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
+                border: "hover:border-blue-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(59,130,246,0.2)]",
+                topBorder: "from-blue-400 to-sky-400",
+                text: "group-hover:text-blue-600",
               },
               {
                 title: "Cyber Sentinel",
                 description: "Proactive, multi-layered defense systems designed to neutralize threats before they materialize.",
-                icon: "🛡️"
+                icon: "🛡️",
+                accent: "from-indigo-500/12 via-violet-400/8 to-transparent",
+                border: "hover:border-indigo-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-violet-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(99,102,241,0.22)]",
+                topBorder: "from-indigo-400 to-violet-400",
+                text: "group-hover:text-indigo-600",
               },
               {
                 title: "managed.ai",
                 description: "Continuous optimization of your digital ecosystem using autonomous agents and predictive SRE.",
-                icon: "⚙️"
+                icon: "⚙️",
+                accent: "from-cyan-500/12 via-teal-400/8 to-transparent",
+                border: "hover:border-cyan-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-cyan-500 group-hover:to-teal-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(6,182,212,0.2)]",
+                topBorder: "from-cyan-400 to-teal-400",
+                text: "group-hover:text-cyan-600",
               },
               {
                 title: "Cognitive Data",
                 description: "Transforming raw noise into strategic clarity through advanced ML models and neural analytics.",
-                icon: "🧠"
+                icon: "🧠",
+                accent: "from-violet-500/12 via-fuchsia-400/8 to-transparent",
+                border: "hover:border-violet-400/60",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:to-fuchsia-400",
+                glow: "group-hover:shadow-[0_25px_60px_rgba(139,92,246,0.2)]",
+                topBorder: "from-violet-400 to-fuchsia-400",
+                text: "group-hover:text-violet-600",
               },
-            ].map((service, i) => (
+            ] as const).map((service, i) => (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
@@ -374,18 +414,20 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -10 }}
-                className="glass-morphism liquid-shimmer p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group hover:border-blue-300/50 transition-[border-color,transform,box-shadow] duration-500 flex flex-col h-full"
+                className={`relative bg-gradient-to-br ${service.accent} backdrop-blur-xl border border-white/50 liquid-shimmer p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} ${service.glow} transition-all duration-500 flex flex-col h-full overflow-hidden`}
               >
+                {/* Colored top border accent */}
+                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
                 <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500 origin-left grayscale group-hover:grayscale-0">
                   {service.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors">
+                <h3 className={`text-2xl font-bold text-slate-900 mb-4 ${service.text} transition-colors`}>
                   {service.title}
                 </h3>
                 <p className="text-slate-500 leading-relaxed font-light mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className="w-12 h-1 bg-slate-100 group-hover:w-full group-hover:bg-blue-600 transition-[width,background-color] duration-700 rounded-full" />
+                <div className={`w-12 h-1 bg-slate-100 group-hover:w-full ${service.bar} transition-all duration-700 rounded-full`} />
               </motion.div>
             ))}
           </div>
@@ -400,11 +442,12 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9, x: -30 }}
               whileInView={{ opacity: 1, scale: 1, x: 0 }}
               viewport={{ once: true }}
-              className="lg:col-span-3 glass-morphism p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group"
+              className="lg:col-span-3 glass-morphism liquid-shimmer p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group border border-white/40"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[60px] -mr-32 -mt-32 group-hover:bg-blue-500/10 transition-colors" />
+              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 blur-[80px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-colors animate-pulse" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-400/10 blur-[60px] -ml-32 -mb-32 group-hover:bg-sky-400/20 transition-colors" />
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] leading-tight">
-                Specialized in <span className="text-blue-600">Complexity</span>
+                Specialized in <span className="text-gradient-ocean">Complexity</span>
               </h2>
               <div className="flex flex-wrap gap-3 mb-10">
                 {["Fintech", "Healthcare", "Retail", "Logistics", "SaaS"].map(badge => (
@@ -602,6 +645,9 @@ export default function Home() {
             className="max-w-4xl mx-auto glass-morphism p-8 md:p-12 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden"
           >
             <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-sky-600 to-sky-400" />
+            <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full animate-pulse" />
+            <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-sky-400/10 blur-[80px] rounded-full" />
+            
             <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] tracking-tighter">
               Initiate <br className="hidden md:block" /> <span className="text-gradient-ocean">Transformation</span>
             </h2>

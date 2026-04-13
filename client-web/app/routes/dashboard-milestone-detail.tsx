@@ -178,10 +178,10 @@ export default function ClientMilestoneDetail({ supabaseUrl, supabaseAnonKey, ap
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <MiniStatCard icon={BarChart3} label="Progress" value={`${stats?.progress}%`} color={stats?.progress >= 75 ? "emerald" : stats?.progress >= 50 ? "amber" : "red"} />
-          <MiniStatCard icon={CheckSquare} label="Tasks" value={`${stats?.completedTasks}/${stats?.totalTasks}`} color="blue" />
-          <MiniStatCard icon={Calendar} label="Days Left" value={`${stats?.daysRemaining}d`} color={stats?.daysRemaining <= 3 ? "amber" : "emerald"} />
-          <MiniStatCard icon={File} label="Files" value={stats?.deliverablesCount || 0} color="gray" />
+          <MiniStatCard icon={BarChart3} label="Progress" value={`${stats?.progress ?? 0}%`} color={(stats?.progress ?? 0) >= 75 ? "emerald" : (stats?.progress ?? 0) >= 50 ? "amber" : "red"} />
+          <MiniStatCard icon={CheckSquare} label="Tasks" value={`${stats?.completedTasks ?? 0}/${stats?.totalTasks ?? 0}`} color="blue" />
+          <MiniStatCard icon={Calendar} label="Days Left" value={`${stats?.daysRemaining ?? 0}d`} color={(stats?.daysRemaining ?? 0) <= 3 ? "amber" : "emerald"} />
+          <MiniStatCard icon={File} label="Files" value={stats?.deliverablesCount ?? 0} color="gray" />
         </div>
 
         <div className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm">
@@ -194,7 +194,7 @@ export default function ClientMilestoneDetail({ supabaseUrl, supabaseAnonKey, ap
           </div>
           <div className="p-8">
             {activeTab === "overview" && <OverviewTab milestone={milestone} stats={stats} />}
-            {activeTab === "updates" && <UpdatesTab updates={milestone.updates || []} expandedComments={expandedComments} newComment={newComment} onToggleComments={(id) => setExpandedComments((prev) => ({ ...prev, [id]: !prev[id] }))} onCommentChange={(id, value) => setNewComment((prev) => ({ ...prev, [id]: value }))} />}
+            {activeTab === "updates" && <UpdatesTab updates={milestone.updates || []} expandedComments={expandedComments} newComment={newComment} onToggleComments={(id: string) => setExpandedComments((prev) => ({ ...prev, [id]: !prev[id] }))} onCommentChange={(id: string, value: string) => setNewComment((prev) => ({ ...prev, [id]: value }))} />}
             {activeTab === "deliverables" && <DeliverablesTab deliverables={milestone.deliverables || []} />}
           </div>
         </div>

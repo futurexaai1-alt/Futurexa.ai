@@ -30,6 +30,12 @@ import SelectedItemsPanel from "../features/dashboard/components/SelectedItemsPa
 import DemoRequestModal from "../features/dashboard/components/DemoRequestModal";
 import DemoRequestPage from "../features/dashboard/components/DemoRequestPage";
 import LockedState from "../features/dashboard/components/LockedState";
+import {
+  AUTH_STORAGE_KEY,
+  getStoredAuth,
+  isProfileCacheFresh,
+  setStoredAuth,
+} from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
 
 type LoaderData = {
@@ -48,22 +54,6 @@ type MilestoneItem = ListItem & {
   progress: number;
   dueDate: string;
 };
-
-const AUTH_KEY = "futurexa_auth";
-
-function getStoredAuth(): { userName: string; userStatus: string; organizationId: string | null; accessToken: string | null } | null {
-  try {
-    const stored = sessionStorage.getItem(AUTH_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return null;
-}
-
-function setStoredAuth(data: { userName: string; userStatus: string; organizationId: string | null; accessToken: string | null }) {
-  try {
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify(data));
-  } catch {}
-}
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
@@ -186,7 +176,10 @@ export default function Dashboard(_: Route.ComponentProps) {
       const { data } = await supabase.auth.getSession();
 
       if (!data.session) {
-        if (!cancelled) navigate("/signin", { replace: true });
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin", { replace: true });
+        }
         return;
       }
 
@@ -195,15 +188,41 @@ export default function Dashboard(_: Route.ComponentProps) {
       const fallbackName = user.email?.split("@")[0] ?? "Client";
       const fullName = user.user_metadata?.full_name as string | undefined;
       const orgId = user.user_metadata?.organization_id as string | undefined;
+      const displayName = fullName || fallbackName;
+      const cachedForToken =
+        stored?.accessToken && stored.accessToken === token ? stored : null;
 
       if (!cancelled) {
-        setUserName(fullName || fallbackName);
+        setUserName(displayName);
         setUserEmail(user.email || "");
         setAccessToken(token);
         if (orgId) setOrganizationId(orgId);
       }
 
+      if (
+        cachedForToken &&
+        isProfileCacheFresh(cachedForToken) &&
+        Boolean(cachedForToken.organizationId)
+      ) {
+        if (!cancelled) {
+          setUserStatus(cachedForToken.userStatus || "NEW_USER");
+          if (cachedForToken.organizationId) setOrganizationId(cachedForToken.organizationId);
+          setStoredAuth({
+            ...cachedForToken,
+            userName: displayName,
+            userEmail: user.email || cachedForToken.userEmail || null,
+            accessToken: token,
+          });
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
+        if (!apiBaseUrl) {
+          if (!cancelled) setIsLoading(false);
+          return;
+        }
         const res = await fetch(`${apiBaseUrl}/api/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -216,7 +235,14 @@ export default function Dashboard(_: Route.ComponentProps) {
             setUserStatus(newStatus);
             if (newOrgId) setOrganizationId(newOrgId);
 
-            const authData = { userName: fullName || fallbackName, userStatus: newStatus, organizationId: newOrgId, accessToken: token };
+            const authData = {
+              userName: displayName,
+              userStatus: newStatus,
+              userEmail: user.email || null,
+              organizationId: newOrgId,
+              accessToken: token,
+              profileSyncedAt: Date.now(),
+            };
             setStoredAuth(authData);
           }
         }
@@ -232,6 +258,7 @@ export default function Dashboard(_: Route.ComponentProps) {
       setUserStatus(stored.userStatus);
       setOrganizationId(stored.organizationId);
       setAccessToken(stored.accessToken);
+      setIsLoading(false);
     }
 
     checkAuth().catch(() => {
@@ -242,7 +269,7 @@ export default function Dashboard(_: Route.ComponentProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [apiBaseUrl, navigate, supabase]);
 
   useEffect(() => {
     if (!accessToken || !organizationId) return;
@@ -331,7 +358,7 @@ export default function Dashboard(_: Route.ComponentProps) {
   }, [organizationId, accessToken, apiBaseUrl]);
 
   const handleLogout = async () => {
-    sessionStorage.removeItem(AUTH_KEY);
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
     await supabase.auth.signOut();
     navigate("/signin", { replace: true });
   };

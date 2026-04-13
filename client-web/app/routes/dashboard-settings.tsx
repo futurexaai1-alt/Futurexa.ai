@@ -74,9 +74,9 @@ export default function DashboardSettings(_: Route.ComponentProps) {
   return (
     <DashboardLayout supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey} apiBaseUrl={apiBaseUrl} activeKey="settings">
       <div className="mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="mt-1 text-gray-500">Manage your account settings</p>
+        <div className="mb-10 text-center lg:text-left">
+          <h1 className="text-4xl font-black text-gray-900 tracking-tighter font-outfit">Settings</h1>
+          <p className="mt-2 text-gray-500 font-medium tracking-tight">Configure your identity and workspace security vault.</p>
         </div>
 
         <SettingsPanel

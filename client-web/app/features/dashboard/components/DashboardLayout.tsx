@@ -28,11 +28,14 @@ type DashboardLayoutProps = {
 type AuthData = {
   userName: string;
   userStatus: string;
+  userEmail?: string | null;
   organizationId: string | null;
   accessToken: string | null;
+  profileSyncedAt?: number;
 };
 
 export const AUTH_STORAGE_KEY = "futurexa_auth";
+export const PROFILE_CACHE_TTL_MS = 2 * 60 * 1000;
 
 export const navItems = [
   { key: "overview", label: "Overview", icon: FolderKanban, path: "/dashboard" },
@@ -60,6 +63,11 @@ export function setStoredAuth(data: AuthData) {
   } catch {}
 }
 
+export function isProfileCacheFresh(cachedAuth: AuthData | null): boolean {
+  if (!cachedAuth?.profileSyncedAt) return false;
+  return Date.now() - cachedAuth.profileSyncedAt < PROFILE_CACHE_TTL_MS;
+}
+
 export default function DashboardLayout({
   supabaseUrl,
   supabaseAnonKey,
@@ -83,7 +91,6 @@ export default function DashboardLayout({
     let cancelled = false;
 
     async function checkAuth() {
-      // If we have stored auth, let the UI render immediately with cached data
       const existing = getStoredAuth();
       if (existing?.accessToken) {
         if (!cancelled) setIsLoading(false);
@@ -104,15 +111,41 @@ export default function DashboardLayout({
       const fallbackName = user.email?.split("@")[0] ?? "Client";
       const fullName = user.user_metadata?.full_name as string | undefined;
       const orgId = user.user_metadata?.organization_id as string | undefined;
+      const displayName = fullName || fallbackName;
+      const cachedForToken =
+        existing?.accessToken && existing.accessToken === token ? existing : null;
 
       if (!cancelled) {
         setAccessToken(token);
-        if (fullName || fallbackName) setUserName(fullName || fallbackName);
+        setUserName(displayName);
         if (orgId) setOrganizationId(orgId);
       }
 
+      if (
+        cachedForToken &&
+        isProfileCacheFresh(cachedForToken) &&
+        Boolean(cachedForToken.organizationId)
+      ) {
+        if (!cancelled) {
+          setUserStatus(cachedForToken.userStatus || "NEW_USER");
+          if (cachedForToken.organizationId) setOrganizationId(cachedForToken.organizationId);
+          setStoredAuth({
+            ...cachedForToken,
+            userName: displayName,
+            userEmail: user.email || cachedForToken.userEmail || null,
+            accessToken: token,
+          });
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
-        // Always refresh /api/me to get latest status and organizationId
+        if (!apiBaseUrl) {
+          if (!cancelled) setIsLoading(false);
+          return;
+        }
+
         const res = await fetch(`${apiBaseUrl}/api/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -121,13 +154,14 @@ export default function DashboardLayout({
           const json = await res.json() as any;
           const newStatus = json?.status ?? "NEW_USER";
           const newOrgId = json?.organizationId || orgId || null;
-          const displayName = fullName || fallbackName;
 
           const updatedAuth: AuthData = {
             userName: displayName,
             userStatus: newStatus,
+            userEmail: user.email || null,
             organizationId: newOrgId,
             accessToken: token,
+            profileSyncedAt: Date.now(),
           };
 
           if (!cancelled) {
@@ -169,7 +203,15 @@ export default function DashboardLayout({
 
   return (
     <>
-    <div className="flex h-[100dvh] flex-col md:flex-row bg-gray-50 overflow-hidden">
+    <div className="flex h-[100dvh] flex-col md:flex-row bg-gray-50 overflow-hidden relative">
+      {/* Background Mesh Orbs */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-blue-100/50 blur-[100px] animate-orb" style={{ animationDelay: "0s" }} />
+        <div className="absolute bottom-[-10%] left-[-5%] h-[400px] w-[400px] rounded-full bg-indigo-100/40 blur-[100px] animate-orb" style={{ animationDelay: "-5s" }} />
+        <div className="absolute top-[30%] left-[20%] h-[300px] w-[300px] rounded-full bg-purple-100/30 blur-[100px] animate-orb" style={{ animationDelay: "-10s" }} />
+      </div>
+
+      <div className="flex h-[100dvh] flex-col md:flex-row bg-transparent overflow-hidden relative z-10 w-full">
       
       {/* Mobile Top Header */}
       <header className="flex md:hidden items-center justify-between border-b border-gray-100 bg-white p-4 shrink-0 shadow-sm z-30 relative">
@@ -245,6 +287,7 @@ export default function DashboardLayout({
       <main className="flex-1 overflow-auto p-4 md:p-8">
         {children}
       </main>
+    </div>
     </div>
     </>
   );

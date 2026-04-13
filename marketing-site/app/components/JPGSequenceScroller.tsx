@@ -37,13 +37,14 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
   const [isReady, setIsReady] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const readyRef = useRef(false);
   const lastFrameIndex = useRef<number>(-1);
   const dimensionsRef = useRef({ width: 0, height: 0, dpr: 1 });
   
-  const getFilePath = (index: number) => {
+  const getFilePath = React.useCallback((index: number) => {
     const paddedIndex = String(index).padStart(padding, '0');
     return `${directory}/${fileNamePrefix}${paddedIndex}.${extension}`;
-  };
+  }, [directory, extension, fileNamePrefix, padding]);
 
   const renderFrame = React.useCallback((index: number) => {
     const canvas = canvasRef.current;
@@ -81,47 +82,90 @@ export const JPGSequenceScroller: React.FC<JPGSequenceScrollerProps> = ({
     if (typeof window === 'undefined') return;
 
     let loadedCount = 0;
-    const images: HTMLImageElement[] = [];
-    const bufferThreshold = Math.floor(frameCount * 0.1); 
+    let disposed = false;
+    let idleHandle: number | null = null;
+    const images = new Array<HTMLImageElement>(frameCount);
+    const bufferThreshold = Math.min(frameCount, Math.max(4, Math.ceil(frameCount * 0.08)));
     let lastReportedProgress = 0;
 
-    for (let i = startFrame; i < startFrame + frameCount; i++) {
-      const img = new Image();
-      img.src = getFilePath(i);
-      
-      const handleLoad = () => {
-        loadedCount++;
-        const currentProgress = (loadedCount / frameCount) * 100;
-        
-        // Only update state every 5% to avoid render flooding
-        if (currentProgress - lastReportedProgress >= 5 || loadedCount === frameCount) {
-          setLoadProgress(currentProgress);
-          lastReportedProgress = currentProgress;
-        }
-        
-        if (loadedCount >= bufferThreshold && !isReady) {
-          setIsReady(true);
-        }
-        
-        if (i === startFrame) renderFrame(0);
-      };
-
-      if (img.complete) {
-        handleLoad();
-      } else {
-        img.onload = handleLoad;
+    const handleLoaded = (frame: number) => {
+      if (disposed) return;
+      loadedCount++;
+      const currentProgress = (loadedCount / frameCount) * 100;
+      if (currentProgress - lastReportedProgress >= 5 || loadedCount === frameCount) {
+        setLoadProgress(currentProgress);
+        lastReportedProgress = currentProgress;
       }
-      
-      images.push(img);
+      if (loadedCount >= bufferThreshold && !readyRef.current) {
+        readyRef.current = true;
+        setIsReady(true);
+      }
+      if (frame === startFrame) renderFrame(0);
+    };
+
+    const preloadFrame = (frame: number, priority = false) => {
+      const index = frame - startFrame;
+      const img = new Image();
+      img.decoding = 'async';
+      if (priority) {
+        (img as HTMLImageElement & { fetchPriority?: 'high' }).fetchPriority = 'high';
+      }
+      img.src = getFilePath(frame);
+      if (img.complete) {
+        handleLoaded(frame);
+      } else {
+        img.onload = () => handleLoaded(frame);
+      }
+      images[index] = img;
+    };
+
+    const criticalFrames = Math.min(frameCount, 8);
+    for (let i = 0; i < criticalFrames; i++) {
+      preloadFrame(startFrame + i, true);
     }
+
+    let cursor = criticalFrames;
+    const scheduleRemaining = () => {
+      if (disposed || cursor >= frameCount) return;
+      if ('requestIdleCallback' in window) {
+        idleHandle = window.requestIdleCallback((deadline) => {
+          while (cursor < frameCount && deadline.timeRemaining() > 4) {
+            preloadFrame(startFrame + cursor);
+            cursor++;
+          }
+          scheduleRemaining();
+        });
+        return;
+      }
+      idleHandle = window.setTimeout(() => {
+        for (let i = 0; i < 4 && cursor < frameCount; i++) {
+          preloadFrame(startFrame + cursor);
+          cursor++;
+        }
+        scheduleRemaining();
+      }, 16);
+    };
+    scheduleRemaining();
+
     imagesRef.current = images;
 
     return () => {
+      disposed = true;
+      if (idleHandle !== null) {
+        if ('cancelIdleCallback' in window) {
+          window.cancelIdleCallback(idleHandle);
+        } else {
+          clearTimeout(idleHandle);
+        }
+      }
       imagesRef.current = [];
+      readyRef.current = false;
     };
-  }, []);
+  }, [frameCount, getFilePath, renderFrame, startFrame]);
 
   useEffect(() => {
+    if (!isReady) return;
+
     const updateDimensions = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;

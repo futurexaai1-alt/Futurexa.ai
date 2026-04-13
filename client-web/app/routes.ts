@@ -7,6 +7,7 @@ export default [
   route("auth/callback", "routes/auth-callback.tsx"),
   route("favicon.ico", "routes/favicon.tsx"),
   route("dashboard", "routes/dashboard.tsx"),
+  route("dashboard/overview", "routes/dashboard-overview.tsx"),
   route("dashboard/project", "routes/dashboard-project.tsx"),
   route("dashboard/ticket", "routes/dashboard-ticket.tsx"),
   route("dashboard/files", "routes/dashboard-files.tsx"),

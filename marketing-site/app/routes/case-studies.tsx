@@ -56,20 +56,20 @@ const cases = [
 
 export default function CaseStudies() {
   return (
-    <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
+    <div className="app-shell text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
       <Navbar />
 
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-24 pb-10 lg:pt-32 lg:pb-16 overflow-hidden">
+        <div className="container">
            <motion.div
-             initial={{ opacity: 0, y: 20 }}
+             initial={{ opacity: 0, y: 15 }}
              animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.6 }}
+             transition={{ duration: 0.5 }}
            >
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
-                Our Work
+              <h1 className="font-['Outfit'] text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+                Our <span className="text-gradient-ocean">Work</span>
               </h1>
-              <p className="max-w-2xl text-xl text-gray-500 mb-12">
+              <p className="max-w-2xl text-lg md:text-xl text-gray-500 mb-10">
                 Real results for visionary companies. Explore how we transform challenges into opportunities.
               </p>
            </motion.div>
@@ -77,7 +77,7 @@ export default function CaseStudies() {
       </section>
 
       <section className="pb-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container">
            <div className="grid gap-16">
               {cases.map((study, i) => (
                 <motion.div
@@ -88,36 +88,36 @@ export default function CaseStudies() {
                   transition={{ delay: i * 0.1 }}
                   className="group grid md:grid-cols-2 gap-8 items-center"
                 >
-                   <div className={`aspect-[4/3] rounded-[2rem] ${study.image} overflow-hidden relative`}>
-                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                   <div className={`aspect-[4/3] rounded-[2rem] ${study.image} overflow-hidden relative glass-morphism-light`}>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                       {/* Placeholder for image */}
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-400 font-medium">
-                        Case Study Image
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-600/30 font-bold uppercase tracking-widest text-xs">
+                        Case Study Concept
                       </div>
                    </div>
                    <div className="space-y-6">
-                      <span className={`inline-block py-1 px-3 rounded-full bg-${study.color}-50 text-${study.color}-600 text-sm font-bold uppercase tracking-wider`}>
+                      <span className={`inline-block py-1.5 px-4 rounded-full bg-${study.color}-50/50 text-${study.color}-600 text-xs font-bold uppercase tracking-widest border border-${study.color}-100/50`}>
                         {study.category}
                       </span>
-                      <h2 className="text-4xl font-bold text-gray-900 leading-tight">
+                      <h2 className="font-['Outfit'] text-4xl font-bold text-gray-900 leading-tight">
                         {study.title}
                       </h2>
                       <p className="text-lg text-gray-500">
                         {study.outcome}
                       </p>
-                      <div className="flex flex-wrap gap-3">
-                         {study.metrics.map(metric => (
-                            <span key={metric} className="py-1.5 px-4 rounded-xl bg-gray-50 border border-gray-100 text-sm font-semibold text-gray-700">
-                               {metric}
-                            </span>
-                         ))}
-                      </div>
-                      <Link 
-                        to={`/case-studies/${study.id}`}
-                        className="inline-flex items-center text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors group-hover:translate-x-2 duration-300"
-                      >
-                        Read Case Study <ArrowUpRight className="ml-2 h-5 w-5" />
-                      </Link>
+                       <div className="flex flex-wrap gap-3">
+                          {study.metrics.map(metric => (
+                             <span key={metric} className="py-2 px-5 rounded-xl bg-white/40 border border-gray-100 backdrop-blur-sm text-sm font-bold text-gray-800 shadow-sm">
+                                {metric}
+                             </span>
+                          ))}
+                       </div>
+                       <Link 
+                         to={`/case-studies/${study.id}`}
+                         className="inline-flex items-center text-lg font-bold text-gray-900 hover:text-blue-600 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-3"
+                       >
+                         Read Case Study <ArrowUpRight className="ml-2 h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                       </Link>
                    </div>
                 </motion.div>
               ))}

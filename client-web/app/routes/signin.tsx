@@ -59,11 +59,13 @@ export default function SignIn(_: Route.ComponentProps) {
   });
 
   useEffect(() => {
-    if (!supabase) return;
+    const client = supabase;
+    if (!client) return;
     let cancelled = false;
 
     async function checkSession() {
-      const { data } = await supabase.auth.getSession();
+      if (!client) return;
+      const { data } = await client.auth.getSession();
       if (!cancelled && data.session) {
         navigate("/dashboard", { replace: true });
       }
@@ -154,7 +156,7 @@ export default function SignIn(_: Route.ComponentProps) {
             >
               Master your{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                domain
+                projects
               </span>{" "}
               with ease.
             </motion.h2>
@@ -165,7 +167,7 @@ export default function SignIn(_: Route.ComponentProps) {
               className="text-lg text-gray-600 leading-relaxed font-medium"
             >
               Sign in to manage your high-priority projects, track milestones,
-              and handle billing through our unified client dashboard.
+              raise tickets, and access your assets through our unified client dashboard.
             </motion.p>
           </div>
 
@@ -214,7 +216,7 @@ export default function SignIn(_: Route.ComponentProps) {
             >
               <button
                 onClick={() => handleOAuthSignIn("google")}
-                disabled={!supabaseConfigured}
+                disabled={isLoading || !supabaseConfigured}
                 className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-white border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group shadow-sm"
               >
                 <svg
@@ -242,7 +244,7 @@ export default function SignIn(_: Route.ComponentProps) {
               </button>
               <button
                 onClick={() => handleOAuthSignIn("github")}
-                disabled={!supabaseConfigured}
+                disabled={isLoading || !supabaseConfigured}
                 className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-white border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group shadow-sm"
               >
                 <Github className="h-5 w-5 text-gray-900 group-hover:scale-110 transition-transform" />
@@ -284,6 +286,7 @@ export default function SignIn(_: Route.ComponentProps) {
                   <input
                     required
                     type="email"
+                    autoComplete="email"
                     placeholder="name@company.com"
                     className="w-full bg-white border border-gray-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/5 transition-all placeholder:text-gray-300 shadow-sm"
                     value={formData.email}
@@ -310,6 +313,7 @@ export default function SignIn(_: Route.ComponentProps) {
                   <input
                     required
                     type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
                     placeholder="Enter your password"
                     className="w-full bg-white border border-gray-100 rounded-2xl py-4 pl-12 pr-12 text-sm font-medium focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/5 transition-all placeholder:text-gray-300 shadow-sm"
                     value={formData.password}

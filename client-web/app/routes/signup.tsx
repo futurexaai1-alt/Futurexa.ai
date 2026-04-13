@@ -64,11 +64,13 @@ export default function SignUp(_: Route.ComponentProps) {
   });
 
   useEffect(() => {
-    if (!supabase) return;
+    const client = supabase;
+    if (!client) return;
     let cancelled = false;
 
     async function checkSession() {
-      const { data } = await supabase.auth.getSession();
+      if (!client) return;
+      const { data } = await client.auth.getSession();
       if (!cancelled && data.session) {
         navigate("/dashboard", { replace: true });
       }
@@ -203,9 +205,9 @@ export default function SignUp(_: Route.ComponentProps) {
               transition={{ delay: 0.2 }}
               className="text-5xl font-bold leading-tight mb-6 text-gray-900"
             >
-              The future of{" "}
+              The next generation of{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                workspace
+                project
               </span>{" "}
               management.
             </motion.h2>
@@ -215,8 +217,8 @@ export default function SignUp(_: Route.ComponentProps) {
               transition={{ delay: 0.3 }}
               className="text-lg text-gray-600 leading-relaxed font-medium"
             >
-              Join thousands of teams shipping faster with Futurexa. Integrated
-              projects, tasks, and billing in one unified interface.
+              Join 500+ professionals shipping faster with Futurexa. Integrated
+              projects, tasks, tickets, and assets in one unified interface.
             </motion.p>
           </div>
 

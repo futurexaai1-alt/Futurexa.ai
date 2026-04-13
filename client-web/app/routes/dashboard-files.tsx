@@ -22,6 +22,8 @@ type FileItem = {
   r2ObjectKey: string;
   uploadedBy?: { name?: string | null; email: string };
   uploadedByRole?: "ADMIN" | "CLIENT";
+  projectId?: string | null;
+  project?: { id?: string | null };
   isImage?: boolean;
   previewUrl?: string | null;
 };
@@ -508,6 +510,10 @@ export default function DashboardFiles(_: Route.ComponentProps) {
                       setUploadError("Please select at least one file");
                       return;
                     }
+                    if (!organizationId || !accessToken) {
+                      setUploadError("Authentication expired. Please refresh and try again.");
+                      return;
+                    }
                     setUploadError(null);
                     setIsUploading(true);
 
@@ -523,7 +529,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
                         method: "POST",
                         headers: {
                           Authorization: `Bearer ${accessToken}`,
-                          "x-organization-id": organizationId,
+                          "x-organization-id": organizationId as string,
                         },
                         body: formData,
                       });
