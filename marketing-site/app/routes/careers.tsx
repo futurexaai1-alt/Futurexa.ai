@@ -47,10 +47,6 @@ export default function Careers() {
       <Navbar />
 
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-b from-blue-50/40 to-indigo-50/40 rounded-full blur-[120px] opacity-60" />
-        </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
@@ -119,7 +115,7 @@ export default function Careers() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group bg-white"
+                    className="p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-[border-color,box-shadow] duration-200 group bg-white"
                   >
                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-4">

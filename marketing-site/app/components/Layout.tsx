@@ -68,16 +68,16 @@ export function Navbar() {
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
       style={{ willChange: 'transform, opacity' }}
       className={clsx(
-        "fixed top-0 w-full z-50 bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)]",
+        "fixed top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm",
         (isHome && !scrolled) && "pointer-events-none"
       )}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/25 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white font-bold text-xl shadow-sm group-hover:scale-105 transition-transform duration-300 ease-out">
             F
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-all duration-300">
+          <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors duration-200">
             Futurexa.ai
           </span>
         </Link>
@@ -90,7 +90,7 @@ export function Navbar() {
               to={link.path}
               className={({ isActive }) =>
                 clsx(
-                  "text-[13px] lg:text-sm font-medium transition-all duration-300 hover:text-blue-600 relative group",
+                  "text-[13px] lg:text-sm font-medium transition-colors duration-200 hover:text-blue-600 relative group",
                   isActive ? "text-blue-600" : "text-slate-600/90"
                 )
               }
@@ -114,13 +114,13 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <a
             href={clientPortalBaseUrl ? clientSignInUrl : "#"}
-            className="h-9 px-4 rounded-full border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center transition-all hover:border-blue-400 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 tracking-widest uppercase"
+            className="h-9 px-4 rounded-full border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center transition-colors duration-200 hover:border-blue-400 hover:text-blue-600 tracking-widest uppercase"
           >
             Sign In
           </a>
           <Link
             to="/contact"
-            className="group relative h-9 px-6 rounded-full bg-slate-900 text-white text-xs font-semibold flex items-center justify-center overflow-hidden transition-all hover:bg-black hover:shadow-xl hover:shadow-slate-900/20 tracking-widest uppercase"
+            className="group relative h-9 px-6 rounded-full bg-slate-900 text-white text-xs font-semibold flex items-center justify-center overflow-hidden transition-colors duration-200 hover:bg-black tracking-widest uppercase"
           >
             <span className="relative z-10 flex items-center gap-2">
               Contact <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
@@ -144,7 +144,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-slate-100 bg-white/80 backdrop-blur-2xl overflow-hidden"
+            className="md:hidden border-t border-slate-100 bg-white overflow-hidden"
           >
             <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {navLinks.map((link) => (
@@ -221,7 +221,7 @@ export function Footer() {
                    href={social.href} 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer border border-slate-100"
+                  className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-colors duration-200 cursor-pointer border border-slate-100"
                  >
                     <social.Icon className="h-5 w-5" />
                  </a>
@@ -275,7 +275,7 @@ export function Footer() {
             </p>
             <Link 
               to="/contact" 
-              className="group inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 tracking-widest uppercase"
+              className="group inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-colors duration-200 shadow-sm tracking-widest uppercase"
             >
               Start a Project
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

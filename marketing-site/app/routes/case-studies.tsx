@@ -107,14 +107,14 @@ export default function CaseStudies() {
                       </p>
                        <div className="flex flex-wrap gap-3">
                           {study.metrics.map(metric => (
-                             <span key={metric} className="py-2 px-5 rounded-xl bg-white/40 border border-gray-100 backdrop-blur-sm text-sm font-bold text-gray-800 shadow-sm">
+                             <span key={metric} className="py-2 px-5 rounded-xl bg-white/60 border border-gray-100 text-sm font-bold text-gray-800 shadow-sm">
                                 {metric}
                              </span>
                           ))}
                        </div>
                        <Link 
                          to={`/case-studies/${study.id}`}
-                         className="inline-flex items-center text-lg font-bold text-gray-900 hover:text-blue-600 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-3"
+                        className="inline-flex items-center text-lg font-bold text-gray-900 hover:text-blue-600 transition-[color,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-2"
                        >
                          Read Case Study <ArrowUpRight className="ml-2 h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                        </Link>

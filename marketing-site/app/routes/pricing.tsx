@@ -70,10 +70,6 @@ export default function Pricing() {
       <Navbar />
 
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-blue-50/30 to-purple-50/30 rounded-full blur-[100px] opacity-60" />
-        </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
@@ -134,7 +130,7 @@ export default function Pricing() {
                    
                    <Link 
                      to="/contact"
-                     className={`w-full py-4 rounded-xl font-bold text-center transition-all ${plan.popular ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/30' : 'bg-gray-50 text-gray-900 hover:bg-gray-100'}`}
+                     className={`w-full py-4 rounded-xl font-bold text-center transition-colors duration-200 ${plan.popular ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm' : 'bg-gray-50 text-gray-900 hover:bg-gray-100'}`}
                    >
                      {plan.cta}
                    </Link>

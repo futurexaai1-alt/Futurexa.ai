@@ -124,11 +124,11 @@ export default function Services() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, ease: [0.4, 0, 0.2, 1] }}
-                  className="group relative glass-morphism-light liquid-shimmer p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 overflow-hidden"
+                  className="group relative bg-white border border-slate-200/80 p-8 rounded-[2rem] shadow-sm transition-[border-color,background-color] duration-200 overflow-hidden"
                 >
-                   <div className={`absolute top-0 right-0 w-32 h-32 ${service.orbBg} rounded-bl-[100px] -mr-8 -mt-8 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-150`} />
+                   <div className={`absolute top-0 right-0 w-32 h-32 ${service.orbBg} rounded-bl-[100px] -mr-8 -mt-8`} />
                    
-                   <div className={`relative h-14 w-14 rounded-2xl ${service.iconBg} ${service.iconText} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                   <div className={`relative h-14 w-14 rounded-2xl ${service.iconBg} ${service.iconText} flex items-center justify-center mb-6`}>
                      <Icon className="h-7 w-7" />
                    </div>
                    

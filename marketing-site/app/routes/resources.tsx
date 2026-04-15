@@ -44,10 +44,6 @@ export default function Resources() {
       <Navbar />
 
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-full blur-[100px] opacity-60" />
-        </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
@@ -76,7 +72,7 @@ export default function Resources() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="group p-8 rounded-[2rem] border border-gray-100 bg-white hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 flex items-start gap-6"
+                  className="group p-8 rounded-[2rem] border border-gray-100 bg-white hover:shadow-xl transition-[box-shadow,border-color,background-color] duration-200 flex items-start gap-6"
                 >
                    <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                       <Icon className="h-7 w-7" />

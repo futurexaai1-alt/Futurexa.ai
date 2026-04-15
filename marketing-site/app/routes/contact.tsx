@@ -14,11 +14,6 @@ export default function Contact() {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-50/50 to-purple-50/50 rounded-full blur-[100px] opacity-60" />
-           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-50/50 to-transparent rounded-full blur-[120px]" />
-        </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
@@ -88,29 +83,29 @@ export default function Contact() {
               </div>
 
               <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 relative overflow-hidden">
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/40 rounded-full -mr-16 -mt-16 pointer-events-none" />
                  
                  <h3 className="text-3xl font-bold text-gray-900 mb-8">Send us a message</h3>
                  <form className="space-y-6 relative z-10">
                     <div className="grid md:grid-cols-2 gap-6">
                        <div className="space-y-2">
                           <label className="text-sm font-bold text-gray-700 ml-1">First Name</label>
-                          <input type="text" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" placeholder="John" />
+                         <input type="text" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-[border-color,box-shadow] duration-200" placeholder="John" />
                        </div>
                        <div className="space-y-2">
                           <label className="text-sm font-bold text-gray-700 ml-1">Last Name</label>
-                          <input type="text" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" placeholder="Doe" />
+                         <input type="text" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-[border-color,box-shadow] duration-200" placeholder="Doe" />
                        </div>
                     </div>
                     
                     <div className="space-y-2">
                        <label className="text-sm font-bold text-gray-700 ml-1">Email Address</label>
-                       <input type="email" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" placeholder="john@company.com" />
+                       <input type="email" className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-[border-color,box-shadow] duration-200" placeholder="john@company.com" />
                     </div>
                     
                     <div className="space-y-2">
                        <label className="text-sm font-bold text-gray-700 ml-1">Project Type</label>
-                       <select className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none text-gray-500">
+                       <select className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-[border-color,box-shadow] duration-200 appearance-none text-gray-500">
                           <option>Web Development</option>
                           <option>Mobile App</option>
                           <option>AI Solution</option>
@@ -120,10 +115,10 @@ export default function Contact() {
                     
                     <div className="space-y-2">
                        <label className="text-sm font-bold text-gray-700 ml-1">Message</label>
-                       <textarea rows={4} className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" placeholder="Tell us about your project..."></textarea>
+                       <textarea rows={4} className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-[border-color,box-shadow] duration-200 resize-none" placeholder="Tell us about your project..."></textarea>
                     </div>
                     
-                    <button type="submit" className="w-full h-16 rounded-2xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 group">
+                    <button type="submit" className="w-full h-16 rounded-2xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm flex items-center justify-center gap-2 group">
                       Send Message <Send className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                  </form>

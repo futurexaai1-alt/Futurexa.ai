@@ -139,12 +139,12 @@ authRoutes.get("/api/me", async (c) => {
   let effectiveStatus = userData?.status ?? userProfile.status;
   let organizationId: string | null = null;
 
-  if (pendingLeadRequest && pendingLeadRequest.length > 0) {
-    effectiveStatus = "LEAD";
-    organizationId = pendingLeadRequest[0]?.organizationId ?? null;
-  } else if (approvedLeadRequest && approvedLeadRequest.length > 0) {
+  if (approvedLeadRequest && approvedLeadRequest.length > 0) {
     effectiveStatus = "ACTIVE_CLIENT";
     organizationId = approvedLeadRequest[0]?.organizationId ?? null;
+  } else if (pendingLeadRequest && pendingLeadRequest.length > 0) {
+    effectiveStatus = "LEAD";
+    organizationId = pendingLeadRequest[0]?.organizationId ?? null;
   }
 
   if (!userData) {

@@ -80,7 +80,7 @@ export default function Industries() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, ease: [0.4, 0, 0.2, 1] }}
-                  className="group p-8 rounded-[2rem] glass-morphism-light liquid-shimmer hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500"
+                  className="group p-8 rounded-[2rem] bg-white border border-slate-200/80 shadow-sm transition-[border-color] duration-200"
                 >
                    <h3 className="font-['Outfit'] text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">{industry.name}</h3>
                    <p className="text-gray-500 leading-relaxed mb-6">{industry.focus}</p>
@@ -108,8 +108,8 @@ export default function Industries() {
                {outcomes.map((outcome, i) => {
                  const Icon = outcome.icon;
                  return (
-                  <div key={i} className="p-8 rounded-3xl glass-morphism-dark group hover:border-blue-500/30 transition-all duration-500">
-                     <div className="h-12 w-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
+                  <div key={i} className="p-8 rounded-3xl bg-slate-900/95 border border-slate-700/50 group transition-colors duration-200">
+                     <div className="h-12 w-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center mb-6">
                         <Icon className="h-6 w-6" />
                      </div>
                      <h3 className="text-xl font-bold mb-3">{outcome.title}</h3>

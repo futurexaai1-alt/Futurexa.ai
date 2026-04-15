@@ -32,9 +32,8 @@ export default function ServiceDetail({ params }: Route.ComponentProps) {
     <div className="bg-[var(--page-background)] text-slate-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900 min-h-screen">
       {/* Permanent Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
-        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60 animate-pulse" />
-        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/30 to-indigo-50/10 opacity-50 animate-pulse" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
-        <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+        <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60" />
+        <div className="floating-mesh-orb top-[40%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-tr from-sky-100/30 to-indigo-50/10 opacity-50" style={{ animationDelay: "-5s", animationDuration: "15s" }} />
       </div>
 
       <section className="relative pt-24 pb-8 lg:pt-32 lg:pb-8 overflow-hidden">
@@ -115,13 +114,12 @@ export default function ServiceDetail({ params }: Route.ComponentProps) {
                 transition={{ duration: 0.8 }}
                 className="relative min-h-[350px] lg:min-h-full group"
               >
-                 <div className="absolute inset-0 bg-blue-600/5 rounded-[2.5rem] transform rotate-3 blur-2xl" />
+                 <div className="absolute inset-0 bg-blue-600/5 rounded-[2.5rem] transform rotate-2" />
                  <div className="relative h-full w-full glass-morphism border border-white/60 rounded-[2.5rem] overflow-hidden p-2">
-                   <div className="absolute inset-0 liquid-shimmer opacity-20 z-10 pointer-events-none" />
                    <img 
                      src={imageSrc} 
                      alt={title} 
-                     className="w-full h-full object-cover rounded-[2rem] shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                     className="w-full h-full object-cover rounded-[2rem] shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
                    />
                  </div>
               </motion.div>

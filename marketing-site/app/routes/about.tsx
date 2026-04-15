@@ -24,10 +24,6 @@ export default function About() {
       <Navbar />
 
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-50/50 to-purple-50/50 rounded-full blur-[100px] opacity-60" />
-        </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
@@ -92,7 +88,7 @@ export default function About() {
                  { title: "Solution Architecture", desc: "Dedicated architects craft a secure, scalable roadmap tailored to your target state." },
                  { title: "Execution & Optimization", desc: "We deliver, monitor, and continuously improve with transparent reporting and insights." },
                ].map((value, i) => (
-                 <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-lg transition-all duration-300">
+                 <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-lg transition-[background-color,box-shadow,border-color] duration-200">
                     <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
                     <p className="text-gray-500 leading-relaxed">{value.desc}</p>
                  </div>

@@ -202,7 +202,8 @@ export default function Dashboard(_: Route.ComponentProps) {
       if (
         cachedForToken &&
         isProfileCacheFresh(cachedForToken) &&
-        Boolean(cachedForToken.organizationId)
+        Boolean(cachedForToken.organizationId) &&
+        cachedForToken.userStatus !== "LEAD"
       ) {
         if (!cancelled) {
           setUserStatus(cachedForToken.userStatus || "NEW_USER");

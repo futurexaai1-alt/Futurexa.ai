@@ -76,11 +76,11 @@ export default function Blog() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="group bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full"
+                  className="group bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-xl transition-[box-shadow,border-color] duration-200 flex flex-col h-full"
                 >
                    <div className={`h-48 bg-${post.color}-50 relative overflow-hidden`}>
                       <div className={`absolute inset-0 bg-gradient-to-br from-${post.color}-100/50 to-transparent`} />
-                      <div className="absolute top-4 left-4 py-1 px-3 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider text-gray-800 shadow-sm">
+                      <div className="absolute top-4 left-4 py-1 px-3 bg-white/90 rounded-full text-xs font-bold uppercase tracking-wider text-gray-800 shadow-sm">
                         {post.category}
                       </div>
                    </div>

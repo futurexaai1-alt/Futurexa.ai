@@ -23,9 +23,6 @@ export default function PrivacyPolicy() {
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
       {/* Compact Header Area */}
       <section className="relative pt-24 pb-8 overflow-hidden bg-white">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute top-0 right-[-10%] w-[600px] h-[600px] bg-gradient-to-b from-blue-50/40 to-indigo-50/30 rounded-full blur-[120px] opacity-40" />
-        </div>
       </section>
 
       {/* Main Grid Layout - Starts Higher */}
@@ -41,7 +38,7 @@ export default function PrivacyPolicy() {
                    <a
                      key={section.id}
                      href={`#${section.id}`}
-                     className="block py-1.5 text-sm font-medium text-gray-500 hover:text-blue-600 border-l-2 border-transparent hover:border-blue-600 pl-4 transition-all"
+                    className="block py-1.5 text-sm font-medium text-gray-500 hover:text-blue-600 border-l-2 border-transparent hover:border-blue-600 pl-4 transition-colors duration-200"
                    >
                      {section.title}
                    </a>

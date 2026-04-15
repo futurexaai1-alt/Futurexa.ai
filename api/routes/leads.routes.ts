@@ -174,10 +174,16 @@ leadsRoutes.patch("/api/project-requests/:id/status", async (c) => {
     }
 
     if (status === "APPROVED" && existingRequest.requestedById) {
-      await supabase
-        .from("User")
-        .update({ status: "ACTIVE_CLIENT" })
-        .eq("id", existingRequest.requestedById);
+      await Promise.all([
+        supabase
+          .from("User")
+          .update({ status: "ACTIVE_CLIENT" })
+          .eq("id", existingRequest.requestedById),
+        supabase
+          .from("Organization")
+          .update({ status: "ACTIVE" })
+          .eq("id", existingRequest.organizationId),
+      ]);
 
       updateSupabaseUserStatus(c.env, existingRequest.requestedById, "ACTIVE_CLIENT").catch(() => {});
     }
