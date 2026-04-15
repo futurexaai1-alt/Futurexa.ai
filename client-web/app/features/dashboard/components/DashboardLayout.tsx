@@ -142,12 +142,8 @@ export default function DashboardLayout({
       }
 
       try {
-        if (!apiBaseUrl) {
-          if (!cancelled) setIsLoading(false);
-          return;
-        }
-
-        const res = await fetch(`${apiBaseUrl}/api/me`, {
+        const meEndpoint = apiBaseUrl ? `${apiBaseUrl}/api/me` : "/api/me";
+        const res = await fetch(meEndpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
