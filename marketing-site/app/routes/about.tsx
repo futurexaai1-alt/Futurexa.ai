@@ -48,11 +48,12 @@ export default function About() {
                 return (
                 <motion.div
                   key={stat.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-white p-8 rounded-[2rem] shadow-sm text-center hover:shadow-lg transition-shadow duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
+                  className="bg-white p-8 rounded-[2rem] shadow-sm text-center transition-colors duration-200"
                 >
                    <div className={`mx-auto h-16 w-16 rounded-full ${stat.iconBg} ${stat.iconText} flex items-center justify-center mb-4`}>
                      <Icon className="h-8 w-8" />
@@ -88,7 +89,7 @@ export default function About() {
                  { title: "Solution Architecture", desc: "Dedicated architects craft a secure, scalable roadmap tailored to your target state." },
                  { title: "Execution & Optimization", desc: "We deliver, monitor, and continuously improve with transparent reporting and insights." },
                ].map((value, i) => (
-                 <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-lg transition-[background-color,box-shadow,border-color] duration-200">
+                 <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:bg-white transition-[background-color,border-color] duration-200">
                     <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
                     <p className="text-gray-500 leading-relaxed">{value.desc}</p>
                  </div>

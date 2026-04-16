@@ -82,13 +82,14 @@ export default function CaseStudies() {
               {cases.map((study, i) => (
                 <motion.div
                   key={study.id}
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
                   className="group grid md:grid-cols-2 gap-8 items-center"
                 >
-                   <div className={`aspect-[4/3] rounded-[2rem] ${study.image} overflow-hidden relative glass-morphism-light`}>
+                   <div className={`aspect-[4/3] rounded-[2rem] ${study.image} overflow-hidden relative bg-white border border-gray-100 shadow-sm`}>
                       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                       {/* Placeholder for image */}
                       <div className="absolute inset-0 flex items-center justify-center text-gray-600/30 font-bold uppercase tracking-widest text-xs">

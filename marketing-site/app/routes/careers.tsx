@@ -86,8 +86,9 @@ export default function Careers() {
                   key={value}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
                   className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center"
                 >
                    <CheckCircle className="h-8 w-8 text-blue-600 mx-auto mb-4" />
@@ -111,11 +112,12 @@ export default function Careers() {
                {roles.map((role, i) => (
                   <motion.div
                     key={role.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-[border-color,box-shadow] duration-200 group bg-white"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                    style={{ willChange: "transform, opacity" }}
+                    className="p-8 rounded-2xl border border-gray-200 hover:border-blue-300 transition-colors duration-200 group bg-white shadow-sm"
                   >
                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-4">

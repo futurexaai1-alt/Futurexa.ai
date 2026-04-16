@@ -7,7 +7,7 @@
   "vars": {},
   "r2_buckets": [
     {
-      "binding": "R2_ENDPOINT",
+      "binding": "R2_BUCKET",
       "bucket_name": "futurexaai"
     }
   ],
@@ -18,9 +18,10 @@
   "env": {
     "dev": {
       "vars": {},
+
       "r2_buckets": [
         {
-          "binding": "R2_ENDPOINT",
+          "binding": "R2_BUCKET",
           "bucket_name": "futurexaai"
         }
       ]
@@ -29,7 +30,7 @@
       "vars": {},
       "r2_buckets": [
         {
-          "binding": "R2_ENDPOINT",
+          "binding": "R2_BUCKET",
           "bucket_name": "futurexaai"
         }
       ]

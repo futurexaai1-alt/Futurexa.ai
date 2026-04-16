@@ -33,7 +33,7 @@ export function meta({ }: Route.MetaArgs) {
 
 function FuturexaHeroAnimation() {
   return (
-    <div className="relative min-h-[100dvh] flex flex-col items-center justify-start md:justify-center overflow-hidden bg-[var(--page-background)] pt-32 md:pt-12 pb-12">
+    <div className="relative min-h-[100dvh] flex flex-col items-center justify-start md:justify-center overflow-hidden bg-[var(--page-background)] pt-14 md:pt-12 pb-8">
       {/* Background orbs natively styled with Tailwind and Framer Motion */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Pure CSS GPU-Accelerated Ripple for Perfect FPS */}
@@ -156,7 +156,7 @@ function FuturexaHeroAnimation() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.0, delay: 0.8 }}
-        className="relative z-10 w-full max-w-6xl px-4 md:px-6 pb-12 mt-12 md:mt-6"
+        className="relative z-10 w-full max-w-6xl px-4 md:px-6 pb-8 mt-2 md:mt-6"
       >
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-14 lg:gap-16 justify-items-center items-start">
           {[

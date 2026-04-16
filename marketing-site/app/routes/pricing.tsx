@@ -92,11 +92,12 @@ export default function Pricing() {
               {plans.map((plan, i) => (
                 <motion.div
                   key={plan.name}
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`relative bg-white rounded-[2.5rem] p-8 border ${plan.popular ? 'border-blue-500 shadow-2xl shadow-blue-500/20 scale-105 z-10' : 'border-gray-100 shadow-xl shadow-gray-100/50'} flex flex-col h-full`}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
+                  className={`relative bg-white rounded-[2.5rem] p-8 border ${plan.popular ? 'border-blue-500 shadow-lg scale-105 z-10' : 'border-gray-100 shadow-sm'} flex flex-col h-full`}
                 >
                    {plan.popular && (
                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-sm font-bold px-4 py-1 rounded-full shadow-lg">

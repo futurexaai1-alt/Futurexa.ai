@@ -66,25 +66,25 @@ body {
 /* Liquid Glass Utilities */
 .glass-morphism {
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.05);
 }
 
 .glass-morphism-dark {
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-morphism-light {
   background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.025);
 }
 
 .liquid-shimmer {
@@ -123,10 +123,11 @@ body {
 .floating-mesh-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(42px);
   z-index: -1;
-  mix-blend-mode: plus-lighter;
-  animation: orbFloat 20s infinite alternate ease-in-out;
+  mix-blend-mode: normal;
+  will-change: transform, opacity;
+  animation: orbFloat 28s infinite alternate ease-in-out;
 }
 
 @keyframes orbFloat {
@@ -134,6 +135,21 @@ body {
   33% { transform: translate(30px, -50px) scale(1.1); }
   66% { transform: translate(-20px, 40px) scale(0.9); }
   100% { transform: translate(10px, -10px) scale(1); }
+}
+
+@media (max-width: 1024px) {
+  .floating-mesh-orb {
+    animation: none;
+    filter: blur(30px);
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 1280px) {
+  .floating-mesh-orb {
+    animation-duration: 36s;
+    opacity: 0.35;
+  }
 }
 
 .app-shell {
@@ -312,7 +328,7 @@ body {
   opacity: 1;
   background: rgba(15, 23, 42, 0.85);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
@@ -588,15 +604,20 @@ body {
 }
 
 @media (max-width: 768px) {
+  .hero-landing {
+    align-items: flex-start;
+    padding-top: 0;
+  }
+
   .opening-content {
     position: relative;
-    top: auto;
+    top: -28px;
     left: auto;
     transform: none;
     width: 100%;
     padding: 0 20px;
-    margin-top: 80px;
-    margin-bottom: 30px;
+    margin-top: 0;
+    margin-bottom: 8px;
   }
 
   .logo-reveal {
@@ -632,7 +653,7 @@ body {
     gap: 16px;
     width: 94%;
     padding: 0 10px;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
   }
 
   .stat-item {

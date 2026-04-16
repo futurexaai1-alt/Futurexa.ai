@@ -122,8 +122,9 @@ export default function Services() {
                   key={service.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, ease: [0.4, 0, 0.2, 1] }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
                   className="group relative bg-white border border-slate-200/80 p-8 rounded-[2rem] shadow-sm transition-[border-color,background-color] duration-200 overflow-hidden"
                 >
                    <div className={`absolute top-0 right-0 w-32 h-32 ${service.orbBg} rounded-bl-[100px] -mr-8 -mt-8`} />

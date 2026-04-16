@@ -65,7 +65,7 @@ export function Navbar() {
         y: (isHome && !scrolled) ? -100 : 0,
         opacity: (isHome && !scrolled) ? 0 : 1
       }}
-      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
       style={{ willChange: 'transform, opacity' }}
       className={clsx(
         "fixed top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm",
@@ -99,10 +99,7 @@ export function Navbar() {
                 <>
                   {link.name}
                   {isActive && (
-                    <motion.div
-                      layoutId="navbar-indicator"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
-                    />
+                    <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
                   )}
                   <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </>
@@ -141,9 +138,11 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, y: -8, scaleY: 0.98 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            style={{ transformOrigin: "top", willChange: "transform, opacity" }}
             className="md:hidden border-t border-slate-100 bg-white overflow-hidden"
           >
             <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">

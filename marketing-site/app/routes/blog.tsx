@@ -74,9 +74,10 @@ export default function Blog() {
                   key={post.slug}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="group bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-xl transition-[box-shadow,border-color] duration-200 flex flex-col h-full"
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
+                  className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden transition-colors duration-200 flex flex-col h-full"
                 >
                    <div className={`h-48 bg-${post.color}-50 relative overflow-hidden`}>
                       <div className={`absolute inset-0 bg-gradient-to-br from-${post.color}-100/50 to-transparent`} />

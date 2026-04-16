@@ -68,11 +68,12 @@ export default function Resources() {
                 return (
                 <motion.div
                   key={resource.title}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="group p-8 rounded-[2rem] border border-gray-100 bg-white hover:shadow-xl transition-[box-shadow,border-color,background-color] duration-200 flex items-start gap-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
+                  className="group p-8 rounded-[2rem] border border-gray-100 bg-white shadow-sm transition-[border-color,background-color] duration-200 flex items-start gap-6"
                 >
                    <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                       <Icon className="h-7 w-7" />
@@ -104,7 +105,7 @@ export default function Resources() {
                   We build tailored research for your board, leadership team, or program office to navigate complex IT landscapes.
                </p>
             </div>
-            <Link to="/contact" className="h-16 px-10 rounded-full bg-white text-blue-600 font-bold text-lg flex items-center justify-center hover:bg-blue-50 transition-colors shadow-xl shrink-0">
+            <Link to="/contact" className="h-16 px-10 rounded-full bg-white text-blue-600 font-bold text-lg flex items-center justify-center hover:bg-blue-50 transition-colors shadow-sm shrink-0">
                Request a briefing
             </Link>
          </div>

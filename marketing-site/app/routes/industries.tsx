@@ -78,8 +78,9 @@ export default function Industries() {
                   key={industry.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, ease: [0.4, 0, 0.2, 1] }}
+                  viewport={{ once: true, margin: "0px 0px -12% 0px", amount: 0.2 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 5) * 0.035 }}
+                  style={{ willChange: "transform, opacity" }}
                   className="group p-8 rounded-[2rem] bg-white border border-slate-200/80 shadow-sm transition-[border-color] duration-200"
                 >
                    <h3 className="font-['Outfit'] text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">{industry.name}</h3>
