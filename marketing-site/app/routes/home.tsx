@@ -3,7 +3,13 @@ import React from "react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Briefcase, Library } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Route } from "./+types/home";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export function meta({ }: Route.MetaArgs) {
   const title = "Futurexa.ai | Premium Digital Transformation";
@@ -32,151 +38,183 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 function FuturexaHeroAnimation() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const welcomeRef = React.useRef<HTMLDivElement>(null);
+  const welcomeTextRef = React.useRef<HTMLDivElement>(null);
+  const progressRef = React.useRef<HTMLDivElement>(null);
+  const totalFrames = 82;
+  const imagesRef = React.useRef<HTMLImageElement[]>([]);
+  const hasRevealedRef = React.useRef(false);
+  
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    let loadedCount = 0;
+    const images: HTMLImageElement[] = [];
+    imagesRef.current = images;
+
+    // --- Wait for Outfit font, then fade in the welcome text ---
+    document.fonts.ready.then(() => {
+      if (welcomeTextRef.current) {
+        gsap.to(welcomeTextRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+        });
+      }
+    });
+
+    // --- Cinematic reveal timeline (GSAP only, zero React re-renders) ---
+    const revealSequence = () => {
+      if (hasRevealedRef.current) return;
+      hasRevealedRef.current = true;
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+
+      // 1. Fade out welcome overlay (composite-only: opacity + transform)
+      tl.to(welcomeRef.current, {
+        opacity: 0,
+        scale: 1.08,
+        duration: 1.0,
+        ease: "power2.in",
+      });
+
+      // 2. Simultaneously fade in canvas (composite-only: opacity + scale)
+      tl.fromTo(canvasRef.current, 
+        { opacity: 0, scale: 1.06 }, 
+        { opacity: 1, scale: 1, duration: 1.4, ease: "power3.out" },
+        "-=0.5" // overlap for a smooth crossfade
+      );
+    };
+
+    const loadFrame = (index: number) => {
+      const img = new window.Image();
+      const paddedIndex = index.toString().padStart(3, "0");
+      img.src = `/assets/entry_sequence/55KFZ0e0ngo0X5zzuTgVcD2ZDZUnmQljQ0BeheqG_${paddedIndex}.webp`;
+      img.onload = () => {
+        loadedCount++;
+        
+        // Update progress bar directly via DOM — zero React re-renders
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${loadedCount / totalFrames})`;
+        }
+
+        if (index === 0) {
+          renderFrame(0);
+        }
+
+        // Trigger reveal once we have enough frames buffered
+        if (loadedCount >= 8 && !hasRevealedRef.current) {
+          revealSequence();
+        }
+      };
+      images[index] = img;
+    };
+    
+    for (let i = 0; i < totalFrames; i++) {
+       loadFrame(i);
+    }
+    
+    const renderFrame = (index: number) => {
+      if (!canvas || !ctx) return;
+      
+      const targetW = canvas.clientWidth;
+      const targetH = canvas.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = targetW * dpr;
+      canvas.height = targetH * dpr;
+      ctx.scale(dpr, dpr);
+      
+      const img = imagesRef.current[index];
+      if (!img || !img.complete) return;
+      
+      const scale = Math.max(targetW / img.width, targetH / img.height);
+      const x = (targetW / 2) - (img.width / 2) * scale;
+      const y = (targetH / 2) - (img.height / 2) * scale;
+      
+      ctx.clearRect(0, 0, targetW, targetH);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
+    
+    const handleResize = () => {
+       const currentFrame = Math.round(scrollObj.frame);
+       renderFrame(currentFrame);
+    };
+    window.addEventListener("resize", handleResize);
+    
+    const scrollObj = { frame: 0 };
+    
+    const ctxContext = gsap.context(() => {
+       ScrollTrigger.create({
+         trigger: containerRef.current,
+         start: "top top",
+         end: "+=300%",
+         pin: true,
+         scrub: 0.5,
+         onLeave: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: true } })),
+         onEnterBack: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: false } })),
+         onUpdate: (self) => {
+            const frameIndex = Math.min(
+               Math.max(0, Math.round(self.progress * (totalFrames - 1))),
+               totalFrames - 1
+            );
+            scrollObj.frame = frameIndex;
+            renderFrame(frameIndex);
+         }
+       });
+    }, containerRef);
+    
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      ctxContext.revert();
+    };
+  }, []);
+  
   return (
-    <div className="relative min-h-[100dvh] flex flex-col items-center justify-start md:justify-center overflow-hidden bg-[var(--page-background)] pt-14 md:pt-12 pb-8">
-      {/* Background orbs natively styled with Tailwind and Framer Motion */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Pure CSS GPU-Accelerated Ripple for Perfect FPS */}
-        <style>{`
-          .hero-ripple {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 1000px;
-            height: 1000px;
-            border-radius: 50%;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            animation: heroRippleExpand 4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
-            will-change: transform, opacity;
-            transform: translate(-50%, -50%) scale(0);
-          }
-
-          @keyframes heroRippleExpand {
-            0% {
-              transform: translate(-50%, -50%) scale(0);
-              opacity: 0;
-            }
-            5% {
-              opacity: 0.8;
-            }
-            100% {
-              transform: translate(-50%, -50%) scale(1.5);
-              opacity: 0;
-            }
-          }
-
-          .hero-ripple:nth-child(2) { animation-delay: 1.3s; }
-          .hero-ripple:nth-child(3) { animation-delay: 2.6s; }
-
-          .stat-line-glow {
-            position: absolute;
-            top: -1.2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
-            animation: statLinePulse 2.5s ease-in-out infinite;
-          }
-
-          @keyframes statLinePulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-          }
-          
-          .logo-pulse-glow {
-            animation: logoGlowEffect 3s ease-in-out infinite;
-          }
-
-          @keyframes logoGlowEffect {
-            0%, 100% { text-shadow: 0 0 20px rgba(37,99,235,0.2); }
-            50% { text-shadow: 0 0 50px rgba(37,99,235,0.5); }
-          }
-        `}</style>
-
-        <div className="hero-ripple"></div>
-
-        <motion.div
-          animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] left-[10%] w-[360px] h-[360px] bg-blue-100/30 rounded-full blur-[48px]"
+    <div className="hero-sequence-wrapper w-full relative z-20">
+      <div ref={containerRef} className="relative w-full h-[100dvh] overflow-hidden bg-white z-10">
+        {/* Canvas — starts invisible, GSAP reveals it */}
+        <canvas 
+          ref={canvasRef} 
+          className="absolute inset-0 w-full h-full object-cover will-change-transform"
+          style={{ pointerEvents: "none", opacity: 0 }}
         />
-        <motion.div
-          animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[20%] right-[15%] w-[320px] h-[320px] bg-sky-200/15 rounded-full blur-[44px]"
-        />
-        <motion.div
-          animate={{ x: [0, -20, 0], y: [0, -20, 0], scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] bg-sky-100/30 rounded-full blur-[40px]"
-        />
-      </div>
 
-      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto flex-1 flex flex-col justify-start md:justify-center items-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotateY: 45 }}
-          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-          transition={{ duration: 1.0, ease: [0.34, 1.56, 0.64, 1], delay: 0.1 }}
-          className="font-['Outfit'] text-5xl md:text-[5rem] font-bold text-gradient-ocean mb-6 md:mb-8 logo-pulse-glow"
+        {/* Premium Welcome Overlay — GSAP fades it out */}
+        <div 
+          ref={welcomeRef}
+          className="absolute inset-0 z-50 bg-white flex flex-col items-center justify-center pointer-events-none will-change-transform"
         >
-          Futurexa.ai
-        </motion.div>
+             {/* Soft radial glow (static, no animation — zero paint cost) */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full bg-blue-50/50 blur-3xl pointer-events-none" />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.0, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
-          className="font-['Outfit'] text-4xl md:text-6xl font-light text-slate-900 mb-4 md:mb-6 tracking-wide px-2"
-        >
-          Transforming Visions into Reality
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.0, delay: 0.45, ease: [0.23, 1, 0.32, 1] }}
-          className="text-lg md:text-2xl font-normal max-w-3xl leading-relaxed text-slate-500/90 mb-8 md:mb-12"
-        >
-          We specialize in turning complex concepts into practical, profitable solutions
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <Link to="/services" className="inline-block px-8 py-4 md:px-12 md:py-5 text-base md:text-lg font-bold text-white bg-gradient-to-br from-blue-600 to-sky-500 rounded-full tracking-widest shadow-[0_15px_50px_rgba(37,99,235,0.2)] hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_25px_60px_rgba(37,99,235,0.4)] transition-[transform,shadow,background-color] duration-500 ease-out">
-            EXPLORE SERVICES
-          </Link>
-        </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, delay: 0.8 }}
-        className="relative z-10 w-full max-w-6xl px-4 md:px-6 pb-8 mt-2 md:mt-6"
-      >
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-14 lg:gap-16 justify-items-center items-start">
-          {[
-            { value: "10+ Years", label: "Building digital futures" },
-            { value: "500+", label: "Projects Delivered" },
-            { value: "95%", label: "Return Customers" },
-            { value: "Global", label: "Presence & Delivery" }
-          ].map((stat, i) => (
-            <div key={i} className="text-center relative group flex flex-col items-center w-full">
-              <div className="stat-line-glow" />
-              <span className="block font-['Outfit'] text-3xl md:text-[2.5rem] font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-600 to-sky-400 mb-2 group-hover:scale-105 transition-transform duration-500 whitespace-nowrap">
-                {stat.value}
-              </span>
-              <span className="block text-xs md:text-[0.95rem] text-slate-500 font-semibold tracking-widest uppercase max-w-[200px] leading-snug">
-                {stat.label}
-              </span>
-            </div>
-          ))}
+             {/* Typographic Centerpiece — hidden until font loads */}
+             <div 
+               ref={welcomeTextRef}
+               className="relative z-10 flex flex-col items-center px-6 text-center will-change-transform"
+               style={{ opacity: 0, transform: "translateY(12px)" }}
+             >
+                <span className="block font-['Outfit'] text-4xl md:text-6xl font-bold tracking-tight text-slate-800 pb-2">
+                   Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-sky-500">Futurexa.ai</span>
+                </span>
+                
+                {/* GPU-only progress bar (transform: scaleX only) */}
+                <div className="mt-8 md:mt-10 w-48 md:w-64 h-[2px] bg-slate-200/60 relative overflow-hidden rounded-full">
+                   <div 
+                      ref={progressRef}
+                      className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-blue-600 to-sky-400 origin-left will-change-transform rounded-full" 
+                      style={{ transform: "scaleX(0)", transition: "transform 0.2s ease-out" }} 
+                   />
+                </div>
+             </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -213,7 +251,7 @@ export default function Home() {
   const inViewTransition = { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const };
 
   return (
-    <div id="home" className="landing relative overflow-x-hidden bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900">
+    <div id="home" className="landing relative bg-[var(--page-background)] selection:bg-blue-100 selection:text-blue-900" style={{ overflowX: 'clip' }}>
       {/* Permanent Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
         <div className="floating-mesh-orb top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-b from-blue-100/30 to-sky-200/10 opacity-60" />
@@ -221,55 +259,54 @@ export default function Home() {
         <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-blue-100/20 to-sky-100/20 opacity-40" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
       </div>
 
+      {heroMode === "animation" ? (
+        <FuturexaHeroAnimation />
+      ) : (
+        <section className="hero-landing">
+          <div className="hero-video">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={defaultPoster}
+            >
+              <source src={heroVideoUrl} type="video/mp4" />
+            </video>
+          </div>
+          <div className="opening-content">
+            <div className="logo-reveal">Futurexa.ai</div>
+            <h1>Modern IT transformation delivered with precision</h1>
+            <p className="tagline">
+              Futurexa.ai unifies strategy, engineering, and managed services to
+              accelerate secure, measurable outcomes.
+            </p>
+            <Link to="/services" className="opening-button">
+              <span>EXPLORE SERVICES</span>
+            </Link>
+          </div>
+          <div className="opening-stats">
+            <div className="stat-item">
+              <span className="stat-number">10+ Years</span>
+              <span className="stat-label">Building digital futures</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">500+</span>
+              <span className="stat-label">Projects Delivered</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">95%</span>
+              <span className="stat-label">Return Customers</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">Global</span>
+              <span className="stat-label">Presence & Delivery</span>
+            </div>
+          </div>
+        </section>
+      )}
+
       <Navbar />
-      <section className="hero-landing">
-        {heroMode === "animation" ? (
-          <FuturexaHeroAnimation />
-        ) : (
-          <>
-            <div className="hero-video">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={defaultPoster}
-              >
-                <source src={heroVideoUrl} type="video/mp4" />
-              </video>
-            </div>
-            <div className="opening-content">
-              <div className="logo-reveal">Futurexa.ai</div>
-              <h1>Modern IT transformation delivered with precision</h1>
-              <p className="tagline">
-                Futurexa.ai unifies strategy, engineering, and managed services to
-                accelerate secure, measurable outcomes.
-              </p>
-              <Link to="/services" className="opening-button">
-                <span>EXPLORE SERVICES</span>
-              </Link>
-            </div>
-            <div className="opening-stats">
-              <div className="stat-item">
-                <span className="stat-number">10+ Years</span>
-                <span className="stat-label">Building digital futures</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">500+</span>
-                <span className="stat-label">Projects Delivered</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">95%</span>
-                <span className="stat-label">Return Customers</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">Global</span>
-                <span className="stat-label">Presence & Delivery</span>
-              </div>
-            </div>
-          </>
-        )}
-      </section>
 
       {/* Trusted By - Enhanced with Volumetric Lighting */}
       <section className="py-20 md:py-32 relative z-10 overflow-hidden reveal-immediate bg-gradient-to-b from-transparent via-blue-50/20 to-transparent" id="trusted">

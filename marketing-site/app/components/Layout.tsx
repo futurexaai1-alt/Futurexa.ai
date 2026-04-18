@@ -16,7 +16,9 @@ export function Navbar() {
 
   const { scrollY } = useScroll();
 
+  // On non-home pages, show navbar after 80px scroll
   useMotionValueEvent(scrollY, "change", (latest) => {
+    if (isHome) return;
     const next = latest > 80;
     if (scrolledRef.current !== next) {
       scrolledRef.current = next;
@@ -61,15 +63,16 @@ export function Navbar() {
   return (
     <motion.nav
       initial={false}
-      animate={{ 
-        y: (isHome && !scrolled) ? -100 : 0,
-        opacity: (isHome && !scrolled) ? 0 : 1
+      animate={isHome ? {} : { 
+        y: scrolled ? 0 : -100,
+        opacity: scrolled ? 1 : 0
       }}
-      transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
-      style={{ willChange: 'transform, opacity' }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: isHome ? undefined : 'transform, opacity' }}
       className={clsx(
-        "fixed top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm",
-        (isHome && !scrolled) && "pointer-events-none"
+        "top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm",
+        isHome ? "sticky" : "fixed",
+        (!isHome && !scrolled) && "pointer-events-none"
       )}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">
