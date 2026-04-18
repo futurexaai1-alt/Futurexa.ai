@@ -126,37 +126,55 @@ function FuturexaHeroAnimation() {
     for (let i = 0; i < totalFrames; i++) {
        loadFrame(i);
     }
-    
+
+    // --- Cache canvas dimensions (only recalculate on resize, NOT every frame) ---
+    let cachedW = canvas.clientWidth;
+    let cachedH = canvas.clientHeight;
+    // Allow up to 3x for pristine clarity on Retina iPhones & MacBooks (was arbitrarily capped at 2x)
+    const dpr = Math.min(window.devicePixelRatio || 1, 3); 
+    canvas.width = cachedW * dpr;
+    canvas.height = cachedH * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Force high-quality interpolation for scaled sequence frames
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
     const renderFrame = (index: number) => {
       if (!canvas || !ctx) return;
-      
-      const targetW = canvas.clientWidth;
-      const targetH = canvas.clientHeight;
-      const dpr = window.devicePixelRatio || 1;
-      
-      canvas.width = targetW * dpr;
-      canvas.height = targetH * dpr;
-      ctx.scale(dpr, dpr);
       
       const img = imagesRef.current[index];
       if (!img || !img.complete) return;
       
-      const scale = Math.max(targetW / img.width, targetH / img.height);
-      const x = (targetW / 2) - (img.width / 2) * scale;
-      const y = (targetH / 2) - (img.height / 2) * scale;
+      const scale = Math.max(cachedW / img.width, cachedH / img.height);
+      const x = (cachedW / 2) - (img.width / 2) * scale;
+      const y = (cachedH / 2) - (img.height / 2) * scale;
       
-      ctx.clearRect(0, 0, targetW, targetH);
+      ctx.clearRect(0, 0, cachedW, cachedH);
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
-    // --- Mobile viewport fix: Delegate sizing to CSS and ONLY re-render canvas ---
-    // Removed window.innerHeight forced sync and layout thrashing ScrollTrigger.refresh()
+
+    // --- Only recalculate canvas size on actual resize ---
     const handleResize = () => {
+       cachedW = canvas.clientWidth;
+       cachedH = canvas.clientHeight;
+       canvas.width = cachedW * dpr;
+       canvas.height = cachedH * dpr;
+       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+       
+       // Re-apply smoothing after context resets (changing canvas w/h clears context state)
+       ctx.imageSmoothingEnabled = true;
+       ctx.imageSmoothingQuality = "high";
+       
        const currentFrame = Math.round(scrollObj.frame);
        renderFrame(currentFrame);
     };
     window.addEventListener("resize", handleResize);
     
+    // Enable GSAP lag smoothing for consistent frame pacing
+    gsap.ticker.lagSmoothing(500, 33);
+
     const scrollObj = { frame: 0 };
+    let lastRenderedFrame = -1;
     
     const ctxContext = gsap.context(() => {
        ScrollTrigger.create({
@@ -164,7 +182,7 @@ function FuturexaHeroAnimation() {
          start: "top top",
          end: "+=300%",
          pin: true,
-         scrub: 0.5,
+         scrub: 1.2,  // Smoother, more cinematic scroll-follow
          invalidateOnRefresh: true,
          onLeave: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: true } })),
          onEnterBack: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: false } })),
@@ -174,7 +192,11 @@ function FuturexaHeroAnimation() {
                totalFrames - 1
             );
             scrollObj.frame = frameIndex;
-            renderFrame(frameIndex);
+            // Skip redundant redraws — only paint when the frame actually changes
+            if (frameIndex !== lastRenderedFrame) {
+              lastRenderedFrame = frameIndex;
+              renderFrame(frameIndex);
+            }
          }
        });
     }, containerRef);
@@ -186,7 +208,15 @@ function FuturexaHeroAnimation() {
   }, []);
   
   return (
-    <div className="hero-sequence-wrapper w-full relative z-20">
+    <div 
+      className="hero-sequence-wrapper w-full relative z-20"
+      style={{
+        /* On mobile, 100lvh > 100svh by the URL-bar height.
+           This negative margin pulls the Navbar flush against the hero
+           when it unpins back into flow. On desktop svh==lvh so this is 0. */
+        marginBottom: "calc(100svh - 100lvh)",
+      }}
+    >
       <div 
         ref={containerRef} 
         className="relative w-full overflow-hidden bg-white z-10"
@@ -202,7 +232,7 @@ function FuturexaHeroAnimation() {
         <canvas 
           ref={canvasRef} 
           className="absolute inset-0 w-full h-full object-cover will-change-transform"
-          style={{ pointerEvents: "none", opacity: 0 }}
+          style={{ pointerEvents: "none", opacity: 0, imageRendering: "high-quality" }}
         />
 
         {/* Premium Welcome Overlay — GSAP fades it out */}

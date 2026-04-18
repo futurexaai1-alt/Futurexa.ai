@@ -13,7 +13,7 @@ export function SmoothScroll() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const shouldUseVirtualScroll = location.pathname === "/new-home";
+    const shouldUseVirtualScroll = location.pathname === "/new-home" || location.pathname === "/";
     if (!shouldUseVirtualScroll) return;
 
     // Respect user motion settings and avoid virtual scroll on coarse touch devices.
