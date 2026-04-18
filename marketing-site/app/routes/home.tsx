@@ -130,8 +130,9 @@ function FuturexaHeroAnimation() {
     // --- Cache canvas dimensions (only recalculate on resize, NOT every frame) ---
     let cachedW = canvas.clientWidth;
     let cachedH = canvas.clientHeight;
-    // Allow up to 3x for pristine clarity on Retina iPhones & MacBooks (was arbitrarily capped at 2x)
-    const dpr = Math.min(window.devicePixelRatio || 1, 3); 
+    // Allow up to 3x for pristine clarity on Desktop, but cap mobile at 2x to save GPU load
+    const isMobilePerf = window.innerWidth < 768;
+    const dpr = isMobilePerf ? Math.min(window.devicePixelRatio || 1, 2) : Math.min(window.devicePixelRatio || 1, 3); 
     canvas.width = cachedW * dpr;
     canvas.height = cachedH * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -182,7 +183,8 @@ function FuturexaHeroAnimation() {
          start: "top top",
          end: "+=300%",
          pin: true,
-         scrub: 1.2,  // Smoother, more cinematic scroll-follow
+         // Use true (immediate lock) on mobile to respect native hardware touch momentum, use 1.2 (cinematic) on desktop
+         scrub: isMobilePerf ? true : 1.2,  
          invalidateOnRefresh: true,
          onLeave: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: true } })),
          onEnterBack: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: false } })),
