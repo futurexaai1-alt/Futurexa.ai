@@ -147,8 +147,17 @@ function FuturexaHeroAnimation() {
       ctx.clearRect(0, 0, targetW, targetH);
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
-    
+    // --- Mobile viewport fix: always match actual visible height ---
+    const setContainerHeight = () => {
+      if (containerRef.current) {
+        containerRef.current.style.height = `${window.innerHeight}px`;
+      }
+    };
+    setContainerHeight();
+
     const handleResize = () => {
+       setContainerHeight();
+       ScrollTrigger.refresh();
        const currentFrame = Math.round(scrollObj.frame);
        renderFrame(currentFrame);
     };
@@ -185,7 +194,7 @@ function FuturexaHeroAnimation() {
   
   return (
     <div className="hero-sequence-wrapper w-full relative z-20">
-      <div ref={containerRef} className="relative w-full overflow-hidden bg-white z-10" style={{ height: '100svh' }}>
+      <div ref={containerRef} className="relative w-full overflow-hidden bg-white z-10">
         {/* Canvas — starts invisible, GSAP reveals it */}
         <canvas 
           ref={canvasRef} 
