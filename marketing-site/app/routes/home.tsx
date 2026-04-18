@@ -208,15 +208,7 @@ function FuturexaHeroAnimation() {
   }, []);
   
   return (
-    <div 
-      className="hero-sequence-wrapper w-full relative z-20"
-      style={{
-        /* On mobile, 100lvh > 100svh by the URL-bar height.
-           This negative margin pulls the Navbar flush against the hero
-           when it unpins back into flow. On desktop svh==lvh so this is 0. */
-        marginBottom: "calc(100svh - 100lvh)",
-      }}
-    >
+    <div className="hero-sequence-wrapper w-full relative z-20">
       <div 
         ref={containerRef} 
         className="relative w-full overflow-hidden bg-white z-10"
