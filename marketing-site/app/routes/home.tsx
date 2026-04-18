@@ -53,6 +53,12 @@ function FuturexaHeroAnimation() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     
+    // Detect mobile at mount time for correct asset sequence
+    const isMobile = window.innerWidth < 768;
+    const assetPath = isMobile
+      ? "/assets/entry_sequence_mobile/64f35869-bc9c-40fb-8dc8-359254d5f16f"
+      : "/assets/entry_sequence/55KFZ0e0ngo0X5zzuTgVcD2ZDZUnmQljQ0BeheqG";
+    
     let loadedCount = 0;
     const images: HTMLImageElement[] = [];
     imagesRef.current = images;
@@ -95,7 +101,7 @@ function FuturexaHeroAnimation() {
     const loadFrame = (index: number) => {
       const img = new window.Image();
       const paddedIndex = index.toString().padStart(3, "0");
-      img.src = `/assets/entry_sequence/55KFZ0e0ngo0X5zzuTgVcD2ZDZUnmQljQ0BeheqG_${paddedIndex}.webp`;
+      img.src = `${assetPath}_${paddedIndex}.webp`;
       img.onload = () => {
         loadedCount++;
         
