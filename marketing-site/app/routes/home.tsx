@@ -190,7 +190,13 @@ function FuturexaHeroAnimation() {
       <div 
         ref={containerRef} 
         className="relative w-full overflow-hidden bg-white z-10"
-        style={{ height: "100dvh" }}
+        style={{
+          /* Use lvh (largest viewport height) so we always fill the maximum 
+             possible viewport — when the mobile URL bar hides, there's no gap.
+             svh fallback ensures older browsers still get a safe value. */
+          height: "100lvh",
+          minHeight: "100svh",
+        }}
       >
         {/* Canvas — starts invisible, GSAP reveals it */}
         <canvas 
@@ -228,6 +234,15 @@ function FuturexaHeroAnimation() {
              </div>
         </div>
       </div>
+      {/* Mobile URL-bar gap killer: a white block that sits directly below the
+          pinned hero and is painted BEHIND the Navbar. On desktop this is invisible
+          because lvh == the viewport, but on mobile it bridges the ~50-100px gap
+          the collapsing URL bar leaves behind. */}
+      <div 
+        className="block md:hidden w-full bg-white" 
+        style={{ height: "calc(100lvh - 100svh + 2px)" }} 
+        aria-hidden="true" 
+      />
     </div>
   );
 }
