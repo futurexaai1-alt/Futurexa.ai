@@ -9,6 +9,7 @@ import type { Route } from "./+types/home";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 export function meta({ }: Route.MetaArgs) {
@@ -147,17 +148,9 @@ function FuturexaHeroAnimation() {
       ctx.clearRect(0, 0, targetW, targetH);
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
-    // --- Mobile viewport fix: always match actual visible height ---
-    const setContainerHeight = () => {
-      if (containerRef.current) {
-        containerRef.current.style.height = `${window.innerHeight}px`;
-      }
-    };
-    setContainerHeight();
-
+    // --- Mobile viewport fix: Delegate sizing to CSS and ONLY re-render canvas ---
+    // Removed window.innerHeight forced sync and layout thrashing ScrollTrigger.refresh()
     const handleResize = () => {
-       setContainerHeight();
-       ScrollTrigger.refresh();
        const currentFrame = Math.round(scrollObj.frame);
        renderFrame(currentFrame);
     };
@@ -194,7 +187,11 @@ function FuturexaHeroAnimation() {
   
   return (
     <div className="hero-sequence-wrapper w-full relative z-20">
-      <div ref={containerRef} className="relative w-full overflow-hidden bg-white z-10">
+      <div 
+        ref={containerRef} 
+        className="relative w-full overflow-hidden bg-white z-10"
+        style={{ height: "100dvh" }}
+      >
         {/* Canvas — starts invisible, GSAP reveals it */}
         <canvas 
           ref={canvasRef} 
