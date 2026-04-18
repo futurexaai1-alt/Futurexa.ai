@@ -163,6 +163,7 @@ function FuturexaHeroAnimation() {
          end: "+=300%",
          pin: true,
          scrub: 0.5,
+         invalidateOnRefresh: true,
          onLeave: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: true } })),
          onEnterBack: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: false } })),
          onUpdate: (self) => {
@@ -184,7 +185,7 @@ function FuturexaHeroAnimation() {
   
   return (
     <div className="hero-sequence-wrapper w-full relative z-20">
-      <div ref={containerRef} className="relative w-full h-[100dvh] overflow-hidden bg-white z-10">
+      <div ref={containerRef} className="relative w-full overflow-hidden bg-white z-10" style={{ height: '100svh' }}>
         {/* Canvas — starts invisible, GSAP reveals it */}
         <canvas 
           ref={canvasRef} 
