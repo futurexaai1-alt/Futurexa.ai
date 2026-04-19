@@ -16,5 +16,4 @@ export default [
   route("resources", "routes/resources.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
-  route("new-home", "routes/new-home.tsx"),
 ] satisfies RouteConfig;

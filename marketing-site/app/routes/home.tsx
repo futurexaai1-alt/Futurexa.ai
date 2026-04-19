@@ -5,10 +5,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, Briefcase, Library } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import type { Route } from "./+types/home";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
@@ -38,31 +39,26 @@ export function meta({ }: Route.MetaArgs) {
   ];
 }
 
-function FuturexaHeroAnimation() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+function FuturexaHeroVideo() {
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   const welcomeRef = React.useRef<HTMLDivElement>(null);
   const welcomeTextRef = React.useRef<HTMLDivElement>(null);
   const progressRef = React.useRef<HTMLDivElement>(null);
-  const totalFrames = 82;
-  const imagesRef = React.useRef<HTMLImageElement[]>([]);
   const hasRevealedRef = React.useRef(false);
-  
+  const hasScrolledRef = React.useRef(false);
+
   React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    
-    // Detect mobile at mount time for correct asset sequence
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
+
+    // Detect mobile at mount time for correct video asset
     const isMobile = window.innerWidth < 768;
-    const assetPath = isMobile
-      ? "/assets/entry_sequence_mobile/64f35869-bc9c-40fb-8dc8-359254d5f16f"
-      : "/assets/entry_sequence/55KFZ0e0ngo0X5zzuTgVcD2ZDZUnmQljQ0BeheqG";
-    
-    let loadedCount = 0;
-    const images: HTMLImageElement[] = [];
-    imagesRef.current = images;
+    video.src = isMobile
+      ? "/assets/Mobileviewvideo.mp4"
+      : "/assets/entrydesktopvideo.mp4";
+    video.load();
 
     // --- Wait for Outfit font, then fade in the welcome text ---
     document.fonts.ready.then(() => {
@@ -76,14 +72,14 @@ function FuturexaHeroAnimation() {
       }
     });
 
-    // --- Cinematic reveal timeline (GSAP only, zero React re-renders) ---
-    const revealSequence = () => {
+    // --- Cinematic reveal: fade out welcome, play video ---
+    const revealAndPlay = () => {
       if (hasRevealedRef.current) return;
       hasRevealedRef.current = true;
 
       const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
 
-      // 1. Fade out welcome overlay (composite-only: opacity + transform)
+      // 1. Fade out welcome overlay
       tl.to(welcomeRef.current, {
         opacity: 0,
         scale: 1.08,
@@ -91,171 +87,122 @@ function FuturexaHeroAnimation() {
         ease: "power2.in",
       });
 
-      // 2. Simultaneously fade in canvas (composite-only: opacity + scale)
-      tl.fromTo(canvasRef.current, 
-        { opacity: 0, scale: 1.06 }, 
-        { opacity: 1, scale: 1, duration: 1.4, ease: "power3.out" },
-        "-=0.5" // overlap for a smooth crossfade
+      // 2. Simultaneously fade in video
+      tl.fromTo(
+        videoRef.current,
+        { opacity: 0, scale: 1.04 },
+        { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out" },
+        "-=0.5"
       );
+
+      // 3. Start video playback mid-transition
+      tl.call(() => {
+        video.play().catch(() => {});
+      }, [], "-=1.0");
     };
 
-    const loadFrame = (index: number) => {
-      const img = new window.Image();
-      const paddedIndex = index.toString().padStart(3, "0");
-      img.src = `${assetPath}_${paddedIndex}.webp`;
-      img.onload = () => {
-        loadedCount++;
-        
-        // Update progress bar directly via DOM — zero React re-renders
-        if (progressRef.current) {
-          progressRef.current.style.transform = `scaleX(${loadedCount / totalFrames})`;
-        }
-
-        if (index === 0) {
-          renderFrame(0);
-        }
-
-        // Trigger reveal once we have enough frames buffered
-        if (loadedCount >= 8 && !hasRevealedRef.current) {
-          revealSequence();
-        }
-      };
-      images[index] = img;
+    // --- Track buffering progress for the progress bar ---
+    const handleProgress = () => {
+      if (!video.buffered.length || !video.duration) return;
+      const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+      const progress = bufferedEnd / video.duration;
+      if (progressRef.current) {
+        progressRef.current.style.transform = `scaleX(${Math.min(progress, 1)})`;
+      }
     };
-    
-    for (let i = 0; i < totalFrames; i++) {
-       loadFrame(i);
+
+    // --- Once browser confirms enough data for smooth playback ---
+    const handleCanPlayThrough = () => {
+      // Fill progress bar to 100%
+      if (progressRef.current) {
+        progressRef.current.style.transform = "scaleX(1)";
+      }
+      // Small delay so user sees the bar fill, then reveal
+      setTimeout(revealAndPlay, 300);
+    };
+
+    // --- When video finishes, wait 1s then auto-scroll past the hero ---
+    const handleVideoEnd = () => {
+      if (hasScrolledRef.current) return;
+      hasScrolledRef.current = true;
+
+      setTimeout(() => {
+        const heroBottom = container.offsetTop + container.offsetHeight;
+        gsap.to(window, {
+          scrollTo: { y: heroBottom, autoKill: false },
+          duration: 1.4,
+          ease: "power3.inOut",
+        });
+      }, 1000);
+    };
+
+    video.addEventListener("progress", handleProgress);
+    video.addEventListener("canplaythrough", handleCanPlayThrough);
+    video.addEventListener("ended", handleVideoEnd);
+
+    // Fallback: if canplaythrough already fired before listener attached
+    if (video.readyState >= 4) {
+      handleCanPlayThrough();
     }
 
-    // --- Cache canvas dimensions (only recalculate on resize, NOT every frame) ---
-    let cachedW = canvas.clientWidth;
-    let cachedH = canvas.clientHeight;
-    // Allow up to 3x for pristine clarity on Desktop, but cap mobile at 2x to save GPU load
-    const isMobilePerf = window.innerWidth < 768;
-    const dpr = isMobilePerf ? Math.min(window.devicePixelRatio || 1, 2) : Math.min(window.devicePixelRatio || 1, 3); 
-    canvas.width = cachedW * dpr;
-    canvas.height = cachedH * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // Force high-quality interpolation for scaled sequence frames
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
-    const renderFrame = (index: number) => {
-      if (!canvas || !ctx) return;
-      
-      const img = imagesRef.current[index];
-      if (!img || !img.complete) return;
-      
-      const scale = Math.max(cachedW / img.width, cachedH / img.height);
-      const x = (cachedW / 2) - (img.width / 2) * scale;
-      const y = (cachedH / 2) - (img.height / 2) * scale;
-      
-      ctx.clearRect(0, 0, cachedW, cachedH);
-      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-    };
-
-    // --- Only recalculate canvas size on actual resize ---
-    const handleResize = () => {
-       cachedW = canvas.clientWidth;
-       cachedH = canvas.clientHeight;
-       canvas.width = cachedW * dpr;
-       canvas.height = cachedH * dpr;
-       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-       
-       // Re-apply smoothing after context resets (changing canvas w/h clears context state)
-       ctx.imageSmoothingEnabled = true;
-       ctx.imageSmoothingQuality = "high";
-       
-       const currentFrame = Math.round(scrollObj.frame);
-       renderFrame(currentFrame);
-    };
-    window.addEventListener("resize", handleResize);
-    
-    // Enable GSAP lag smoothing for consistent frame pacing
-    gsap.ticker.lagSmoothing(500, 33);
-
-    const scrollObj = { frame: 0 };
-    let lastRenderedFrame = -1;
-    
-    const ctxContext = gsap.context(() => {
-       ScrollTrigger.create({
-         trigger: containerRef.current,
-         start: "top top",
-         end: "+=300%",
-         pin: true,
-         // Use true (immediate lock) on mobile to respect native hardware touch momentum, use 1.2 (cinematic) on desktop
-         scrub: isMobilePerf ? true : 1.2,  
-         invalidateOnRefresh: true,
-         onLeave: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: true } })),
-         onEnterBack: () => window.dispatchEvent(new CustomEvent('hero-sequence-end', { detail: { visible: false } })),
-         onUpdate: (self) => {
-            const frameIndex = Math.min(
-               Math.max(0, Math.round(self.progress * (totalFrames - 1))),
-               totalFrames - 1
-            );
-            scrollObj.frame = frameIndex;
-            // Skip redundant redraws — only paint when the frame actually changes
-            if (frameIndex !== lastRenderedFrame) {
-              lastRenderedFrame = frameIndex;
-              renderFrame(frameIndex);
-            }
-         }
-       });
-    }, containerRef);
-    
     return () => {
-      window.removeEventListener("resize", handleResize);
-      ctxContext.revert();
+      video.removeEventListener("progress", handleProgress);
+      video.removeEventListener("canplaythrough", handleCanPlayThrough);
+      video.removeEventListener("ended", handleVideoEnd);
     };
   }, []);
-  
+
   return (
-    <div className="hero-sequence-wrapper w-full relative z-20">
-      <div 
-        ref={containerRef} 
+    <div className="hero-video-wrapper w-full relative z-20">
+      <div
+        ref={containerRef}
         className="relative w-full overflow-hidden bg-white z-10"
         style={{
-          /* Use lvh (largest viewport height) so we always fill the maximum 
-             possible viewport — when the mobile URL bar hides, there's no gap.
-             svh fallback ensures older browsers still get a safe value. */
           height: "100lvh",
           minHeight: "100svh",
         }}
       >
-        {/* Canvas — starts invisible, GSAP reveals it */}
-        <canvas 
-          ref={canvasRef} 
+        {/* Video — starts invisible, GSAP reveals it after preloading.
+            Source is set programmatically in useEffect based on screen width. */}
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover will-change-transform"
-          style={{ pointerEvents: "none", opacity: 0, imageRendering: "high-quality" }}
+          style={{ pointerEvents: "none", opacity: 0 }}
         />
 
-        {/* Premium Welcome Overlay — GSAP fades it out */}
-        <div 
+        {/* Premium Welcome Overlay — shows while video buffers */}
+        <div
           ref={welcomeRef}
           className="absolute inset-0 z-50 bg-white flex flex-col items-center justify-center pointer-events-none will-change-transform"
         >
-             {/* Soft radial glow (static, no animation — zero paint cost) */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full bg-blue-50/50 blur-3xl pointer-events-none" />
+          {/* Soft radial glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full bg-blue-50/50 blur-3xl pointer-events-none" />
 
-             {/* Typographic Centerpiece — hidden until font loads */}
-             <div 
-               ref={welcomeTextRef}
-               className="relative z-10 flex flex-col items-center px-6 text-center will-change-transform"
-               style={{ opacity: 0, transform: "translateY(12px)" }}
-             >
-                <span className="block font-['Outfit'] text-4xl md:text-6xl font-bold tracking-tight text-slate-800 pb-2">
-                   Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-sky-500">Futurexa.ai</span>
-                </span>
-                
-                {/* GPU-only progress bar (transform: scaleX only) */}
-                <div className="mt-8 md:mt-10 w-48 md:w-64 h-[2px] bg-slate-200/60 relative overflow-hidden rounded-full">
-                   <div 
-                      ref={progressRef}
-                      className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-blue-600 to-sky-400 origin-left will-change-transform rounded-full" 
-                      style={{ transform: "scaleX(0)", transition: "transform 0.2s ease-out" }} 
-                   />
-                </div>
-             </div>
+          {/* Typographic Centerpiece — hidden until font loads */}
+          <div
+            ref={welcomeTextRef}
+            className="relative z-10 flex flex-col items-center px-6 text-center will-change-transform"
+            style={{ opacity: 0, transform: "translateY(12px)" }}
+          >
+            <span className="block font-['Outfit'] text-4xl md:text-6xl font-bold tracking-tight text-slate-800 pb-2">
+              Welcome to{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-sky-500">
+                Futurexa.ai
+              </span>
+            </span>
+
+            {/* Buffering progress bar */}
+            <div className="mt-8 md:mt-10 w-48 md:w-64 h-[2px] bg-slate-200/60 relative overflow-hidden rounded-full">
+              <div
+                ref={progressRef}
+                className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-blue-600 to-sky-400 origin-left will-change-transform rounded-full"
+                style={{ transform: "scaleX(0)", transition: "transform 0.2s ease-out" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -263,32 +210,6 @@ function FuturexaHeroAnimation() {
 }
 
 export default function Home() {
-  const defaultVideo =
-    "https://cdn.coverr.co/videos/coverr-working-on-code-1873/1080p.mp4";
-  const defaultPoster =
-    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1400&q=80";
-  const [heroVideoUrl, setHeroVideoUrl] = React.useState(defaultVideo);
-  const [heroMode, setHeroMode] = React.useState<"video" | "animation">(
-    "animation"
-  );
-
-  React.useEffect(() => {
-    const elements = Array.from(document.querySelectorAll<HTMLElement>(".entry"));
-    if (!elements.length) return;
-    const observer = new IntersectionObserver(
-      (entries, io) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in-view");
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.05 }
-    );
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
-  }, []);
 
   const inViewViewport = { once: true, amount: 0.2, margin: "0px 0px -10% 0px" } as const;
   const inViewTransition = { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const };
@@ -302,52 +223,7 @@ export default function Home() {
         <div className="floating-mesh-orb bottom-[-10%] right-[10%] w-[700px] h-[700px] bg-gradient-to-l from-blue-100/20 to-sky-100/20 opacity-40" style={{ animationDelay: "-10s", animationDuration: "20s" }} />
       </div>
 
-      {heroMode === "animation" ? (
-        <FuturexaHeroAnimation />
-      ) : (
-        <section className="hero-landing">
-          <div className="hero-video">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={defaultPoster}
-            >
-              <source src={heroVideoUrl} type="video/mp4" />
-            </video>
-          </div>
-          <div className="opening-content">
-            <div className="logo-reveal">Futurexa.ai</div>
-            <h1>Modern IT transformation delivered with precision</h1>
-            <p className="tagline">
-              Futurexa.ai unifies strategy, engineering, and managed services to
-              accelerate secure, measurable outcomes.
-            </p>
-            <Link to="/services" className="opening-button">
-              <span>EXPLORE SERVICES</span>
-            </Link>
-          </div>
-          <div className="opening-stats">
-            <div className="stat-item">
-              <span className="stat-number">10+ Years</span>
-              <span className="stat-label">Building digital futures</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">500+</span>
-              <span className="stat-label">Projects Delivered</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">95%</span>
-              <span className="stat-label">Return Customers</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">Global</span>
-              <span className="stat-label">Presence & Delivery</span>
-            </div>
-          </div>
-        </section>
-      )}
+      <FuturexaHeroVideo />
 
       <Navbar />
 
