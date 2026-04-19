@@ -95,8 +95,9 @@ function FuturexaHeroVideo() {
         "-=0.5"
       );
 
-      // 3. Start video playback mid-transition
+      // 3. Start video playback mid-transition from frame 0
       tl.call(() => {
+        video.currentTime = 0;
         video.play().catch((err) => {
           console.warn("Mobile browser blocked autoplay (likely Low Power Mode). Bypassing hero...", err);
           // If iOS blocks video playback (e.g. Low Power Mode), immediately trigger the auto-scroll 
@@ -171,6 +172,7 @@ function FuturexaHeroVideo() {
             Source is set programmatically in useEffect based on screen width. */}
         <video
           ref={videoRef}
+          autoPlay
           muted
           playsInline
           preload="auto"
