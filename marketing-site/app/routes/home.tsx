@@ -66,7 +66,7 @@ function FuturexaHeroVideo() {
     video.setAttribute("webkit-playsinline", "true");
     video.removeAttribute("controls");
     video.src = isMobile
-      ? "/assets/mobileentry.mp4"
+      ? "/assets/mobileentry.h264.mp4"
       : "/assets/entrydesktopvideo.mp4";
     video.load();
 
