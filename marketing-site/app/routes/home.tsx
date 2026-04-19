@@ -56,7 +56,7 @@ function FuturexaHeroVideo() {
     // Detect mobile at mount time for correct video asset
     const isMobile = window.innerWidth < 768;
     video.src = isMobile
-      ? "/assets/Mobileviewvideo.mp4"
+      ? "/assets/mobileentry.mp4"
       : "/assets/entrydesktopvideo.mp4";
     video.load();
 
@@ -97,7 +97,12 @@ function FuturexaHeroVideo() {
 
       // 3. Start video playback mid-transition
       tl.call(() => {
-        video.play().catch(() => {});
+        video.play().catch((err) => {
+          console.warn("Mobile browser blocked autoplay (likely Low Power Mode). Bypassing hero...", err);
+          // If iOS blocks video playback (e.g. Low Power Mode), immediately trigger the auto-scroll 
+          // so the user isn't stuck on a black screen.
+          handleVideoEnd();
+        });
       }, [], "-=1.0");
     };
 
