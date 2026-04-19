@@ -47,6 +47,7 @@ function FuturexaHeroVideo() {
   const progressRef = React.useRef<HTMLDivElement>(null);
   const hasRevealedRef = React.useRef(false);
   const hasScrolledRef = React.useRef(false);
+  const hasStartedPlaybackRef = React.useRef(false);
 
   React.useEffect(() => {
     const video = videoRef.current;
@@ -55,6 +56,11 @@ function FuturexaHeroVideo() {
 
     // Detect mobile at mount time for correct video asset
     const isMobile = window.innerWidth < 768;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "true");
+    video.setAttribute("webkit-playsinline", "true");
     video.src = isMobile
       ? "/assets/mobileentry.mp4"
       : "/assets/entrydesktopvideo.mp4";
@@ -118,7 +124,9 @@ function FuturexaHeroVideo() {
     };
 
     // --- Once browser confirms enough data for smooth playback ---
-    const handleCanPlayThrough = () => {
+    const handleCanStart = () => {
+      if (hasStartedPlaybackRef.current) return;
+      hasStartedPlaybackRef.current = true;
       // Fill progress bar to 100%
       if (progressRef.current) {
         progressRef.current.style.transform = "scaleX(1)";
@@ -143,17 +151,21 @@ function FuturexaHeroVideo() {
     };
 
     video.addEventListener("progress", handleProgress);
-    video.addEventListener("canplaythrough", handleCanPlayThrough);
+    video.addEventListener("loadeddata", handleCanStart);
+    video.addEventListener("canplay", handleCanStart);
+    video.addEventListener("canplaythrough", handleCanStart);
     video.addEventListener("ended", handleVideoEnd);
 
-    // Fallback: if canplaythrough already fired before listener attached
-    if (video.readyState >= 4) {
-      handleCanPlayThrough();
+    // Fallback: if media is already ready before listeners attach.
+    if (video.readyState >= 2) {
+      handleCanStart();
     }
 
     return () => {
       video.removeEventListener("progress", handleProgress);
-      video.removeEventListener("canplaythrough", handleCanPlayThrough);
+      video.removeEventListener("loadeddata", handleCanStart);
+      video.removeEventListener("canplay", handleCanStart);
+      video.removeEventListener("canplaythrough", handleCanStart);
       video.removeEventListener("ended", handleVideoEnd);
     };
   }, []);
