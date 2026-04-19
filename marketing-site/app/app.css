@@ -467,6 +467,13 @@ body {
   filter: saturate(1.1) contrast(1.05) brightness(0.9);
 }
 
+/* iOS Safari can paint native play chrome even when controls are disabled */
+.hero-entry-video::-webkit-media-controls,
+.hero-entry-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
 .opening-content {
   position: absolute;
   top: 38%;

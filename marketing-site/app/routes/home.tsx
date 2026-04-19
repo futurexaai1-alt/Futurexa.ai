@@ -56,6 +56,8 @@ function FuturexaHeroVideo() {
 
     // Detect mobile at mount time for correct video asset
     const isMobile = window.innerWidth < 768;
+    let playRetryId: number | null = null;
+    let playAttempts = 0;
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
@@ -69,6 +71,21 @@ function FuturexaHeroVideo() {
       ? "/assets/mobileentry.h264.mp4"
       : "/assets/entrydesktopvideo.mp4";
     video.load();
+
+    const tryAutoplay = () => {
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          if (playAttempts >= 6) {
+            handleVideoEnd();
+            return;
+          }
+          playAttempts += 1;
+          playRetryId = window.setTimeout(tryAutoplay, 250);
+        });
+      }
+    };
 
     // --- Wait for Outfit font, then fade in the welcome text ---
     document.fonts.ready.then(() => {
@@ -108,12 +125,7 @@ function FuturexaHeroVideo() {
       // 3. Start video playback mid-transition from frame 0
       tl.call(() => {
         video.currentTime = 0;
-        video.play().catch((err) => {
-          console.warn("Mobile browser blocked autoplay (likely Low Power Mode). Bypassing hero...", err);
-          // If iOS blocks video playback (e.g. Low Power Mode), immediately trigger the auto-scroll 
-          // so the user isn't stuck on a black screen.
-          handleVideoEnd();
-        });
+        tryAutoplay();
       }, [], "-=1.0");
     };
 
@@ -137,6 +149,7 @@ function FuturexaHeroVideo() {
       }
       // Small delay so user sees the bar fill, then reveal
       setTimeout(revealAndPlay, 300);
+      tryAutoplay();
     };
 
     // --- When video finishes, wait 1s then auto-scroll past the hero ---
@@ -168,6 +181,7 @@ function FuturexaHeroVideo() {
 
     return () => {
       window.clearTimeout(forceStartId);
+      if (playRetryId !== null) window.clearTimeout(playRetryId);
       video.removeEventListener("progress", handleProgress);
       video.removeEventListener("loadeddata", handleCanStart);
       video.removeEventListener("canplay", handleCanStart);
@@ -196,7 +210,7 @@ function FuturexaHeroVideo() {
           controls={false}
           disablePictureInPicture
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover will-change-transform"
+          className="hero-entry-video absolute inset-0 w-full h-full object-cover will-change-transform"
           style={{ pointerEvents: "none", opacity: 0 }}
         />
 
