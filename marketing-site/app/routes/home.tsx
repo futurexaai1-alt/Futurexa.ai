@@ -68,7 +68,7 @@ function FuturexaHeroVideo() {
     video.setAttribute("webkit-playsinline", "true");
     video.removeAttribute("controls");
     video.src = isMobile
-      ? "/assets/mobileentry.h264.mp4"
+      ? "/assets/Mobileviewvideo.mp4"
       : "/assets/entrydesktopvideo.mp4";
     video.load();
 
@@ -269,9 +269,9 @@ export default function Home() {
       <Navbar />
 
       {/* Trusted By - Enhanced with Volumetric Lighting */}
-      <section className="py-20 md:py-32 relative z-10 overflow-hidden reveal-immediate bg-gradient-to-b from-transparent via-blue-50/20 to-transparent" id="trusted">
+      <section className="py-12 md:py-20 relative z-10 overflow-hidden reveal-immediate bg-gradient-to-b from-transparent via-blue-50/20 to-transparent" id="trusted">
         <div className="container text-center">
-          <div className="mb-16 md:mb-24">
+          <div className="mb-10 md:mb-14">
             <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 font-['Outfit'] tracking-tighter">
               Trusted by <span className="text-gradient-ocean">Global Leaders</span>
             </h2>
@@ -287,10 +287,9 @@ export default function Home() {
             ].map((name) => (
               <div
                 key={name}
-                className="bg-white/85 border border-slate-200/80 p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-colors duration-200 hover:border-blue-300/40 hover:bg-blue-50/20"
-                style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+                className="glass-morphism-light p-6 md:p-8 rounded-[2rem] flex items-center justify-center group cursor-default transition-all duration-500 ease-out hover:scale-[1.03] hover:border-blue-200/80 hover:bg-white/90 shadow-[0_2px_12px_rgba(0,0,0,0.025)] hover:shadow-[0_20px_40px_-15px_rgba(0,100,255,0.15)]"
               >
-                <span className="font-['Outfit'] font-bold text-slate-500 group-hover:text-blue-600 transition-colors duration-200 tracking-wider text-sm md:text-base">
+                <span className="font-['Outfit'] font-bold text-slate-500 group-hover:text-sky-500 transition-colors duration-500 tracking-wider text-sm md:text-base">
                   {name}
                 </span>
               </div>
@@ -300,22 +299,22 @@ export default function Home() {
       </section>
 
       {/* Services Section - Redesigned with Liquid Glass Cards */}
-      <section className="py-16 md:py-24 relative z-10">
+      <section className="py-10 md:py-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-end justify-between mb-12 gap-8">
-            <div className="max-w-2xl">
+          <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+            <div className="max-w-4xl mx-auto mb-6 md:mb-8">
               <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] leading-tight">
-                Architecting the <br /> <span className="text-gradient-ocean">Impossible</span>
+                Architecting the <span className="text-gradient-ocean">Impossible</span>
               </h2>
-              <p className="text-lg md:text-xl text-slate-500 font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-slate-500 font-light leading-relaxed max-w-2xl mx-auto">
                 We don't just build software. We engineer competitive advantages using the most advanced technological stacks available today.
               </p>
             </div>
 
             <div>
-              <Link to="/services" className="group flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 glass-morphism rounded-full font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-[background-color,color,box-shadow,transform] duration-500 tracking-widest text-sm md:text-base">
-                View All Capabilities
-                <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
+              <Link to="/services" className="group flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 glass-morphism rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-500 tracking-widest text-sm md:text-base border border-blue-100/50">
+                <span className="text-gradient-ocean">View All Capabilities</span>
+                <span className="group-hover:translate-x-2 transition-transform duration-300 text-sky-500">→</span>
               </Link>
             </div>
           </div>
@@ -326,60 +325,51 @@ export default function Home() {
                 title: "Cloud Forge",
                 description: "Transcendent infrastructure that scales with human ambition, secured by zero-trust protocols.",
                 icon: "☁️",
-                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
-                border: "hover:border-blue-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
               },
               {
                 title: "Cyber Sentinel",
                 description: "Proactive, multi-layered defense systems designed to neutralize threats before they materialize.",
                 icon: "🛡️",
-                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
-                border: "hover:border-blue-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
               },
               {
                 title: "managed.ai",
                 description: "Continuous optimization of your digital ecosystem using autonomous agents and predictive SRE.",
                 icon: "⚙️",
-                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
-                border: "hover:border-blue-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
               },
               {
                 title: "Cognitive Data",
                 description: "Transforming raw noise into strategic clarity through advanced ML models and neural analytics.",
                 icon: "🧠",
-                accent: "from-blue-500/12 via-sky-400/8 to-transparent",
-                border: "hover:border-blue-400/60",
-                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
                 topBorder: "from-blue-400 to-sky-400",
                 text: "group-hover:text-blue-600",
+                bar: "group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-sky-400",
               },
-            ] as const).map((service, i) => (
+            ] as const).map((service) => (
               <div
                 key={service.title}
-                className={`relative bg-gradient-to-br ${service.accent} border border-white/70 p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group ${service.border} transition-[border-color,background-color] duration-200 flex flex-col h-full overflow-hidden`}
-                style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+                className="glass-morphism-light relative p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] group hover:border-blue-300/60 transition-all duration-500 ease-out flex flex-col h-full overflow-hidden hover:-translate-y-2 shadow-[0_2px_12px_rgba(0,0,0,0.025)] hover:shadow-[0_25px_50px_-12px_rgba(0,100,255,0.15)]"
               >
                 {/* Colored top border accent */}
-                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-60`} />
-                <div className="text-4xl mb-6 grayscale">
+                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${service.topBorder} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="text-4xl mb-6 grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110 origin-left">
                   {service.icon}
                 </div>
-                <h3 className={`text-2xl font-bold text-slate-900 mb-4 ${service.text} transition-colors`}>
+                <h3 className={`text-2xl font-bold text-slate-900 mb-4 ${service.text} transition-colors duration-500`}>
                   {service.title}
                 </h3>
                 <p className="text-slate-500 leading-relaxed font-light mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className={`w-full h-1 bg-slate-100 ${service.bar} transition-colors duration-200 rounded-full`} />
+                <div className={`w-full h-1 bg-slate-100 ${service.bar} transition-all duration-500 rounded-full group-hover:scale-x-105`} />
               </div>
             ))}
           </div>
@@ -387,48 +377,51 @@ export default function Home() {
       </section>
 
       {/* Industries Section - Redesigned with Asymmetric Depth */}
-      <section className="py-16 md:py-24 relative z-10" id="industries">
+      <section className="py-10 md:py-16 relative z-10" id="industries">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-5 gap-8 md:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
+            {/* Header/Text on the Left */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, x: -30 }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-1 text-center lg:text-left"
+            >
+              <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-6 font-['Outfit'] leading-tight">
+                Specialized in <br className="hidden md:block" /> <span className="text-gradient-ocean">Complexity</span>
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500 font-light leading-relaxed mb-6">
+                We align elite strategy with flawless technical execution to deliver measurable transformation programs in high-stakes environments.
+              </p>
+              <p className="text-slate-500 font-light leading-relaxed mb-8">
+                Our delivery playbooks are tailored to each industry’s risk profile, ensuring compliance is built into the architecture from day zero.
+              </p>
+              <div className="flex justify-center lg:justify-start">
+                <Link to="/industries" className="inline-flex items-center gap-2 font-bold text-sky-600 group">
+                  <span className="text-gradient-ocean">Explore focus areas</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2 text-sky-500" />
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Content Card on the Right */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, x: 50 }}
               whileInView={{ opacity: 1, scale: 1, x: 0 }}
               viewport={inViewViewport}
               transition={inViewTransition}
-              className="lg:col-span-3 bg-white/90 p-8 md:p-12 rounded-[2rem] md:rounded-[3.5rem] relative overflow-hidden group border border-slate-200/70"
-              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+              className="order-2 glass-morphism-light p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] relative overflow-hidden group shadow-[0_4px_24px_rgba(31,38,135,0.02)]"
             >
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] leading-tight">
-                Specialized in <span className="text-gradient-ocean">Complexity</span>
-              </h2>
-              <div className="flex flex-wrap gap-3 mb-10">
+              <div className="flex flex-wrap gap-3 mb-8">
                 {["Fintech", "Healthcare", "Retail", "Logistics", "SaaS"].map(badge => (
-                  <span key={badge} className="px-5 py-2 bg-white border border-slate-200 text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase">
+                  <span key={badge} className="px-5 py-2 glass-morphism-light text-sky-600 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm">
                     {badge}
                   </span>
                 ))}
               </div>
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed font-light">
-                We align elite strategy with flawless technical execution to deliver measurable transformation programs in high-stakes environments.
-              </p>
-              <Link to="/industries" className="inline-flex items-center gap-2 font-bold text-blue-600">
-                Explore focus areas <ArrowRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={inViewViewport}
-              transition={inViewTransition}
-              className="lg:col-span-2 space-y-6"
-            >
-              <h3 className="text-3xl font-bold text-slate-900 font-['Outfit']">Regulatory Precision</h3>
-              <p className="text-lg text-slate-500 font-light leading-relaxed">
-                Our delivery playbooks are tailored to each industry’s risk profile, ensuring compliance is built into the architecture, not added as an afterthought.
-              </p>
-              <div className="p-8 glass-morphism-light rounded-[2rem] border-l-4 border-blue-600">
-                <p className="italic text-slate-600 font-medium">
+              <div className="p-6 md:p-8 bg-blue-50/30 rounded-[1.5rem] border-l-4 border-blue-600">
+                <p className="italic text-slate-600 font-medium text-lg">
                   "Futurexa didn't just understand our tech; they understood our market's gravitational forces."
                 </p>
               </div>
@@ -438,88 +431,89 @@ export default function Home() {
       </section>
 
       {/* Portfolio Section - Redesigned with Depth-of-Field Glass */}
-      <section className="py-16 md:py-24 relative z-10" id="portfolio">
+      <section className="py-10 md:py-16 relative z-10" id="portfolio">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inViewViewport}
-              transition={inViewTransition}
-            >
-              <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
-                Case Studies <br /> of <span className="text-gradient-ocean">Velocity</span>
-              </h2>
-              <p className="text-lg md:text-xl text-slate-500 mb-8 md:mb-10 font-light leading-relaxed">
-                We deliver rapid wins and long-term value, pairing elite UX with enterprise-grade engineering. Every project is a testament to precision.
-              </p>
-              <Link to="/portfolio" className="inline-flex items-center justify-center px-8 py-3 md:px-10 md:py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-[background-color,color,border-color] duration-200 shadow-sm text-sm md:text-base">
-                View Performance Portfolio
-              </Link>
-            </motion.div>
-
-            <div className="grid gap-6">
+          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
+            {/* Content Cards on the Left */}
+            <div className="grid gap-6 order-2 lg:order-1">
               {[
-                { label: "Incident Volume Reduction", value: "-42%", color: "blue" },
-                { label: "Release Velocity Increase", value: "3x", color: "blue" },
-                { label: "Global Platform Uptime", value: "99.99%", color: "sky" }
+                { label: "Incident Volume Reduction", value: "-42%" },
+                { label: "Release Velocity Increase", value: "3x" },
+                { label: "Global Platform Uptime", value: "99.99%" }
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
-                  initial={{ opacity: 0, x: 100 }}
+                  initial={{ opacity: 0, x: -100 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={inViewViewport}
                   transition={{ ...inViewTransition, delay: i * 0.04 }}
-                  className="bg-white/90 border border-slate-200/70 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative"
-                  style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+                  className="glass-morphism-light p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-between group cursor-default overflow-hidden relative transition-all duration-500 ease-out hover:-translate-y-1 shadow-[0_2px_12px_rgba(0,0,0,0.025)] hover:shadow-[0_20px_40px_-15px_rgba(0,100,255,0.15)]"
                 >
-                  <div className="relative z-10">
+                  <div className="relative z-10 transition-transform duration-500 group-hover:translate-x-2">
                     <span className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</span>
-                    <span className={`text-4xl font-bold text-${item.color}-600 font-['Outfit']`}>{item.value}</span>
+                    <span className="text-4xl font-bold font-['Outfit'] text-gradient-ocean">{item.value}</span>
                   </div>
-                  <div className={`w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-${item.color}-600`}>
+                  <div className="w-12 h-12 rounded-full glass-morphism-light flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 text-sky-500 shadow-sm">
                     ↗
                   </div>
                 </motion.div>
               ))}
             </div>
+
+            {/* Header/Text on the Right */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-1 lg:order-2 text-center lg:text-left"
+            >
+              <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
+                Case Studies of <span className="text-gradient-ocean">Velocity</span>
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500 mb-8 md:mb-10 font-light leading-relaxed">
+                We deliver rapid wins and long-term value, pairing elite UX with enterprise-grade engineering. Every project is a testament to precision.
+              </p>
+              <Link to="/portfolio" className="inline-flex items-center justify-center px-8 py-3 md:px-10 md:py-4 glass-morphism-light rounded-full font-bold text-slate-900 transition-all duration-500 hover:bg-slate-900 hover:text-white shadow-sm hover:shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] text-sm md:text-base hover:-translate-y-1">
+                View Performance Portfolio
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* About Section - Redesigned as a Wide Cinematic Panel */}
-      <section className="py-16 md:py-24 relative z-10" id="about">
+      <section className="py-10 md:py-16 relative z-10" id="about">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={inViewViewport}
             transition={inViewTransition}
-            className="bg-white/90 border border-slate-200/70 p-6 md:p-10 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden group"
-            style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+            className="glass-morphism-light p-6 md:p-10 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden group shadow-[0_4px_24px_rgba(31,38,135,0.02)]"
           >
             <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center relative z-10">
-              <div>
+              <div className="text-center lg:text-left">
                 <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit'] tracking-tight">
-                  Beyond <span className="text-blue-600">Innovation</span>
+                  Beyond <span className="text-gradient-ocean">Innovation</span>
                 </h2>
                 <p className="text-lg md:text-xl text-slate-600 mb-8 md:mb-10 leading-relaxed font-light">
                   Futurexa.ai is a senior collective of strategists, designers, and engineers dedicated to crafting high-impact digital experiences that stand the test of time.
                 </p>
-                <Link to="/about" className="group flex items-center gap-2 md:gap-3 w-fit px-6 py-3 md:px-10 md:py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-[background-color,color,border-color] duration-200 tracking-widest text-sm md:text-base">
-                  Learn Our Story
-                  <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                <Link to="/about" className="group flex items-center gap-2 md:gap-3 w-fit px-6 py-3 md:px-10 md:py-4 glass-morphism-light rounded-full font-bold text-slate-900 transition-all duration-500 hover:bg-slate-900 hover:text-white shadow-sm hover:shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] text-sm md:text-base hover:-translate-y-1 border border-blue-50">
+                  <span className="text-gradient-ocean">Learn Our Story</span>
+                  <ArrowRight className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-2 text-sky-500" />
                 </Link>
               </div>
-              <div className="p-8 md:p-12 bg-white border border-slate-200 rounded-[2rem] md:rounded-[3rem]">
+              <div className="p-8 md:p-12 glass-morphism-light bg-blue-50/30 rounded-[2rem] md:rounded-[3rem] border-l-4 border-blue-600">
                 <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-medium italic">
                   "We blend premium design, data intelligence, and technical execution to create unforgettable digital legacies."
                 </p>
                 <div className="mt-8 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-sky-600" />
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-sky-600 shadow-lg shadow-blue-600/20" />
                   <div>
                     <span className="block font-bold text-slate-900">Elite Standards</span>
-                    <span className="block text-sm text-slate-500 tracking-widest uppercase font-bold">The Futurexa Creed</span>
+                    <span className="block text-sm text-sky-600 tracking-widest uppercase font-bold">The Futurexa Creed</span>
                   </div>
                 </div>
               </div>
@@ -528,85 +522,158 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Careers & Resources - Redesigned as Alternating Glass Cards */}
-      <section className="py-16 md:py-24 relative z-10 overflow-hidden">
+      {/* Careers Section - Zigzag Pattern (Text Right) */}
+      <section className="py-10 md:py-16 relative z-10 overflow-hidden" id="careers">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
-            {/* Careers */}
-            <div
-              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group border border-white/70 transition-colors duration-200"
-              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
+          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
+            {/* Graphic on the Left */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, x: -50 }}
+              whileInView={{ opacity: 1, scale: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-2 lg:order-1 glass-morphism-light p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] relative overflow-hidden group shadow-[0_4px_24px_rgba(31,38,135,0.02)]"
             >
-              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8">
-                <Briefcase className="h-6 w-6 md:h-8 md:w-8" />
+              <div className="h-16 w-16 md:h-20 md:w-20 glass-morphism-light rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center text-blue-600 mb-8 shadow-sm">
+                <Briefcase className="h-8 w-8 md:h-10 md:w-10" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit']">Join the Collective</h3>
-              <p className="text-lg text-slate-500 mb-8 leading-relaxed font-light">
+              <div className="flex flex-wrap gap-2 md:gap-3">
+                {["Remote-first", "Growth Budgets", "Mission-Led"].map(tag => (
+                  <span key={tag} className="px-5 py-2 glass-morphism-light text-sky-600 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full shadow-sm">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-600/5 blur-3xl rounded-full" />
+            </motion.div>
+
+            {/* Header/Text on the Right */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-1 lg:order-2 text-center lg:text-left"
+            >
+              <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-6 font-['Outfit'] leading-tight">
+                Join the <br className="hidden md:block" /> <span className="text-gradient-ocean">Collective</span>
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500 mb-8 leading-relaxed font-light">
                 We're looking for ambitious builders who thrive on excellence and want to shape the future of digital transformation.
               </p>
-              <div className="flex flex-wrap gap-2 mb-10">
-                {["Remote-first", "Growth Budgets", "Mission-Led"].map(tag => (
-                  <span key={tag} className="px-4 py-1 glass-morphism-light text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">{tag}</span>
-                ))}
+              <div className="flex justify-center lg:justify-start">
+                <Link to="/careers" className="group inline-flex items-center gap-3 px-8 py-3 glass-morphism-light rounded-full font-bold text-slate-900 transition-all duration-500 hover:bg-slate-900 hover:text-white shadow-sm hover:shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] text-sm md:text-base hover:-translate-y-1 border border-blue-50">
+                  <span className="text-gradient-ocean">View Open Roles</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2 text-sky-500" />
+                </Link>
               </div>
-              <Link to="/careers" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
-                View Open Roles <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-
-            {/* Resources */}
-            <div
-              className="glass-morphism p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] group border border-white/70 transition-colors duration-200"
-              style={{ boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)" }}
-            >
-              <div className="h-12 w-12 md:h-16 md:w-16 glass-morphism-light rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 mb-6 md:mb-8">
-                <Library className="h-6 w-6 md:h-8 md:w-8" />
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-6 font-['Outfit']">Intelligence Hub</h3>
-              <p className="text-lg text-slate-500 mb-8 leading-relaxed font-light">
-                Executive playbooks, transformation guides, and AI readiness toolkits curated for modern IT leaders.
-              </p>
-              <div className="flex flex-wrap gap-2 mb-10">
-                {["Cloud Guides", "AI Playbooks", "Market Trends"].map(tag => (
-                  <span key={tag} className="px-4 py-1 glass-morphism-light text-blue-600 text-xs font-bold uppercase tracking-widest rounded-full">{tag}</span>
-                ))}
-              </div>
-              <Link to="/resources" className="inline-flex items-center gap-2 font-bold text-blue-600 group/btn">
-                Browse Insights <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section - Redesigned as a Cinematic Call to Action */}
-      <section className="py-16 md:py-24 relative z-10" id="contact">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Resources Section - Zigzag Pattern (Text Left) */}
+      <section className="py-10 md:py-16 relative z-10" id="resources">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
+            {/* Header/Text on the Left */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-1 text-center lg:text-left"
+            >
+              <h2 className="text-3xl md:text-6xl font-bold text-slate-900 mb-6 font-['Outfit'] leading-tight">
+                Intelligence <br className="hidden md:block" /> <span className="text-gradient-ocean">Hub</span>
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500 mb-8 leading-relaxed font-light">
+                Executive playbooks, transformation guides, and AI readiness toolkits curated for modern IT leaders.
+              </p>
+              <div className="flex justify-center lg:justify-start">
+                <Link to="/resources" className="group inline-flex items-center gap-3 px-8 py-3 glass-morphism-light rounded-full font-bold text-slate-900 transition-all duration-500 hover:bg-slate-900 hover:text-white shadow-sm hover:shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] text-sm md:text-base hover:-translate-y-1 border border-blue-50">
+                  <span className="text-gradient-ocean">Browse Insights</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2 text-sky-500" />
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Graphic on the Right */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, x: 50 }}
+              whileInView={{ opacity: 1, scale: 1, x: 0 }}
+              viewport={inViewViewport}
+              transition={inViewTransition}
+              className="order-2 glass-morphism-light p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] relative overflow-hidden group shadow-[0_4px_24px_rgba(31,38,135,0.02)]"
+            >
+              <div className="h-16 w-16 md:h-20 md:w-20 glass-morphism-light rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center text-blue-600 mb-8 shadow-sm">
+                <Library className="h-8 w-8 md:h-10 md:w-10" />
+              </div>
+              <div className="flex flex-wrap gap-2 md:gap-3">
+                {["Cloud Guides", "AI Playbooks", "Market Trends"].map(tag => (
+                  <span key={tag} className="px-5 py-2 glass-morphism-light text-blue-600 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full shadow-sm">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-sky-400/5 blur-3xl rounded-full" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section - Zigzag Pattern (Text Right) */}
+      <section className="py-10 md:py-20 relative z-10" id="contact">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={inViewViewport}
             transition={inViewTransition}
-            className="max-w-4xl mx-auto glass-morphism p-8 md:p-12 rounded-[2rem] md:rounded-[4rem] relative overflow-hidden"
+            className="glass-morphism-light p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] relative overflow-hidden shadow-[0_8px_48px_rgba(31,38,135,0.06)]"
           >
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-sky-600 to-sky-400" />
-            <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full animate-pulse" />
-            <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-sky-400/10 blur-[80px] rounded-full" />
-            
-            <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] tracking-tighter">
-              Initiate <br className="hidden md:block" /> <span className="text-gradient-ocean">Transformation</span>
-            </h2>
-            <p className="text-lg md:text-2xl text-slate-500 mb-8 md:mb-12 leading-relaxed font-light max-w-2xl mx-auto px-2">
-              Partner with the world's most elite digital squad. Your next breakthrough starts with a single dialogue.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
-              <Link to="/contact" className="group flex items-center justify-center gap-2 md:gap-3 px-8 py-4 md:px-10 md:py-5 bg-blue-600 text-white rounded-full font-bold text-sm md:text-lg hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/40 w-full sm:w-auto tracking-widest">
-                Book Strategy Session
-                <ArrowRight className="h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-2 transition-transform" />
-              </Link>
-              <Link to="/resources" className="px-8 py-4 md:px-12 md:py-5 glass-morphism rounded-full font-bold text-sm md:text-lg text-slate-900 hover:bg-slate-900 hover:text-white transition-all w-full sm:w-auto tracking-widest">
-                Explore Guides
-              </Link>
+            {/* Subtle Depth Accents - Cleaned up to reduce 'too much coloring' */}
+            <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-slate-200/20 blur-[120px] rounded-full" />
+            <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-blue-50/20 blur-[100px] rounded-full" />
+
+            <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center relative z-10">
+              {/* Visual Element on the Left */}
+              <div className="order-2 lg:order-1 hidden lg:block">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-blue-600/5 blur-3xl rounded-full scale-150" />
+                  <div className="relative glass-morphism-light p-10 rounded-[3rem] border-l-4 border-sky-500">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="h-14 w-14 rounded-full bg-gradient-to-br from-blue-600 to-sky-600 shadow-xl shadow-blue-600/20" />
+                      <div>
+                        <span className="block font-bold text-slate-900 text-xl font-['Outfit'] tracking-tight">Elite Standards</span>
+                        <span className="block text-xs text-sky-600 tracking-widest uppercase font-bold">The Futurexa Creed</span>
+                      </div>
+                    </div>
+                    <p className="text-xl text-slate-600 italic leading-relaxed">
+                      "Partner with the world's most elite digital squad. Your next breakthrough starts here."
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Header/CTAs on the Right */}
+              <div className="order-1 lg:order-2 text-center lg:text-left">
+                <h2 className="text-4xl md:text-7xl font-bold text-slate-900 mb-6 md:mb-8 font-['Outfit'] tracking-tighter leading-[0.95]">
+                  Initiate <br className="hidden md:block" /> <span className="text-gradient-ocean">Transformation</span>
+                </h2>
+                <p className="text-lg md:text-xl text-slate-500 mb-8 md:mb-12 leading-relaxed font-light">
+                  Ready to architect the impossible? Let's begin a dialogue about your vision.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6">
+                  <Link to="/contact" className="group flex items-center justify-center gap-3 px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-blue-600 to-sky-600 text-white rounded-full font-bold text-sm md:text-lg hover:shadow-[0_20px_40px_-10px_rgba(0,100,255,0.4)] transition-all duration-500 w-full sm:w-auto tracking-widest hover:-translate-y-1">
+                    Book Strategy Session
+                    <ArrowRight className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-2" />
+                  </Link>
+                  <Link to="/resources" className="px-8 py-4 md:px-10 md:py-5 glass-morphism-light rounded-full font-bold text-sm md:text-lg text-slate-900 transition-all duration-500 hover:bg-slate-900 hover:text-white shadow-sm w-full sm:w-auto tracking-widest hover:-translate-y-1">
+                    Explore Guides
+                  </Link>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>

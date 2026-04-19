@@ -231,7 +231,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-slate-900 mb-6">Services</h4>
             <ul className="space-y-4">
               {[
@@ -250,7 +250,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-slate-900 mb-6">Company</h4>
             <ul className="space-y-4">
               {[
@@ -270,9 +270,9 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-slate-900 mb-6">Let's Connect</h4>
-            <p className="text-slate-500/90 mb-8 text-sm leading-relaxed font-medium">
+            <p className="text-slate-500/90 mb-8 text-sm leading-relaxed font-medium mx-auto md:mx-0 max-w-xs md:max-w-none">
               Ready to scale your digital infrastructure? Reach out to our team of experts today.
             </p>
             <Link 
