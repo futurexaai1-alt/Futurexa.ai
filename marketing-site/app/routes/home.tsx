@@ -59,8 +59,12 @@ function FuturexaHeroVideo() {
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
+    video.controls = false;
+    video.setAttribute("muted", "true");
+    video.setAttribute("autoplay", "true");
     video.setAttribute("playsinline", "true");
     video.setAttribute("webkit-playsinline", "true");
+    video.removeAttribute("controls");
     video.src = isMobile
       ? "/assets/mobileentry.mp4"
       : "/assets/entrydesktopvideo.mp4";
@@ -155,6 +159,7 @@ function FuturexaHeroVideo() {
     video.addEventListener("canplay", handleCanStart);
     video.addEventListener("canplaythrough", handleCanStart);
     video.addEventListener("ended", handleVideoEnd);
+    const forceStartId = window.setTimeout(handleCanStart, 1200);
 
     // Fallback: if media is already ready before listeners attach.
     if (video.readyState >= 2) {
@@ -162,6 +167,7 @@ function FuturexaHeroVideo() {
     }
 
     return () => {
+      window.clearTimeout(forceStartId);
       video.removeEventListener("progress", handleProgress);
       video.removeEventListener("loadeddata", handleCanStart);
       video.removeEventListener("canplay", handleCanStart);
@@ -187,6 +193,8 @@ function FuturexaHeroVideo() {
           autoPlay
           muted
           playsInline
+          controls={false}
+          disablePictureInPicture
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover will-change-transform"
           style={{ pointerEvents: "none", opacity: 0 }}
