@@ -33,10 +33,10 @@ import LockedState from "../features/dashboard/components/LockedState";
 import {
   AUTH_STORAGE_KEY,
   getStoredAuth,
-  isProfileCacheFresh,
   setStoredAuth,
 } from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -172,10 +172,14 @@ export default function Dashboard(_: Route.ComponentProps) {
 
     let cancelled = false;
 
-    async function checkAuth() {
-      const { data } = await supabase.auth.getSession();
+    async function bootstrapAuth() {
+      const auth = await ensureDashboardAuth({
+        supabaseUrl,
+        supabaseAnonKey,
+        apiBaseUrl,
+      });
 
-      if (!data.session) {
+      if (!auth) {
         if (!cancelled) {
           setIsLoading(false);
           navigate("/signin", { replace: true });
@@ -183,71 +187,13 @@ export default function Dashboard(_: Route.ComponentProps) {
         return;
       }
 
-      const user = data.session.user;
-      const token = data.session.access_token;
-      const fallbackName = user.email?.split("@")[0] ?? "Client";
-      const fullName = user.user_metadata?.full_name as string | undefined;
-      const orgId = user.user_metadata?.organization_id as string | undefined;
-      const displayName = fullName || fallbackName;
-      const cachedForToken =
-        stored?.accessToken && stored.accessToken === token ? stored : null;
-
       if (!cancelled) {
-        setUserName(displayName);
-        setUserEmail(user.email || "");
-        setAccessToken(token);
-        if (orgId) setOrganizationId(orgId);
-      }
-
-      if (
-        cachedForToken &&
-        isProfileCacheFresh(cachedForToken) &&
-        Boolean(cachedForToken.organizationId) &&
-        cachedForToken.userStatus !== "LEAD"
-      ) {
-        if (!cancelled) {
-          setUserStatus(cachedForToken.userStatus || "NEW_USER");
-          if (cachedForToken.organizationId) setOrganizationId(cachedForToken.organizationId);
-          setStoredAuth({
-            ...cachedForToken,
-            userName: displayName,
-            userEmail: user.email || cachedForToken.userEmail || null,
-            accessToken: token,
-          });
-          setIsLoading(false);
-        }
-        return;
-      }
-
-      try {
-        const meEndpoint = apiBaseUrl ? `${apiBaseUrl}/api/me` : "/api/me";
-        const res = await fetch(meEndpoint, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.ok) {
-          const json = await res.json() as any;
-          if (!cancelled) {
-            const newStatus = json?.status ?? "NEW_USER";
-            const newOrgId = json?.organizationId || orgId || null;
-            setUserStatus(newStatus);
-            if (newOrgId) setOrganizationId(newOrgId);
-
-            const authData = {
-              userName: displayName,
-              userStatus: newStatus,
-              userEmail: user.email || null,
-              organizationId: newOrgId,
-              accessToken: token,
-              profileSyncedAt: Date.now(),
-            };
-            setStoredAuth(authData);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to fetch user status", e);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+        setUserName(auth.userName);
+        setUserEmail(auth.userEmail || "");
+        setUserStatus(auth.userStatus);
+        setOrganizationId(auth.organizationId);
+        setAccessToken(auth.accessToken);
+        setIsLoading(false);
       }
     }
 
@@ -259,7 +205,7 @@ export default function Dashboard(_: Route.ComponentProps) {
       setIsLoading(false);
     }
 
-    checkAuth().catch(() => {
+    bootstrapAuth().catch(() => {
       if (!cancelled) navigate("/signin", { replace: true });
       if (!cancelled) setIsLoading(false);
     });
@@ -273,6 +219,7 @@ export default function Dashboard(_: Route.ComponentProps) {
     if (!accessToken || !organizationId) return;
 
     let cancelled = false;
+    const controller = new AbortController();
 
     async function fetchData() {
       try {
@@ -281,16 +228,15 @@ export default function Dashboard(_: Route.ComponentProps) {
           "x-organization-id": organizationId as string
         };
 
-        const [pRes, mRes, tRes, ticRes, dRes, fRes, notifRes, sRes] = await Promise.all([
-          fetch(`${apiBaseUrl}/api/projects`, { headers }),
-          fetch(`${apiBaseUrl}/api/milestones`, { headers }),
-          fetch(`${apiBaseUrl}/api/tasks`, { headers }),
-          fetch(`${apiBaseUrl}/api/tickets`, { headers }),
-          fetch(`${apiBaseUrl}/api/deployments`, { headers }),
-          fetch(`${apiBaseUrl}/api/files`, { headers }),
-          fetch(`${apiBaseUrl}/api/notifications`, { headers }),
-          fetch(`${apiBaseUrl}/api/billing/subscriptions`, { headers }),
+        // Load above-the-fold dashboard data first, then hydrate secondary panels.
+        const [pRes, mRes, tRes, ticRes] = await Promise.all([
+          fetch(`${apiBaseUrl}/api/projects?limit=50&offset=0`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/milestones?limit=50&offset=0`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/tasks`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/tickets?limit=50&offset=0`, { headers, signal: controller.signal }),
         ]);
+
+        if (cancelled) return;
 
         if (pRes.ok) {
           const json = await pRes.json() as any;
@@ -315,6 +261,17 @@ export default function Dashboard(_: Route.ComponentProps) {
           const json = await ticRes.json() as any;
           setLiveTickets((json?.data ?? []).map((t: any) => ({ id: t.id, title: t.title, status: t.status || "OPEN" })));
         }
+
+        if (!cancelled) setIsLoading(false);
+
+        const [dRes, fRes, notifRes, sRes] = await Promise.all([
+          fetch(`${apiBaseUrl}/api/deployments`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/files?limit=50&offset=0&includePreview=false`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/notifications`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/billing/subscriptions?limit=50&offset=0`, { headers, signal: controller.signal }),
+        ]);
+
+        if (cancelled) return;
 
         if (dRes.ok) {
           const json = await dRes.json() as any;
@@ -342,7 +299,9 @@ export default function Dashboard(_: Route.ComponentProps) {
           setLiveSubscriptions((json?.data ?? []).map((s: any) => ({ id: s.id, title: s.planName || "Plan", status: s.status || "ACTIVE" })));
         }
       } catch (e) {
-        console.error("Failed to fetch data", e);
+        if (!(e instanceof DOMException && e.name === "AbortError")) {
+          console.error("Failed to fetch data", e);
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -352,6 +311,7 @@ export default function Dashboard(_: Route.ComponentProps) {
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [organizationId, accessToken, apiBaseUrl]);
 
@@ -454,7 +414,7 @@ export default function Dashboard(_: Route.ComponentProps) {
       if (res.ok) {
         setTicketTitle("");
         setTicketProjectId(null);
-        const { data } = await fetch(`${apiBaseUrl}/api/tickets`, {
+        const { data } = await fetch(`${apiBaseUrl}/api/tickets?limit=50&offset=0`, {
           headers: { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId as string },
         }).then(r => r.json()) as { data: any };
         setLiveTickets((data?.data ?? []).map((t: any) => ({ id: t.id, title: t.title, status: t.status || "OPEN" })));
@@ -532,7 +492,7 @@ export default function Dashboard(_: Route.ComponentProps) {
       if (res.ok) {
         setUploadFile(null);
         setFileProjectId(null);
-        const { data } = await fetch(`${apiBaseUrl}/api/files`, {
+        const { data } = await fetch(`${apiBaseUrl}/api/files?limit=50&offset=0&includePreview=false`, {
           headers: { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId as string },
         }).then(r => r.json()) as { data: any };
         setLiveFiles((data?.data ?? []).map((f: any) => {

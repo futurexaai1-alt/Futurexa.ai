@@ -2,9 +2,9 @@ import type { Route } from "./+types/dashboard-files";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState, useRef } from "react";
 import { Files, UploadCloud, Download, Loader2, Image, FileText, X, Eye, Trash2, Search, Filter, Grid, List, ChevronDown, Layers, Folder } from "lucide-react";
-import DashboardLayout, { getStoredAuth, AUTH_STORAGE_KEY } from "../features/dashboard/components/DashboardLayout";
-import { createSupabaseBrowserClient } from "../utils/supabase";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -71,15 +71,16 @@ export default function DashboardFiles(_: Route.ComponentProps) {
   const navigate = useNavigate();
 
   const [files, setFiles] = useState<FileItem[]>([]);
-  const [filteredFiles, setFilteredFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasFetchedFiles, setHasFetchedFiles] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userStatus, setUserStatus] = useState<string>("NEW_USER");
-  // statusConfirmed=true means we've validated status from live /api/me (not just stale cache)
+  // statusConfirmed=true means auth bootstrap is completed with a valid, authorized user.
   const [statusConfirmed, setStatusConfirmed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sortBy, setSortBy] = useState<"createdAt" | "originalFilename" | "fileSize">("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -100,62 +101,30 @@ export default function DashboardFiles(_: Route.ComponentProps) {
     let cancelled = false;
 
     async function initAuth() {
-      const stored = getStoredAuth();
-      // Optimistically use stored auth for fast render
-      if (stored?.accessToken) {
-        setAccessToken(stored.accessToken);
-        if (stored.organizationId) setOrganizationId(stored.organizationId);
-        if (stored.userStatus) setUserStatus(stored.userStatus);
-      }
-
-      // Always validate with server to get freshest organizationId + status
       try {
-        const sbClient = createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey);
-        const { data: sessionData } = await sbClient.auth.getSession();
-
-        if (!sessionData?.session) {
-          if (!cancelled) { setIsLoading(false); navigate("/signin"); }
-          return;
-        }
-
-        const liveToken = sessionData.session.access_token;
-        if (!cancelled) setAccessToken(liveToken);
-
-        // Fetch latest status + org from API
-        const res = await fetch(`${apiBaseUrl}/api/me`, {
-          headers: { Authorization: `Bearer ${liveToken}` },
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
         });
 
-        if (res.ok) {
-          const json = await res.json() as any;
-          const newStatus: string = json?.status ?? "NEW_USER";
-          const newOrgId: string | null = json?.organizationId ?? null;
-
-          if (!cancelled) {
-            setUserStatus(newStatus);
-            setStatusConfirmed(true);
-            if (newOrgId) setOrganizationId(newOrgId);
-            // Persist refreshed auth
-            const existing = JSON.parse(sessionStorage.getItem(AUTH_STORAGE_KEY) || "{}");
-            sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
-              ...existing,
-              accessToken: liveToken,
-              userStatus: newStatus,
-              organizationId: newOrgId,
-            }));
-          }
-        } else {
-          // If /api/me fails, fall back to stored auth
-          if (!stored?.accessToken) {
-            if (!cancelled) { setIsLoading(false); navigate("/signin"); }
+        if (!cancelled) {
+          if (!auth) {
+            setIsLoading(false);
+            navigate("/signin");
             return;
           }
+
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
+          setUserStatus(auth.userStatus || "NEW_USER");
+          setStatusConfirmed(true);
         }
       } catch (e) {
-        console.warn("Auth refresh failed, using stored auth", e);
-        if (!stored?.accessToken) {
-          if (!cancelled) { setIsLoading(false); navigate("/signin"); }
-          return;
+        console.warn("Auth bootstrap failed", e);
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin");
         }
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -167,7 +136,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
   }, [navigate, supabaseUrl, supabaseAnonKey, apiBaseUrl]);
 
   useEffect(() => {
-    // Wait for live /api/me confirmation before redirecting — avoids false redirects from stale cache
+    // Wait for auth bootstrap completion before applying restricted-status redirects.
     if (!statusConfirmed) return;
     if (!organizationId || !accessToken) return;
     // Only block genuinely non-client statuses from accessing files
@@ -176,28 +145,43 @@ export default function DashboardFiles(_: Route.ComponentProps) {
     }
   }, [navigate, organizationId, accessToken, userStatus, statusConfirmed]);
 
-  const fetchFileConfig = async () => {
+  const fetchFileConfig = async (signal?: AbortSignal) => {
     try {
-      const res = await fetch(`${apiBaseUrl}/api/files/config`);
+      const res = await fetch(`${apiBaseUrl}/api/files/config`, { signal });
       if (res.ok) {
         const config = await res.json() as FileConfig;
         setFileConfig(config);
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       console.error("Failed to fetch file config", e);
     }
   };
 
-  const fetchFiles = async () => {
+  const fetchFiles = async (signal?: AbortSignal) => {
     if (!organizationId || !accessToken) {
       console.log("fetchFiles skipped: organizationId or accessToken missing", { organizationId, hasAccessToken: !!accessToken });
       return;
     }
     try {
       setIsLoading(true);
+      setFetchError(null);
       const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
+      const params = new URLSearchParams({
+        status: "ACTIVE",
+        limit: "100",
+        offset: "0",
+        includePreview: "true",
+        sortBy,
+        sortOrder,
+      });
+      if (selectedProjectId !== "all") params.set("projectId", selectedProjectId);
+      if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
       console.log("Fetching files for organization:", organizationId);
-      const res = await fetch(`${apiBaseUrl}/api/files?status=ACTIVE&limit=100`, { headers });
+      const res = await fetch(`${apiBaseUrl}/api/files?${params.toString()}`, {
+        headers,
+        signal,
+      });
       console.log("Files response status:", res.status);
       if (res.ok) {
         const json = await res.json() as any;
@@ -217,73 +201,53 @@ export default function DashboardFiles(_: Route.ComponentProps) {
         setFetchError(errorMessage);
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       console.error("Failed to fetch files", e);
     } finally {
+      setHasFetchedFiles(true);
       setIsLoading(false);
     }
   };
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (signal?: AbortSignal) => {
     if (!organizationId || !accessToken) return;
     try {
       const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
-      const res = await fetch(`${apiBaseUrl}/api/projects`, { headers });
+      const res = await fetch(`${apiBaseUrl}/api/projects?limit=100&offset=0`, { headers, signal });
       if (res.ok) {
         const json = await res.json() as any;
         setProjects(json?.data ?? []);
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       console.error("Failed to fetch projects", e);
     }
   };
 
   useEffect(() => {
-    fetchFileConfig();
+    const controller = new AbortController();
+    fetchFileConfig(controller.signal);
+    return () => controller.abort();
   }, [apiBaseUrl]);
 
   useEffect(() => {
-    fetchFiles();
+    const controller = new AbortController();
+    fetchFiles(controller.signal);
+    return () => controller.abort();
+  }, [organizationId, accessToken, apiBaseUrl, debouncedSearch, sortBy, sortOrder, selectedProjectId]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchProjects(controller.signal);
+    return () => controller.abort();
   }, [organizationId, accessToken, apiBaseUrl]);
 
   useEffect(() => {
-    fetchProjects();
-  }, [organizationId, accessToken, apiBaseUrl]);
-
-  useEffect(() => {
-    let result = [...files];
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(f =>
-        f.originalFilename.toLowerCase().includes(query) ||
-        f.uploadedBy?.name?.toLowerCase().includes(query) ||
-        f.uploadedBy?.email?.toLowerCase().includes(query)
-      );
-    }
-
-    if (selectedProjectId !== "all") {
-      result = result.filter(f => f.project?.id === selectedProjectId || f.projectId === selectedProjectId);
-    }
-
-    result.sort((a, b) => {
-      let comparison = 0;
-      switch (sortBy) {
-        case "originalFilename":
-          comparison = a.originalFilename.localeCompare(b.originalFilename);
-          break;
-        case "fileSize":
-          comparison = a.fileSize - b.fileSize;
-          break;
-        case "createdAt":
-        default:
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-      }
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-
-    setFilteredFiles(result);
-  }, [files, searchQuery, sortBy, sortOrder, selectedProjectId]);
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const handleDownload = async (file: FileItem) => {
     if (!accessToken || !organizationId) return;
@@ -349,16 +313,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
     }
   };
 
-  const handleSortChange = (field: typeof sortBy) => {
-    if (sortBy === field) {
-      setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setSortOrder("desc");
-    }
-  };
-
-  if (isLoading) {
+  if (isLoading || !hasFetchedFiles) {
     return (
       <DashboardLayout supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey} apiBaseUrl={apiBaseUrl} activeKey="files">
         <div className="flex h-64 items-center justify-center">
@@ -367,6 +322,8 @@ export default function DashboardFiles(_: Route.ComponentProps) {
       </DashboardLayout>
     );
   }
+
+  const shouldShowEmptyState = files.length === 0;
 
   return (
     <DashboardLayout supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey} apiBaseUrl={apiBaseUrl} activeKey="files">
@@ -634,7 +591,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
           </div>
         </div>
 
-        {filteredFiles.length === 0 ? (
+        {shouldShowEmptyState ? (
           <div className="rounded-xl border border-gray-100 bg-white p-12 text-center shadow-sm">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
               <Files className="h-8 w-8 text-blue-300" />
@@ -659,7 +616,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
           </div>
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredFiles.map((file) => {
+            {files.map((file) => {
               const FileIcon = getFileIcon(file.mimeType);
               return (
                 <div
@@ -735,7 +692,7 @@ export default function DashboardFiles(_: Route.ComponentProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredFiles.map((file) => {
+                {files.map((file) => {
                   const FileIcon = getFileIcon(file.mimeType);
                   return (
                     <tr key={file.id} className="hover:bg-gray-50 transition-colors">

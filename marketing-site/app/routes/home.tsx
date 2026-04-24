@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 export function meta({ }: Route.MetaArgs) {
   const title = "Futurexa.ai | Premium Digital Transformation";
   const description = "Experts in transforming businesses through strategic implementation and premium digital experiences.";
-  const ogImage = "/assets/seo/og-preview.png";
+  const ogImage = "/assets/services/cloud-services.png";
   const canonical = "https://futurexa.ai/";
 
   return [

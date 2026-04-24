@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from "react-router";
-import { Menu, X, Globe, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Menu, X, ArrowRight, Twitter, Linkedin, Github, Instagram } from "lucide-react";
+import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 
@@ -11,18 +11,19 @@ export function Navbar() {
   const isHome = location.pathname === "/";
   const [clientPortalBaseUrl, setClientPortalBaseUrl] = useState("https://clientweb.futurexaai1.workers.dev");
   const clientSignInUrl = `${clientPortalBaseUrl}/signin`;
-  const clientSignUpUrl = `${clientPortalBaseUrl}/signup`;
-  const scrolledRef = useRef(scrolled);
 
   const { scrollY } = useScroll();
 
-  // On non-home pages, show navbar after 80px scroll
+  // Standardized visibility for all sub-pages
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+    }
+  }, [isHome, location.pathname]);
+
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (isHome) return;
-    const next = latest > 80;
-    if (scrolledRef.current !== next) {
-      scrolledRef.current = next;
-      setScrolled(next);
+    if (isHome) {
+      setScrolled(latest > 80);
     }
   });
 
@@ -63,16 +64,14 @@ export function Navbar() {
   return (
     <motion.nav
       initial={false}
-      animate={isHome ? {} : { 
-        y: scrolled ? 0 : -100,
-        opacity: scrolled ? 1 : 0
+      animate={{ 
+        y: (isHome && !scrolled) ? -20 : 0, 
+        opacity: (isHome && !scrolled) ? 0 : 1 
       }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      style={{ willChange: isHome ? undefined : 'transform, opacity' }}
       className={clsx(
-        "top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm",
-        isHome ? "sticky" : "fixed",
-        (!isHome && !scrolled) && "pointer-events-none"
+        "sticky top-0 w-full z-50 bg-white/90 border-b border-white/20 shadow-sm transition-all duration-300",
+        (!isHome) && "backdrop-blur-md"
       )}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">

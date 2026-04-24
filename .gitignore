@@ -140,3 +140,4 @@ Desktop.ini
 # Project build outputs
 client-web/build/
 api/dist/
+.agents/

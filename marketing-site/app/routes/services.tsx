@@ -2,7 +2,6 @@ import type { Route } from "./+types/services";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 import { ArrowRight, Code, Brain, Cloud, Database, Shield, Globe, Activity, Zap } from "lucide-react";
-import { Navbar, Footer } from "../components/Layout";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -89,9 +88,8 @@ const services = [
 export default function Services() {
   return (
     <div className="app-shell text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
 
-      <section className="relative pt-24 pb-10 lg:pt-32 lg:pb-16 overflow-hidden">
+      <section className="relative pt-16 pb-8 lg:pt-20 lg:pb-12 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
            <div className="floating-mesh-orb top-0 right-0 w-[600px] h-[600px] bg-gradient-to-b from-blue-50/30 to-indigo-50/30 opacity-50" />
         </div>
@@ -102,10 +100,10 @@ export default function Services() {
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.5 }}
            >
-              <h1 className="font-['Outfit'] text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+              <h1 className="font-['Outfit'] text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4">
                 Futuristic <span className="text-gradient-ocean">Services</span>
               </h1>
-              <p className="max-w-2xl text-lg md:text-xl text-gray-500 mb-10">
+              <p className="max-w-2xl text-lg md:text-xl text-gray-500 mb-8">
                 We blend creativity with technology to build digital products that are years ahead of the curve.
               </p>
            </motion.div>
@@ -153,7 +151,6 @@ export default function Services() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

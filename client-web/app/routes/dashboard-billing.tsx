@@ -2,8 +2,9 @@ import type { Route } from "./+types/dashboard-billing";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { CreditCard, CheckCircle2, Download, Receipt } from "lucide-react";
-import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -46,33 +47,65 @@ export default function DashboardBilling(_: Route.ComponentProps) {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userStatus, setUserStatus] = useState<string>("NEW_USER");
+  const [statusConfirmed, setStatusConfirmed] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    if (stored?.accessToken && stored?.organizationId) {
-      setAccessToken(stored.accessToken);
-      setOrganizationId(stored.organizationId);
-      setUserStatus(stored.userStatus || "NEW_USER");
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      navigate("/signin");
+    let cancelled = false;
+    async function bootstrapAuth() {
+      try {
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
+        });
+
+        if (!cancelled) {
+          if (!auth) {
+            setIsLoading(false);
+            navigate("/signin");
+            return;
+          }
+
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
+          setUserStatus(auth.userStatus || "NEW_USER");
+
+          const status = auth.userStatus || "NEW_USER";
+          setUserStatus(status);
+          if (status !== "ACTIVE_CLIENT" && status !== "PENDING_CLIENT") {
+            setIsLoading(false);
+            navigate("/dashboard");
+            return;
+          }
+          setStatusConfirmed(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin");
+        }
+      }
     }
-  }, [navigate]);
+
+    bootstrapAuth();
+    return () => { cancelled = true; };
+  }, [navigate, supabaseUrl, supabaseAnonKey, apiBaseUrl]);
 
   useEffect(() => {
-    if (!organizationId || !accessToken) return;
-    if (userStatus && userStatus !== "ACTIVE_CLIENT" && userStatus !== "PENDING_CLIENT") {
-      navigate("/dashboard");
-      return;
-    }
+    if (!organizationId || !accessToken || !statusConfirmed) return;
+    const controller = new AbortController();
+    let cancelled = false;
 
     async function fetchData() {
+      setIsLoading(true);
       try {
         const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId as string };
-        const res = await fetch(`${apiBaseUrl}/api/billing/subscriptions`, { headers });
+        const res = await fetch(`${apiBaseUrl}/api/billing/subscriptions?limit=50&offset=0`, {
+          headers,
+          signal: controller.signal,
+        });
 
-        if (res.ok) {
+        if (!cancelled && res.ok) {
           const json = await res.json() as any;
           const data = json?.data ?? [];
           setSubscriptions(data.map((s: any) => ({
@@ -84,14 +117,19 @@ export default function DashboardBilling(_: Route.ComponentProps) {
           })));
         }
       } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
         console.error("Failed to fetch subscriptions", e);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     fetchData();
-  }, [organizationId, accessToken, apiBaseUrl]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [organizationId, accessToken, apiBaseUrl, statusConfirmed]);
 
   if (isLoading) {
     return (

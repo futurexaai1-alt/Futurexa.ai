@@ -80,11 +80,15 @@ body {
 }
 
 .glass-morphism-light {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.025);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.06),
+    0 2px 4px rgba(0, 0, 0, 0.01),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  background-clip: padding-box;
 }
 
 .liquid-shimmer {
@@ -140,15 +144,15 @@ body {
 @media (max-width: 1024px) {
   .floating-mesh-orb {
     animation: none;
-    filter: blur(30px);
-    opacity: 0.25;
+    filter: blur(40px);
+    opacity: 0.35;
   }
 }
 
 @media (max-width: 1280px) {
   .floating-mesh-orb {
     animation-duration: 36s;
-    opacity: 0.35;
+    opacity: 0.45;
   }
 }
 

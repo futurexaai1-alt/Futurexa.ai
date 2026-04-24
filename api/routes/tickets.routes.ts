@@ -33,11 +33,30 @@ function generateTicketNumber(): string {
   return result;
 }
 
+function getOptionalPagination(c: { req: { query: (name: string) => string | undefined } }) {
+  const limitRaw = c.req.query("limit");
+  const offsetRaw = c.req.query("offset");
+  const hasPagination = limitRaw !== undefined || offsetRaw !== undefined;
+  const limit = Math.min(Math.max(parseInt(limitRaw || "50", 10), 1), 200);
+  const offset = Math.max(parseInt(offsetRaw || "0", 10), 0);
+  return { hasPagination, limit, offset };
+}
+
 ticketsRoutes.get("/api/tickets", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const adminMode = isAdminCrmRequest(c);
   const orgIdHeader = getOrgIdFromHeader(c);
-  const { status, priority, category, search } = await c.req.query();
+  const status = c.req.query("status");
+  const priority = c.req.query("priority");
+  const category = c.req.query("category");
+  const search = c.req.query("search");
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (!adminMode && !orgIdHeader) {
     return c.json({ error: "Admin access or Organization ID required" }, 403);
@@ -50,7 +69,8 @@ ticketsRoutes.get("/api/tickets", async (c) => {
       project:Project(id, name),
       organization:Organization(id, name)
     `)
-    .order("createdAt", { ascending: false });
+    .order("createdAt", { ascending: false })
+    .order("id", { ascending: false });
 
   if (!adminMode && orgIdHeader) {
     query = query.eq("organizationId", orgIdHeader);
@@ -60,6 +80,7 @@ ticketsRoutes.get("/api/tickets", async (c) => {
   if (priority) query = query.eq("priority", priority);
   if (category) query = query.eq("category", category);
   if (search) query = query.ilike("title", `%${search}%`);
+  if (usePagination) query = query.range(offset, offset + limit - 1);
 
   const { data: tickets, error } = await query;
 

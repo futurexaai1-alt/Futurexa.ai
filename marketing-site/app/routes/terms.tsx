@@ -1,5 +1,3 @@
-import React from "react";
-
 import { motion } from "framer-motion";
 
 export function meta() {
@@ -22,12 +20,8 @@ export default function TermsOfService() {
 
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      {/* Compact Header Area */}
-      <section className="relative pt-24 pb-8 overflow-hidden bg-white">
-      </section>
 
-      {/* Main Grid Layout - Starts Higher */}
-      <section className="pb-32 bg-white relative -mt-16">
+      <section className="pt-20 pb-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="grid lg:grid-cols-12 gap-8 items-start">
              
@@ -119,7 +113,7 @@ export default function TermsOfService() {
                       <p className="text-lg">
                         If you have any questions about these Terms, please contact us at:
                       </p>
-                      <a href="mailto:legal@futurexa.ai" className="inline-block text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                      <a href="mailto:legal@futurexa.ai" className="inline-block text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors font-['Outfit']">
                         legal@futurexa.ai
                       </a>
                     </section>
@@ -131,9 +125,6 @@ export default function TermsOfService() {
         </div>
       </section>
 
-
     </div>
   );
 }
-
-

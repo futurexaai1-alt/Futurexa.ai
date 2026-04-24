@@ -1,7 +1,7 @@
 import type { Route } from "./+types/blog-post";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-import { ArrowLeft, Clock, User, Share2 } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
 
 
 export function meta({ params }: Route.MetaArgs) {

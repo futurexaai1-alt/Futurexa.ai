@@ -84,7 +84,7 @@ export default function DashboardLayout({
   const [userStatus, setUserStatus] = useState(storedAuth?.userStatus || "NEW_USER");
   const [organizationId, setOrganizationId] = useState<string | null>(storedAuth?.organizationId || null);
   const [accessToken, setAccessToken] = useState<string | null>(storedAuth?.accessToken || null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!Boolean(storedAuth?.accessToken));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -114,63 +114,23 @@ export default function DashboardLayout({
       const displayName = fullName || fallbackName;
       const cachedForToken =
         existing?.accessToken && existing.accessToken === token ? existing : null;
+      const nextStatus = cachedForToken?.userStatus ?? "NEW_USER";
+      const nextOrgId = cachedForToken?.organizationId ?? orgId ?? null;
 
       if (!cancelled) {
         setAccessToken(token);
         setUserName(displayName);
-        if (orgId) setOrganizationId(orgId);
-      }
-
-      if (
-        cachedForToken &&
-        isProfileCacheFresh(cachedForToken) &&
-        Boolean(cachedForToken.organizationId) &&
-        cachedForToken.userStatus !== "LEAD"
-      ) {
-        if (!cancelled) {
-          setUserStatus(cachedForToken.userStatus || "NEW_USER");
-          if (cachedForToken.organizationId) setOrganizationId(cachedForToken.organizationId);
-          setStoredAuth({
-            ...cachedForToken,
-            userName: displayName,
-            userEmail: user.email || cachedForToken.userEmail || null,
-            accessToken: token,
-          });
-          setIsLoading(false);
-        }
-        return;
-      }
-
-      try {
-        const meEndpoint = apiBaseUrl ? `${apiBaseUrl}/api/me` : "/api/me";
-        const res = await fetch(meEndpoint, {
-          headers: { Authorization: `Bearer ${token}` },
+        setUserStatus(nextStatus);
+        setOrganizationId(nextOrgId);
+        setStoredAuth({
+          userName: displayName,
+          userStatus: nextStatus,
+          userEmail: user.email || cachedForToken?.userEmail || null,
+          organizationId: nextOrgId,
+          accessToken: token,
+          profileSyncedAt: cachedForToken?.profileSyncedAt,
         });
-
-        if (res.ok) {
-          const json = await res.json() as any;
-          const newStatus = json?.status ?? "NEW_USER";
-          const newOrgId = json?.organizationId || orgId || null;
-
-          const updatedAuth: AuthData = {
-            userName: displayName,
-            userStatus: newStatus,
-            userEmail: user.email || null,
-            organizationId: newOrgId,
-            accessToken: token,
-            profileSyncedAt: Date.now(),
-          };
-
-          if (!cancelled) {
-            setUserStatus(newStatus);
-            if (newOrgId) setOrganizationId(newOrgId);
-            setStoredAuth(updatedAuth);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to fetch user status", e);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+        setIsLoading(false);
       }
     }
 

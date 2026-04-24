@@ -8,6 +8,14 @@ import { createActivityLog } from "../services/notification.service";
 
 export const filesRoutes = new Hono<{ Bindings: Env }>();
 
+function parseBooleanQuery(value: string | undefined): boolean | null {
+  if (value === undefined) return null;
+  const normalized = value.toLowerCase();
+  if (normalized === "true") return true;
+  if (normalized === "false") return false;
+  return null;
+}
+
 filesRoutes.get("/api/files/config", async (c) => {
   return c.json({
     allowedExtensions: ALLOWED_EXTENSIONS,
@@ -29,6 +37,9 @@ filesRoutes.get("/api/files", async (c) => {
   const sortOrder = c.req.query("sortOrder") === "asc" ? "asc" : "desc";
   const limit = parseInt(c.req.query("limit") || "50");
   const offset = parseInt(c.req.query("offset") || "0");
+  const includePreviewQuery = parseBooleanQuery(c.req.query("includePreview"));
+  const previewLazyFlag = (c.env.FILE_PREVIEW_LAZY_V1 ?? "").toLowerCase() === "true";
+  const includePreview = includePreviewQuery ?? !previewLazyFlag;
 
   if (orgId) {
     if (!adminMode) {
@@ -74,21 +85,22 @@ filesRoutes.get("/api/files", async (c) => {
 
     const enrichedFiles = await Promise.all((files || []).map(async (file: any) => {
       const isImage = isImageMimeType(file.mimeType);
-      let previewUrl: string | null = null;
-      if (isImage) {
-        try {
-          previewUrl = await getPresignedDownloadUrl(
-            {
-              R2_ACCESS_KEY_ID: c.env.R2_ACCESS_KEY_ID,
-              R2_SECRET_ACCESS_KEY: c.env.R2_SECRET_ACCESS_KEY,
-              R2_ENDPOINT: c.env.R2_ENDPOINT,
-              R2_BUCKET_NAME: c.env.R2_BUCKET_NAME,
-            },
-            file.r2ObjectKey,
-            3600
-          );
-        } catch {}
+      if (!includePreview || !isImage) {
+        return { ...file, isImage, previewUrl: null };
       }
+      let previewUrl: string | null = null;
+      try {
+        previewUrl = await getPresignedDownloadUrl(
+          {
+            R2_ACCESS_KEY_ID: c.env.R2_ACCESS_KEY_ID,
+            R2_SECRET_ACCESS_KEY: c.env.R2_SECRET_ACCESS_KEY,
+            R2_ENDPOINT: c.env.R2_ENDPOINT,
+            R2_BUCKET_NAME: c.env.R2_BUCKET_NAME,
+          },
+          file.r2ObjectKey,
+          3600
+        );
+      } catch {}
       return { ...file, isImage, previewUrl };
     }));
 
@@ -100,6 +112,7 @@ filesRoutes.get("/api/files", async (c) => {
         offset,
         hasMore: offset + (files?.length || 0) < (total || 0),
       },
+      options: { includePreview },
     });
   }
 
@@ -141,21 +154,22 @@ filesRoutes.get("/api/files", async (c) => {
 
   const enrichedAdminFiles = await Promise.all((files || []).map(async (file: any) => {
     const isImage = isImageMimeType(file.mimeType);
-    let previewUrl: string | null = null;
-    if (isImage) {
-      try {
-        previewUrl = await getPresignedDownloadUrl(
-          {
-            R2_ACCESS_KEY_ID: c.env.R2_ACCESS_KEY_ID,
-            R2_SECRET_ACCESS_KEY: c.env.R2_SECRET_ACCESS_KEY,
-            R2_ENDPOINT: c.env.R2_ENDPOINT,
-            R2_BUCKET_NAME: c.env.R2_BUCKET_NAME,
-          },
-          file.r2ObjectKey,
-          3600
-        );
-      } catch {}
+    if (!includePreview || !isImage) {
+      return { ...file, isImage, previewUrl: null };
     }
+    let previewUrl: string | null = null;
+    try {
+      previewUrl = await getPresignedDownloadUrl(
+        {
+          R2_ACCESS_KEY_ID: c.env.R2_ACCESS_KEY_ID,
+          R2_SECRET_ACCESS_KEY: c.env.R2_SECRET_ACCESS_KEY,
+          R2_ENDPOINT: c.env.R2_ENDPOINT,
+          R2_BUCKET_NAME: c.env.R2_BUCKET_NAME,
+        },
+        file.r2ObjectKey,
+        3600
+      );
+    } catch {}
     return { ...file, isImage, previewUrl };
   }));
 
@@ -167,6 +181,7 @@ filesRoutes.get("/api/files", async (c) => {
       offset,
       hasMore: offset + (files?.length || 0) < (total || 0),
     },
+    options: { includePreview },
   });
 });
 

@@ -1,6 +1,5 @@
 import type { Route } from "./+types/contact";
 import { motion } from "framer-motion";
-
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
@@ -13,24 +12,25 @@ export function meta({}: Route.MetaArgs) {
 export default function Contact() {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+
+      <section className="relative pt-20 pb-12 lg:pt-28 lg:pb-16 overflow-hidden">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.6 }}
            >
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4">
                 Let's Build <span className="text-blue-600">Together</span>
               </h1>
-              <p className="max-w-2xl mx-auto text-xl text-gray-500 mb-12">
+              <p className="max-w-2xl mx-auto text-xl text-gray-500 mb-8">
                 Have a project in mind? We'd love to hear from you.
               </p>
            </motion.div>
         </div>
       </section>
 
-      <section className="pb-32 relative z-10">
+      <section className="pb-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="grid lg:grid-cols-2 gap-16 items-start">
               
@@ -127,7 +127,6 @@ export default function Contact() {
            </div>
         </div>
       </section>
-
 
     </div>
   );

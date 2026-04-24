@@ -3,6 +3,10 @@ export type Env = {
   SUPABASE_ANON_KEY: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   DATABASE_URL: string;
+  AUTH_CACHE_V1?: string;
+  AUTH_CACHE_TTL_MS?: string;
+  LIST_PAGINATION_V1?: string;
+  FILE_PREVIEW_LAZY_V1?: string;
   RESEND_API_KEY?: string;
   RESEND_FROM_EMAIL?: string;
   R2_ACCESS_KEY_ID: string;

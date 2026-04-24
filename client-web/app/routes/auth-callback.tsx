@@ -92,7 +92,17 @@ export default function AuthCallback(_: Route.ComponentProps) {
         navigate("/signin", { replace: true });
       } catch (e) {
         if (cancelled) return;
-        setError(e instanceof Error ? e.message : "Auth callback failed");
+        const fallbackMessage = e instanceof Error ? e.message : "Auth callback failed";
+        setError(fallbackMessage);
+
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) {
+            navigate("/dashboard", { replace: true });
+            return;
+          }
+        } catch {}
+
         navigate("/signin", { replace: true });
       }
     }

@@ -7,10 +7,26 @@ import { createNotification, createActivityLog } from "../services/notification.
 
 export const milestonesRoutes = new Hono<{ Bindings: Env }>();
 
+function getOptionalPagination(c: { req: { query: (name: string) => string | undefined } }) {
+  const limitRaw = c.req.query("limit");
+  const offsetRaw = c.req.query("offset");
+  const hasPagination = limitRaw !== undefined || offsetRaw !== undefined;
+  const limit = Math.min(Math.max(parseInt(limitRaw || "50", 10), 1), 200);
+  const offset = Math.max(parseInt(offsetRaw || "0", 10), 0);
+  return { hasPagination, limit, offset };
+}
+
 milestonesRoutes.get("/api/milestones", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
   const adminMode = isAdminCrmRequest(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
     if (!adminMode) {
@@ -21,11 +37,14 @@ milestonesRoutes.get("/api/milestones", async (c) => {
       }
     }
 
-    const { data: milestones, error } = await supabase
+    let query = supabase
       .from("Milestone")
       .select("*, project:Project(*), tasks:Task(id)")
       .eq("organizationId", orgId)
-      .order("dueDate", { ascending: true });
+      .order("dueDate", { ascending: true })
+      .order("id", { ascending: true });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: milestones, error } = await query;
 
     if (error) {
       console.error("Error fetching milestones:", error);
@@ -38,10 +57,13 @@ milestonesRoutes.get("/api/milestones", async (c) => {
     return c.json({ error: "Organization ID required" }, 400);
   }
 
-  const { data: milestones, error } = await supabase
+  let query = supabase
     .from("Milestone")
     .select("*, project:Project(*, organization:Organization(*)), tasks:Task(id)")
-    .order("dueDate", { ascending: true });
+    .order("dueDate", { ascending: true })
+    .order("id", { ascending: true });
+  if (usePagination) query = query.range(offset, offset + limit - 1);
+  const { data: milestones, error } = await query;
 
   if (error) {
     console.error("Error fetching milestones:", error);

@@ -1,5 +1,3 @@
-import React from "react";
-
 import { motion } from "framer-motion";
 
 export function meta() {
@@ -21,12 +19,8 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      {/* Compact Header Area */}
-      <section className="relative pt-24 pb-8 overflow-hidden bg-white">
-      </section>
 
-      {/* Main Grid Layout - Starts Higher */}
-      <section className="pb-32 bg-white relative -mt-16">
+      <section className="pt-20 pb-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="grid lg:grid-cols-12 gap-8 items-start">
              
@@ -78,6 +72,7 @@ export default function PrivacyPolicy() {
                           "Technical Usage data"
                         ].map((item) => (
                           <div key={item} className="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div className="h-2 w-2 rounded-full bg-blue-500 mr-3" />
                             <span className="font-semibold text-gray-700">{item}</span>
                           </div>
                         ))}
@@ -110,7 +105,7 @@ export default function PrivacyPolicy() {
                       <p className="text-lg">
                         If you have questions about this policy, contact us at:
                       </p>
-                      <a href="mailto:privacy@futurexa.ai" className="inline-block text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                      <a href="mailto:privacy@futurexa.ai" className="inline-block text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors font-['Outfit']">
                         privacy@futurexa.ai
                       </a>
                     </section>
@@ -122,9 +117,6 @@ export default function PrivacyPolicy() {
         </div>
       </section>
 
-
     </div>
   );
 }
-
-

@@ -2,7 +2,6 @@ import type { Route } from "./+types/resources";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 import { BookOpen, FileText, Wrench, CheckSquare, ArrowRight } from "lucide-react";
-import { Navbar, Footer } from "../components/Layout";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -41,26 +40,25 @@ const resources = [
 export default function Resources() {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
 
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative pt-20 pb-12 lg:pt-28 lg:pb-16 overflow-hidden">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.6 }}
            >
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4">
                 Knowledge <span className="text-blue-600">Hub</span>
               </h1>
-              <p className="max-w-3xl mx-auto text-xl text-gray-500 mb-12">
+              <p className="max-w-3xl mx-auto text-xl text-gray-500 mb-8">
                 Executive playbooks, transformation guides, and AI readiness toolkits curated for leaders building the future.
               </p>
            </motion.div>
         </div>
       </section>
 
-      <section className="pb-32">
+      <section className="pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="grid md:grid-cols-2 gap-8">
               {resources.map((resource, i) => {
@@ -111,7 +109,6 @@ export default function Resources() {
          </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import type { Route } from "./+types/about";
 import { motion } from "framer-motion";
-import { Link } from "react-router";
 import { Users, Globe, Target, Award } from "lucide-react";
-import { Navbar, Footer } from "../components/Layout";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,26 +19,25 @@ const stats = [
 export default function About() {
   return (
     <div className="bg-white text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
 
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative pt-20 pb-12 lg:pt-28 lg:pb-16 overflow-hidden">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
            <motion.div
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.6 }}
            >
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-8">
+              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
                 Building the <span className="text-blue-600">Future</span>
               </h1>
-              <p className="max-w-3xl mx-auto text-xl text-gray-500 mb-12 leading-relaxed">
+              <p className="max-w-3xl mx-auto text-xl text-gray-500 mb-8 leading-relaxed">
                 Futurexa.ai is a collective of visionary engineers, designers, and strategists dedicated to pushing the boundaries of what's possible with technology.
               </p>
            </motion.div>
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50/50">
+      <section className="py-16 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, i) => {
@@ -98,7 +95,6 @@ export default function About() {
          </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

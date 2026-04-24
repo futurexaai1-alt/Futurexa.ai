@@ -7,8 +7,9 @@ import {
   Target, Clock, ChevronRight, Layers,
   ListTodo, Info, ArrowUpRight, Loader2
 } from "lucide-react";
-import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -54,22 +55,56 @@ export default function DashboardMilestones(_: Route.ComponentProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [userStatus, setUserStatus] = useState<string | null>(null);
+  const [userStatus, setUserStatus] = useState<string>("NEW_USER");
+  const [statusConfirmed, setStatusConfirmed] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    if (stored?.accessToken && stored?.organizationId) {
-      setAccessToken(stored.accessToken);
-      setOrganizationId(stored.organizationId);
-      setUserStatus(stored.userStatus || null);
-    } else {
-      navigate("/signin");
+    let cancelled = false;
+    async function bootstrapAuth() {
+      try {
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
+        });
+
+        if (!cancelled) {
+          if (!auth) {
+            setIsLoading(false);
+            navigate("/signin");
+            return;
+          }
+
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
+
+          const status = auth.userStatus || "NEW_USER";
+          setUserStatus(status);
+          if (status !== "ACTIVE_CLIENT" && status !== "PENDING_CLIENT") {
+            setIsLoading(false);
+            navigate("/dashboard");
+            return;
+          }
+          setStatusConfirmed(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin");
+        }
+      }
     }
-  }, [navigate]);
+
+    bootstrapAuth();
+    return () => { cancelled = true; };
+  }, [navigate, supabaseUrl, supabaseAnonKey, apiBaseUrl]);
 
   useEffect(() => {
-    if (!organizationId || !accessToken) return;
+    if (!organizationId || !accessToken || !statusConfirmed) return;
     
+    const controller = new AbortController();
+    let cancelled = false;
+
     async function fetchData() {
       setIsLoading(true);
       try {
@@ -77,9 +112,12 @@ export default function DashboardMilestones(_: Route.ComponentProps) {
           Authorization: `Bearer ${accessToken}`, 
           "x-organization-id": organizationId as string 
         };
-        const res = await fetch(`${apiBaseUrl}/api/milestones`, { headers });
+        const res = await fetch(`${apiBaseUrl}/api/milestones?limit=100&offset=0`, {
+          headers,
+          signal: controller.signal,
+        });
 
-        if (res.ok) {
+        if (!cancelled && res.ok) {
           const json = await res.json() as any;
           const data = json?.data ?? [];
           const now = new Date();
@@ -113,14 +151,19 @@ export default function DashboardMilestones(_: Route.ComponentProps) {
           }));
         }
       } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
         console.error("Failed to fetch milestones", e);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     fetchData();
-  }, [organizationId, accessToken, apiBaseUrl]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [organizationId, accessToken, apiBaseUrl, statusConfirmed]);
 
   const stats = useMemo(() => {
     const completed = milestones.filter(m => m.status === "COMPLETED").length;

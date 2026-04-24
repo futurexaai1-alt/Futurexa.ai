@@ -7,16 +7,35 @@ import { createActivityLog } from "../services/notification.service";
 
 export const projectsRoutes = new Hono<{ Bindings: Env }>();
 
+function getOptionalPagination(c: { req: { query: (name: string) => string | undefined } }) {
+  const limitRaw = c.req.query("limit");
+  const offsetRaw = c.req.query("offset");
+  const hasPagination = limitRaw !== undefined || offsetRaw !== undefined;
+  const limit = Math.min(Math.max(parseInt(limitRaw || "50", 10), 1), 200);
+  const offset = Math.max(parseInt(offsetRaw || "0", 10), 0);
+  return { hasPagination, limit, offset };
+}
+
 projectsRoutes.get("/api/projects", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
-    const { data: projects, error } = await supabase
+    let query = supabase
       .from("Project")
       .select("*")
       .eq("organizationId", orgId)
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: projects, error } = await query;
 
     if (error) {
       console.error("Error fetching projects:", error);
@@ -26,10 +45,13 @@ projectsRoutes.get("/api/projects", async (c) => {
   }
 
   if (isAdminCrmRequest(c)) {
-    const { data: projects, error } = await supabase
+    let query = supabase
       .from("Project")
       .select("*, organization:Organization(*)")
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: projects, error } = await query;
 
     if (error) {
       console.error("Error fetching projects:", error);

@@ -55,26 +55,39 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+import { Navbar, Footer } from "./components/Layout";
+
 export default function App() {
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
+  const isHome = location.pathname === "/";
 
   if (prefersReducedMotion) {
-    return <Outlet />;
+    return (
+      <>
+        {!isHome && <Navbar />}
+        <Outlet />
+        {!isHome && <Footer />}
+      </>
+    );
   }
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <Outlet />
-      </motion.div>
-    </AnimatePresence>
+    <>
+      {!isHome && <Navbar />}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Outlet />
+        </motion.div>
+      </AnimatePresence>
+      {!isHome && <Footer />}
+    </>
   );
 }
 

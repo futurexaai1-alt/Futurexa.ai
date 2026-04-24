@@ -1,9 +1,10 @@
 import type { Route } from "./+types/dashboard-settings";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import SettingsPanel from "../features/settings/components/SettingsPanel";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -38,30 +39,52 @@ export default function DashboardSettings(_: Route.ComponentProps) {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userStatus, setUserStatus] = useState<string>("NEW_USER");
+  const [statusConfirmed, setStatusConfirmed] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    if (stored?.accessToken && stored?.organizationId) {
-      setAccessToken(stored.accessToken);
-      setOrganizationId(stored.organizationId);
-      setUserName(stored.userName || "Client");
-      setUserStatus(stored.userStatus || "NEW_USER");
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      navigate("/signin");
-    }
-  }, [navigate]);
+    let cancelled = false;
+    async function bootstrapAuth() {
+      try {
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
+        });
 
-  useEffect(() => {
-    if (!organizationId || !accessToken) return;
-    if (userStatus && userStatus !== "ACTIVE_CLIENT" && userStatus !== "PENDING_CLIENT") {
-      navigate("/dashboard");
-      return;
-    }
-  }, [navigate, organizationId, accessToken, userStatus]);
+        if (!cancelled) {
+          if (!auth) {
+            setIsLoading(false);
+            navigate("/signin");
+            return;
+          }
 
-  if (isLoading) {
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
+          setUserName(auth.userName || "Client");
+          setUserStatus(auth.userStatus || "NEW_USER");
+
+          const status = auth.userStatus || "NEW_USER";
+          if (status !== "ACTIVE_CLIENT" && status !== "PENDING_CLIENT") {
+            setIsLoading(false);
+            navigate("/dashboard");
+            return;
+          }
+          setStatusConfirmed(true);
+          setIsLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin");
+        }
+      }
+    }
+
+    bootstrapAuth();
+    return () => { cancelled = true; };
+  }, [navigate, supabaseUrl, supabaseAnonKey, apiBaseUrl]);
+
+  if (isLoading || !statusConfirmed) {
     return (
       <DashboardLayout supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey} apiBaseUrl={apiBaseUrl} activeKey="settings">
         <div className="flex h-64 items-center justify-center">

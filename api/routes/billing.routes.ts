@@ -6,10 +6,26 @@ import { requireActiveClientProfile } from "../middleware/require";
 
 export const billingRoutes = new Hono<{ Bindings: Env }>();
 
+function getOptionalPagination(c: { req: { query: (name: string) => string | undefined } }) {
+  const limitRaw = c.req.query("limit");
+  const offsetRaw = c.req.query("offset");
+  const hasPagination = limitRaw !== undefined || offsetRaw !== undefined;
+  const limit = Math.min(Math.max(parseInt(limitRaw || "50", 10), 1), 200);
+  const offset = Math.max(parseInt(offsetRaw || "0", 10), 0);
+  return { hasPagination, limit, offset };
+}
+
 billingRoutes.get("/api/billing", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
   const adminMode = isAdminCrmRequest(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
     if (!adminMode) {
@@ -20,11 +36,14 @@ billingRoutes.get("/api/billing", async (c) => {
       }
     }
 
-    const { data: subscriptions, error } = await supabase
+    let query = supabase
       .from("Subscription")
       .select("*")
       .eq("organizationId", orgId)
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: subscriptions, error } = await query;
 
     if (error) {
       console.error("Error fetching subscriptions:", error);
@@ -37,10 +56,13 @@ billingRoutes.get("/api/billing", async (c) => {
     return c.json({ error: "Organization ID required" }, 400);
   }
 
-  const { data: subscriptions, error } = await supabase
+  let query = supabase
     .from("Subscription")
     .select("*, organization:Organization(*)")
-    .order("createdAt", { ascending: false });
+    .order("createdAt", { ascending: false })
+    .order("id", { ascending: false });
+  if (usePagination) query = query.range(offset, offset + limit - 1);
+  const { data: subscriptions, error } = await query;
 
   if (error) {
     console.error("Error fetching subscriptions:", error);
@@ -53,6 +75,13 @@ billingRoutes.get("/api/billing/subscriptions", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
   const adminMode = isAdminCrmRequest(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
     if (!adminMode) {
@@ -63,11 +92,14 @@ billingRoutes.get("/api/billing/subscriptions", async (c) => {
       }
     }
 
-    const { data: subscriptions, error } = await supabase
+    let query = supabase
       .from("Subscription")
       .select("*")
       .eq("organizationId", orgId)
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: subscriptions, error } = await query;
 
     if (error) {
       console.error("Error fetching subscriptions:", error);
@@ -80,10 +112,13 @@ billingRoutes.get("/api/billing/subscriptions", async (c) => {
     return c.json({ error: "Organization ID required" }, 400);
   }
 
-  const { data: subscriptions, error } = await supabase
+  let query = supabase
     .from("Subscription")
     .select("*, organization:Organization(*)")
-    .order("createdAt", { ascending: false });
+    .order("createdAt", { ascending: false })
+    .order("id", { ascending: false });
+  if (usePagination) query = query.range(offset, offset + limit - 1);
+  const { data: subscriptions, error } = await query;
 
   if (error) {
     console.error("Error fetching subscriptions:", error);
@@ -96,6 +131,13 @@ billingRoutes.get("/api/billing/invoices", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
   const adminMode = isAdminCrmRequest(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
     if (!adminMode) {
@@ -106,11 +148,14 @@ billingRoutes.get("/api/billing/invoices", async (c) => {
       }
     }
 
-    const { data: invoices, error } = await supabase
+    let query = supabase
       .from("Invoice")
       .select("*")
       .eq("organizationId", orgId)
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: invoices, error } = await query;
 
     if (error) {
       console.error("Error fetching invoices:", error);
@@ -123,10 +168,13 @@ billingRoutes.get("/api/billing/invoices", async (c) => {
     return c.json({ error: "Organization ID required" }, 400);
   }
 
-  const { data: invoices, error } = await supabase
+  let query = supabase
     .from("Invoice")
     .select("*, organization:Organization(*)")
-    .order("createdAt", { ascending: false });
+    .order("createdAt", { ascending: false })
+    .order("id", { ascending: false });
+  if (usePagination) query = query.range(offset, offset + limit - 1);
+  const { data: invoices, error } = await query;
 
   if (error) {
     console.error("Error fetching invoices:", error);
@@ -139,6 +187,13 @@ billingRoutes.get("/api/billing/payments", async (c) => {
   const supabase = getSupabaseClient(c.env);
   const orgId = getOrgIdFromHeader(c);
   const adminMode = isAdminCrmRequest(c);
+  const { hasPagination, limit, offset } = getOptionalPagination(c);
+  const paginationEnabledByFlag = (c.env.LIST_PAGINATION_V1 ?? "").toLowerCase() === "true";
+  const usePagination = hasPagination || paginationEnabledByFlag;
+
+  if (!usePagination) {
+    c.header("X-API-Deprecated", "unpaginated-response; add limit/offset");
+  }
 
   if (orgId) {
     if (!adminMode) {
@@ -149,11 +204,14 @@ billingRoutes.get("/api/billing/payments", async (c) => {
       }
     }
 
-    const { data: payments, error } = await supabase
+    let query = supabase
       .from("Payment")
       .select("*")
       .eq("organizationId", orgId)
-      .order("createdAt", { ascending: false });
+      .order("createdAt", { ascending: false })
+      .order("id", { ascending: false });
+    if (usePagination) query = query.range(offset, offset + limit - 1);
+    const { data: payments, error } = await query;
 
     if (error) {
       console.error("Error fetching payments:", error);
@@ -166,10 +224,13 @@ billingRoutes.get("/api/billing/payments", async (c) => {
     return c.json({ error: "Organization ID required" }, 400);
   }
 
-  const { data: payments, error } = await supabase
+  let query = supabase
     .from("Payment")
     .select("*, organization:Organization(*)")
-    .order("createdAt", { ascending: false });
+    .order("createdAt", { ascending: false })
+    .order("id", { ascending: false });
+  if (usePagination) query = query.range(offset, offset + limit - 1);
+  const { data: payments, error } = await query;
 
   if (error) {
     console.error("Error fetching payments:", error);

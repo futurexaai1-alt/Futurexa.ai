@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { getSupabaseClient } from "../services/supabase.service";
 import type { Env } from "../types";
 import { fetchSupabaseUserProfile, updateSupabaseUserStatus } from "../middleware/auth";
+import { invalidateAuthCacheForUser } from "../middleware/require";
 import { createNotification, createActivityLog } from "../services/notification.service";
 import { sendResendEmail } from "../services/email.service";
 
@@ -76,6 +77,7 @@ usersRoutes.patch("/api/users/:id/suspend", async (c) => {
       .from("User")
       .update({ status: "SUSPENDED" })
       .eq("id", id);
+    invalidateAuthCacheForUser(id);
 
     updateSupabaseUserStatus(c.env, id, "SUSPENDED").catch(() => {});
 
@@ -140,6 +142,7 @@ usersRoutes.patch("/api/users/:id/unsuspend", async (c) => {
       .from("User")
       .update({ status: "ACTIVE_CLIENT" })
       .eq("id", id);
+    invalidateAuthCacheForUser(id);
 
     updateSupabaseUserStatus(c.env, id, "ACTIVE_CLIENT").catch(() => {});
 
@@ -193,6 +196,7 @@ usersRoutes.patch("/api/users/:id/restore", async (c) => {
       .from("User")
       .update({ status: "NEW_USER" })
       .eq("id", id);
+    invalidateAuthCacheForUser(id);
 
     updateSupabaseUserStatus(c.env, id, "NEW_USER").catch(() => {});
 

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { getSupabaseClient } from "../services/supabase.service";
 import type { Env } from "../types";
 import { extractBearerToken, fetchSupabaseUserProfile, updateSupabaseUserStatus } from "../middleware/auth";
+import { invalidateAuthCacheForUser } from "../middleware/require";
 
 export const leadsRoutes = new Hono<{ Bindings: Env }>();
 
@@ -186,6 +187,7 @@ leadsRoutes.patch("/api/project-requests/:id/status", async (c) => {
       ]);
 
       updateSupabaseUserStatus(c.env, existingRequest.requestedById, "ACTIVE_CLIENT").catch(() => {});
+      invalidateAuthCacheForUser(existingRequest.requestedById);
     }
 
     return c.json({ data: request });

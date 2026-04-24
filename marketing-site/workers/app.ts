@@ -18,10 +18,13 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/app-config") {
+      const isLocalRequest = /^(localhost|127\.0\.0\.1)$/i.test(url.hostname);
       const configuredClientWebUrl =
         typeof (env as any).CLIENT_WEB_URL === "string" && (env as any).CLIENT_WEB_URL.trim()
           ? (env as any).CLIENT_WEB_URL.trim()
-          : "https://clientweb.futurexaai1.workers.dev";
+          : isLocalRequest
+            ? "http://localhost:5174"
+            : "https://clientweb.futurexaai1.workers.dev";
       const clientWebBinding = (env as any).CLIENT_WEB as
         | { fetch: (request: Request) => Promise<Response> }
         | undefined;

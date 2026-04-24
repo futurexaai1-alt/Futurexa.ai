@@ -1,8 +1,7 @@
 import type { Route } from "./+types/case-studies";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { Navbar, Footer } from "../components/Layout";
+import { ArrowUpRight } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -57,26 +56,25 @@ const cases = [
 export default function CaseStudies() {
   return (
     <div className="app-shell text-gray-900 font-sans overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
-      <Navbar />
 
-      <section className="relative pt-24 pb-10 lg:pt-32 lg:pb-16 overflow-hidden">
+      <section className="relative pt-16 pb-8 lg:pt-20 lg:pb-12 overflow-hidden">
         <div className="container">
            <motion.div
              initial={{ opacity: 0, y: 15 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.5 }}
            >
-              <h1 className="font-['Outfit'] text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+              <h1 className="font-['Outfit'] text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4">
                 Our <span className="text-gradient-ocean">Work</span>
               </h1>
-              <p className="max-w-2xl text-lg md:text-xl text-gray-500 mb-10">
+              <p className="max-w-2xl text-lg md:text-xl text-gray-500 mb-8">
                 Real results for visionary companies. Explore how we transform challenges into opportunities.
               </p>
            </motion.div>
         </div>
       </section>
 
-      <section className="pb-32">
+      <section className="pb-24">
         <div className="container">
            <div className="grid gap-16">
               {cases.map((study, i) => (
@@ -126,7 +124,6 @@ export default function CaseStudies() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

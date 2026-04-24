@@ -6,8 +6,9 @@ import {
   Clock, AlertTriangle, MessageSquare, Send, ChevronRight,
   CheckCircle2, Circle, ArrowLeft, Layers
 } from "lucide-react";
-import DashboardLayout, { getStoredAuth } from "../features/dashboard/components/DashboardLayout";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -101,6 +102,7 @@ export default function DashboardTicket(_: Route.ComponentProps) {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userStatus, setUserStatus] = useState<string>("NEW_USER");
+  const [statusConfirmed, setStatusConfirmed] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [ticketComments, setTicketComments] = useState<TicketComment[]>([]);
 
@@ -120,36 +122,60 @@ export default function DashboardTicket(_: Route.ComponentProps) {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    if (stored?.accessToken && stored?.organizationId) {
-      setAccessToken(stored.accessToken);
-      setOrganizationId(stored.organizationId);
-      setUserStatus(stored.userStatus || "NEW_USER");
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      navigate("/signin");
-    }
-  }, [navigate]);
+    let cancelled = false;
+    async function bootstrapAuth() {
+      try {
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
+        });
 
-  useEffect(() => {
-    if (!organizationId || !accessToken) return;
-    if (userStatus && userStatus !== "ACTIVE_CLIENT" && userStatus !== "PENDING_CLIENT") {
-      navigate("/dashboard");
-      return;
-    }
-  }, [navigate, organizationId, accessToken, userStatus]);
+        if (!cancelled) {
+          if (!auth) {
+            setIsLoading(false);
+            navigate("/signin");
+            return;
+          }
 
-  const fetchTickets = async () => {
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
+          setUserStatus(auth.userStatus || "NEW_USER");
+
+          const status = auth.userStatus || "NEW_USER";
+          setUserStatus(status);
+          if (status !== "ACTIVE_CLIENT" && status !== "PENDING_CLIENT") {
+            setIsLoading(false);
+            navigate("/dashboard");
+            return;
+          }
+          setStatusConfirmed(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsLoading(false);
+          navigate("/signin");
+        }
+      }
+    }
+
+    bootstrapAuth();
+    return () => { cancelled = true; };
+  }, [navigate, supabaseUrl, supabaseAnonKey, apiBaseUrl]);
+
+  const fetchTickets = async (signal?: AbortSignal) => {
     if (!organizationId || !accessToken) return;
+    if (tickets.length === 0) setIsLoading(true);
     try {
       const params = new URLSearchParams();
       if (filters.status) params.set("status", filters.status);
       if (filters.priority) params.set("priority", filters.priority);
       if (filters.search) params.set("search", filters.search);
+      params.set("limit", "50");
+      params.set("offset", "0");
 
       const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
-      const res = await fetch(`${apiBaseUrl}/api/tickets?${params.toString()}`, { headers });
+      const res = await fetch(`${apiBaseUrl}/api/tickets?${params.toString()}`, { headers, signal });
       if (res.ok) {
         const json = await res.json() as any;
         const data = json?.data ?? [];
@@ -168,6 +194,7 @@ export default function DashboardTicket(_: Route.ComponentProps) {
         })));
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       console.error("Failed to fetch tickets", e);
     } finally {
       setIsLoading(false);
@@ -209,26 +236,33 @@ export default function DashboardTicket(_: Route.ComponentProps) {
   };
 
   useEffect(() => {
-    fetchTickets();
-  }, [organizationId, accessToken, apiBaseUrl, filters]);
+    if (!statusConfirmed) return;
+    const controller = new AbortController();
+    fetchTickets(controller.signal);
+    return () => controller.abort();
+  }, [organizationId, accessToken, apiBaseUrl, filters, statusConfirmed]);
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (signal?: AbortSignal) => {
     if (!organizationId || !accessToken) return;
     try {
       const headers = { Authorization: `Bearer ${accessToken}`, "x-organization-id": organizationId };
-      const res = await fetch(`${apiBaseUrl}/api/projects`, { headers });
+      const res = await fetch(`${apiBaseUrl}/api/projects?limit=100&offset=0`, { headers, signal });
       if (res.ok) {
         const json = await res.json() as any;
         setProjects(json?.data ?? []);
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       console.error("Failed to fetch projects", e);
     }
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, [organizationId, accessToken, apiBaseUrl]);
+    if (!statusConfirmed) return;
+    const controller = new AbortController();
+    fetchProjects(controller.signal);
+    return () => controller.abort();
+  }, [organizationId, accessToken, apiBaseUrl, statusConfirmed]);
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();

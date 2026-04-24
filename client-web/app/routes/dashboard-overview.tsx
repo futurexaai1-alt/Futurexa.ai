@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "../features/dashboard/components/DashboardLayout";
 import OverviewSection from "../features/dashboard/components/OverviewSection";
 import { resolveApiBaseUrl } from "../utils/api-base";
+import { ensureDashboardAuth } from "../utils/dashboard-auth";
 
 type LoaderData = {
   supabaseUrl: string;
@@ -22,21 +23,6 @@ type MilestoneItem = ListItem & {
   progress: number;
   dueDate: string;
 };
-
-type StoredAuth = {
-  accessToken: string | null;
-  organizationId: string | null;
-};
-
-const AUTH_KEY = "futurexa_auth";
-
-function getStoredAuth(): StoredAuth | null {
-  try {
-    const stored = sessionStorage.getItem(AUTH_KEY);
-    if (stored) return JSON.parse(stored) as StoredAuth;
-  } catch {}
-  return null;
-}
 
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env as any;
@@ -71,54 +57,59 @@ export default function DashboardOverview(_: Route.ComponentProps) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    if (stored?.accessToken && stored?.organizationId) {
-      setAccessToken(stored.accessToken);
-      setOrganizationId(stored.organizationId);
-      setIsLoading(false);
-    } else {
-      const checkAuth = async () => {
-        const res = await fetch(`${apiBaseUrl}/api/me`, {
-          headers: { Authorization: `Bearer ${stored?.accessToken}` },
+    let cancelled = false;
+
+    async function bootstrapAuth() {
+      try {
+        const auth = await ensureDashboardAuth({
+          supabaseUrl,
+          supabaseAnonKey,
+          apiBaseUrl,
         });
-        if (res.ok) {
-          const json = await res.json() as { organizationId?: string | null };
-          setOrganizationId(json?.organizationId || stored?.organizationId || null);
-          setAccessToken(stored?.accessToken || null);
+
+        if (!cancelled && auth) {
+          setAccessToken(auth.accessToken);
+          setOrganizationId(auth.organizationId);
         }
-        setIsLoading(false);
-      };
-      if (stored?.accessToken) {
-        checkAuth();
-      } else {
-        setIsLoading(false);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
-  }, []);
+
+    bootstrapAuth();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabaseUrl, supabaseAnonKey, apiBaseUrl]);
 
   useEffect(() => {
     if (!organizationId || !accessToken) return;
+    const controller = new AbortController();
+    let cancelled = false;
 
     async function fetchData() {
+      setIsLoading(true);
       try {
         const orgId = organizationId;
         if (!orgId) return;
         const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}`, "x-organization-id": orgId };
         const [pRes, mRes, tRes, ticRes, dRes, fRes, sRes] = await Promise.all([
-          fetch(`${apiBaseUrl}/api/projects`, { headers }),
-          fetch(`${apiBaseUrl}/api/milestones`, { headers }),
-          fetch(`${apiBaseUrl}/api/tasks`, { headers }),
-          fetch(`${apiBaseUrl}/api/tickets`, { headers }),
-          fetch(`${apiBaseUrl}/api/deployments`, { headers }),
-          fetch(`${apiBaseUrl}/api/files`, { headers }),
-          fetch(`${apiBaseUrl}/api/billing/subscriptions`, { headers }),
+          fetch(`${apiBaseUrl}/api/projects?limit=50&offset=0`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/milestones?limit=50&offset=0`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/tasks`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/tickets?limit=50&offset=0`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/deployments`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/files?limit=50&offset=0&includePreview=false`, { headers, signal: controller.signal }),
+          fetch(`${apiBaseUrl}/api/billing/subscriptions?limit=50&offset=0`, { headers, signal: controller.signal }),
         ]);
 
-        if (pRes.ok) {
+        if (!cancelled && pRes.ok) {
           const json = await pRes.json() as any;
           setLiveProjects((json?.data ?? []).map((p: any) => ({ id: p.id, title: p.name, status: p.status || "ACTIVE" })));
         }
-        if (mRes.ok) {
+        if (!cancelled && mRes.ok) {
           const json = await mRes.json() as any;
           setLiveMilestones((json?.data ?? []).map((m: any) => {
             const status = m.status || "PENDING";
@@ -126,19 +117,19 @@ export default function DashboardOverview(_: Route.ComponentProps) {
             return { id: m.id, title: m.title || m.name, status, progress, dueDate: m.dueDate ? new Date(m.dueDate).toLocaleDateString() : "" };
           }));
         }
-        if (tRes.ok) {
+        if (!cancelled && tRes.ok) {
           const json = await tRes.json() as any;
           setLiveTasks((json?.data ?? []).map((t: any) => ({ id: t.id, title: t.title, status: t.status || "PENDING" })));
         }
-        if (ticRes.ok) {
+        if (!cancelled && ticRes.ok) {
           const json = await ticRes.json() as any;
           setLiveTickets((json?.data ?? []).map((t: any) => ({ id: t.id, title: t.title, status: t.status || "OPEN" })));
         }
-        if (dRes.ok) {
+        if (!cancelled && dRes.ok) {
           const json = await dRes.json() as any;
           setLiveDeployments((json?.data ?? []).map((d: any) => ({ id: d.id, title: d.name, status: d.status || "SUCCESS" })));
         }
-        if (fRes.ok) {
+        if (!cancelled && fRes.ok) {
           const json = await fRes.json() as any;
           setLiveFiles((json?.data ?? []).map((f: any) => {
             const parts = String(f.fileUrl ?? "").split("/");
@@ -146,18 +137,23 @@ export default function DashboardOverview(_: Route.ComponentProps) {
             return { id: f.id, title, status: f.fileType || "FILE" };
           }));
         }
-        if (sRes.ok) {
+        if (!cancelled && sRes.ok) {
           const json = await sRes.json() as any;
           setLiveSubscriptions((json?.data ?? []).map((s: any) => ({ id: s.id, title: s.planName || "Plan", status: s.status || "ACTIVE" })));
         }
       } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
         console.error("Failed to fetch data", e);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     fetchData();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [organizationId, accessToken, apiBaseUrl]);
 
   if (isLoading) {
